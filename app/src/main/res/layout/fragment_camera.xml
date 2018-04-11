@@ -2,8 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <SurfaceView
-        android:id="@+id/camera_view"
+
+    <include layout="@layout/camera_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"></include>
+    <TextView
+        android:id="@+id/hint_face_side"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="注册正脸"
+        android:textSize="@dimen/add_face_hint_text"
+        android:textColor="@color/colorTextWrite"
+        android:layout_marginBottom="100dp"
+        />
+
 </RelativeLayout>

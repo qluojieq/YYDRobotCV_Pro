@@ -24,21 +24,7 @@ import static android.content.ContentValues.TAG;
 
 public class ImageUtils {
 
-    //    public static Bitmap byte2Bitmap(byte [] byteData, int width, int height){
-//
-//        try {
-//            YuvImage yuvImage = new YuvImage(byteData, ImageFormat.NV21,width,height,null);
-//            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//            yuvImage.compressToJpeg(new Rect(0,0,width,height),100,outputStream);
-//            byte [] bytes = outputStream.toByteArray();
-//            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-//            outputStream.close();
-//            return bitmap;
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return  null;
-//    }
+
     static Bitmap bmp = null;
     static YuvImage image = null;
     static ByteArrayOutputStream stream;
@@ -168,6 +154,15 @@ public class ImageUtils {
         } catch (IOException e) {
             Log.e(TAG, "save bitmap error:" + e);
         }
+    }
+
+    /**
+     *
+     * @param fileName
+     * @param bytes
+     */
+    public static void saveBytes(String fileName,byte []bytes){
+
     }
 
 

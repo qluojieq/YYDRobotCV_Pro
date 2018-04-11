@@ -1,38 +1,29 @@
 package com.yongyida.yydrobotcv.useralbum;
 /**
  * @author Brandon on 2018/3/13
+ * update 18/4/10
  **/
 public class User {
 
-    public static final String C_UID = "u_id";
-    public static final String C_UN = "u_name";
-    public static final String C_UBD = "u_birthday";
-    public static final String C_UGD = "u_gender";
-    public static final String C_UPN = "u_phone_num";
-    public static final String C_UPR = "u_vip_rate";
-    public static final String C_UIC = "u_identify_count";
-    public static final String C_TAG = "u_tag";
+
     public static final String TAG = User.class.getSimpleName();
-    int userId;
-    String uaerName;
-    String birthDay;
-    String gender;
-    String phoneNum;
-    String vipRate;
-    int identifyCount;
-    String tag;
+
+    private String userId;
+    private String personId;
+    private String uaerName;
+    private String birthDay;
+    private String age;
+    private String gender;
+    private String phoneNum;
+    private String vipRate;
+    private String  identifyCount;
+    private String headPortrait;
+    private String tag;
 
     public static String getTAG() {
         return TAG;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 
     public String getUaerName() {
         return uaerName;
@@ -74,19 +65,51 @@ public class User {
         this.vipRate = vipRate;
     }
 
-    public int getIdentifyCount() {
-        return identifyCount;
-    }
-
-    public void setIdentifyCount(int identifyCount) {
-        this.identifyCount = identifyCount;
-    }
-
     public String getTag() {
         return tag;
     }
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getIdentifyCount() {
+        return identifyCount;
+    }
+
+    public void setIdentifyCount(String identifyCount) {
+        this.identifyCount = identifyCount;
+    }
+
+    public String getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(String personId) {
+        this.personId = personId;
+    }
+
+    public String getHeadPortrait() {
+        return headPortrait;
+    }
+
+    public void setHeadPortrait(String headPortrait) {
+        this.headPortrait = headPortrait;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
     }
 }

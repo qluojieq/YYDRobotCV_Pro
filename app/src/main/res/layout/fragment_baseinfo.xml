@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@mipmap/ic_launcher"
     android:layout_height="match_parent">
-    <TextView
-        android:text="base_info"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/info_step_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="25dp"
+        android:src="@mipmap/info_step_1" />
+
+    <TextView
+        android:id="@+id/btn_info_next"
+        android:layout_width="@dimen/btn_main_width"
+        android:layout_height="@dimen/btn_main_height"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/btn_main_margin_top"
+        android:layout_marginRight="@dimen/btn_main_margin_side"
+        android:background="@mipmap/ic_steps" />
+
+</RelativeLayout>

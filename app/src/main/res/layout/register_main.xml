@@ -1,45 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/big_background"
     tools:context=".RegisterActivity">
-    <LinearLayout
-        android:layout_width="100dp"
+    <Button
+        android:layout_marginTop="@dimen/btn_main_margin_top"
+        android:layout_marginLeft="@dimen/btn_main_margin_side"
+        android:onClick="registerBack"
+        android:text="返回"
+        android:background="@mipmap/ic_feedback"
+        android:gravity="center"
+        android:layout_width="65dp"
+        android:layout_height="30dp" />
+    <RadioGroup
+        android:id="@+id/refer_view_register"
+        android:layout_centerVertical="true"
+        android:layout_width="130dp"
         android:orientation="vertical"
-        android:layout_height="match_parent">
-        <Button
-            android:onClick="registerBack"
-            android:text="返回"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="100dp" />
-        <Button
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:background="@drawable/button_register_bk"
             android:onClick="registerCamera"
             android:text="人脸录入"
+            android:button="@null"
             android:gravity="center"
+            android:textColor="@color/colorTextWrite"
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
-        <Button
+            android:layout_height="40dp" />
+        <RadioButton
+            android:button="@null"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_register_bk"
+            android:textColor="@color/colorTextWrite"
             android:onClick="registerBaseInfo"
             android:text="个人信息"
             android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
-        <Button
+            android:layout_height="40dp" />
+        <RadioButton
+            android:button="@null"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_register_bk"
+            android:textColor="@color/colorTextWrite"
             android:onClick="registerVipRate"
             android:text="vip信息"
             android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
+            android:layout_height="40dp" />
 
-    </LinearLayout>
+    </RadioGroup>
     <FrameLayout
+        android:layout_toRightOf="@id/refer_view_register"
         android:id="@+id/register_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </FrameLayout>
 
-</LinearLayout>
+</RelativeLayout>

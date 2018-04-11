@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="add_face_hint_text">16dp</dimen>
+    <dimen name="btn_main_height">30dp</dimen>
+    <dimen name="btn_main_width">65dp</dimen>
+    <dimen name="btn_main_margin_top">12dp</dimen>
+    <dimen name="btn_main_margin_side">17dp</dimen>
+</resources>
