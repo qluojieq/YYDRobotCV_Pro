@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class UserDataSupport {
         List<User> allUsers = new ArrayList<>();
         Cursor cursor = database.query(UserDataHelper.DATABASE_TABLE, allColumns, null, null, null, null, null);
         cursor.moveToFirst();
-        while (cursor.isAfterLast()) {
+        while (!cursor.isAfterLast()) {
             User user = new User();
             user.setUserId(cursor.getString(0));
             user.setPersonId(cursor.getString(1));
@@ -59,7 +60,10 @@ public class UserDataSupport {
             user.setHeadPortrait(cursor.getString(7));
             user.setIdentifyCount(cursor.getString(8));
             user.setTag(cursor.getString(9));
+            allUsers.add(user);
+            cursor.moveToNext();
         }
+        Log.e(TAG,allUsers.size() + " get all user success " + cursor.getCount());
         cursor.close();
         close();
         return allUsers;

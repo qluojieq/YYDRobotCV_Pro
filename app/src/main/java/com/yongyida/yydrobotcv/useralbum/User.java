@@ -1,9 +1,14 @@
 package com.yongyida.yydrobotcv.useralbum;
+
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * @author Brandon on 2018/3/13
  * update 18/4/10
  **/
-public class User {
+public class User implements Serializable{
 
 
     public static final String TAG = User.class.getSimpleName();

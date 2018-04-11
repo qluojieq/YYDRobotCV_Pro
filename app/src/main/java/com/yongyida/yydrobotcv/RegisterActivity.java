@@ -43,8 +43,6 @@ public class RegisterActivity extends FragmentActivity {
         registerCamera(null);
     }
 
-
-
     public void registerBack(View view) {
         this.finish();
     }

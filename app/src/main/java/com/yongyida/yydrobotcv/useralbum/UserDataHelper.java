@@ -1,7 +1,6 @@
 package com.yongyida.yydrobotcv.useralbum;
 
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -38,9 +37,6 @@ public class UserDataHelper extends SQLiteOpenHelper {
             + C_UIC + " ,"
             + C_UPR + " ,"
             + C_TAG +" );";
-
-
-
 
 
     public UserDataHelper(Context context) {

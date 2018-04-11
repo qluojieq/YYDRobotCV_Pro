@@ -2,15 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <ImageView
-        android:id="@+id/info_step_hint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="80dp"
-        android:layout_marginTop="25dp"
-        android:src="@mipmap/info_step_1" />
-
+    <TextView
+        android:layout_alignParentEnd="true"
+        android:id="@+id/hold_position"
+        android:layout_width="130dp"
+        android:layout_height="match_parent" />
     <TextView
         android:id="@+id/btn_info_next"
         android:layout_width="@dimen/btn_main_width"
@@ -19,5 +15,102 @@
         android:layout_marginTop="@dimen/btn_main_margin_top"
         android:layout_marginRight="@dimen/btn_main_margin_side"
         android:background="@mipmap/ic_steps" />
+
+
+    <RelativeLayout
+        android:layout_toLeftOf="@id/hold_position"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_centerHorizontal="true"
+            android:id="@+id/info_step_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:src="@mipmap/info_step_1" />
+        <LinearLayout
+            android:id="@+id/insert_phone_tap"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textColor="@color/colorTextWrite"
+                android:textSize="@dimen/text_size_base_info_choice"
+                android:gravity="center"
+                android:text="手机号"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <EditText
+                android:background="@mipmap/btn_qx"
+                android:id="@+id/edit_phone"
+                android:hint="phone "
+                android:textColor="@color/colorTextWrite"
+                android:gravity="center"
+                android:layout_width="150dp"
+                android:layout_height="35dp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/insert_name_tap"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:gravity="center"
+                android:text="姓名"
+                android:textColor="@color/colorTextWrite"
+                android:textSize="@dimen/text_size_base_info_choice"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <EditText
+                android:background="@mipmap/btn_qx"
+                android:hint="input name"
+                android:textColor="@color/colorTextWrite"
+                android:gravity="center"
+                android:id="@+id/edit_name"
+                android:layout_width="150dp"
+                android:layout_height="35dp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/insert_birthday_tap"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="生日"
+                android:gravity="center"
+                android:textColor="@color/colorText"
+                android:layout_width="wrap_content"
+                android:layout_height="110dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/insert_gender_tap"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_marginRight="20dp"
+                android:text="性别"
+                android:gravity="center"
+                android:textSize="@dimen/text_size_base_info_choice"
+                android:textColor="@color/colorTextWrite"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.bigkoo.pickerview.lib.WheelView
+                android:id="@+id/gender_choice"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
 
 </RelativeLayout>

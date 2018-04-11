@@ -5,4 +5,7 @@
     <dimen name="btn_main_width">65dp</dimen>
     <dimen name="btn_main_margin_top">12dp</dimen>
     <dimen name="btn_main_margin_side">17dp</dimen>
+    <dimen name="text_size_base_info">14sp</dimen>
+    <dimen name="text_size_base_info_choice">16sp</dimen>
+    <dimen name="line_size_base_info">45dp</dimen>
 </resources>

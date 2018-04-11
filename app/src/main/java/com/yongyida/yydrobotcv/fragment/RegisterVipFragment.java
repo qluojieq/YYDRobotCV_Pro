@@ -14,6 +14,7 @@ import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
 import com.bigkoo.pickerview.lib.WheelView;
 import com.yongyida.yydrobotcv.R;
 import com.yongyida.yydrobotcv.RegisterActivity;
+import com.yongyida.yydrobotcv.useralbum.User;
 
 import java.util.ArrayList;
 
@@ -24,26 +25,35 @@ import java.util.ArrayList;
 public class RegisterVipFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = RegisterVipFragment.class.getSimpleName();
     TextView btnFinish;
+    User registerUser;
+    WheelView vipChoice;
+    ArrayList <String> arrayList;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-
+        registerUser = new User();
         View view = inflater.inflate(R.layout.fragment_vipinfo,container,false);
 //        return super.onCreateView(inflater, container, savedInstanceState);
-        WheelView vipChoice = view.findViewById(R.id.vip_choice);
+         vipChoice = view.findViewById(R.id.vip_choice);
         btnFinish = view.findViewById(R.id.btn_finsih);
         btnFinish.setOnClickListener(this);
-        ArrayList <String> arrayList = new ArrayList();
+        arrayList = new ArrayList();
         arrayList.add("VIP0");
         arrayList.add("VIP1");
         arrayList.add("VIP2");
+        arrayList.add("VIP3");
+        arrayList.add("VIP4");
+        arrayList.add("VIP5");
+        arrayList.add("VIP6");
 
         vipChoice.setAdapter(new ArrayWheelAdapter(arrayList));// 设置"年"的显示数据
         vipChoice.setLabel("");// 添加文字
         vipChoice.setCurrentItem(0);// 初始化时显示的数据
         vipChoice.setGravity(Gravity.CENTER);
-        vipChoice.setCyclic(false);
+        vipChoice.setTextSize(16);
+        vipChoice.setTextColorCenter(getResources().getColor(R.color.colorTextWrite));
+        vipChoice.setCyclic(true);
         return view;
     }
 
@@ -62,6 +72,10 @@ public class RegisterVipFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_finsih:
+                String vipType = arrayList.get(vipChoice.getCurrentItem());
+                Log.e(TAG,"vip " + vipType);
+                registerUser.setVipRate(vipType);
+                ((RegisterActivity)this.getActivity()).setRegisterUser(registerUser,3);
                 long ret = ((RegisterActivity)this.getActivity()).doEnd();
                 if (ret>0){
                     this.getActivity().finish();
