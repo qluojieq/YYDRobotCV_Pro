@@ -1,6 +1,8 @@
 package com.yongyida.yydrobotcv.fragment;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,7 +40,12 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     LinearLayout genderTableView;
     LinearLayout nameTableView;
     LinearLayout phoneTableView;
-    LinearLayout birthdayTableView;
+    FrameLayout birthdayTableView;
+
+    FragmentManager fm;
+    FragmentTransaction ft;
+
+    BirthDayChoiceFragment birthDayChoiceFragment;
 
     EditText phoneNumView;
     EditText nameView;
@@ -48,6 +56,11 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_baseinfo,container,false);
         initView(view);
+        fm = getFragmentManager();
+        ft = fm.beginTransaction();
+
+        birthDayChoiceFragment = new BirthDayChoiceFragment();
+        ft.add(R.id.insert_birthday_tap, birthDayChoiceFragment).commit();
         return view;
     }
 
@@ -141,14 +154,20 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 String phoneNum = phoneNumView.getText().toString();
                 String nameString = nameView.getText().toString();
                 String genderString = genderList.get(genderWheelView.getCurrentItem());
+                String birthdayString = birthDayChoiceFragment.getBirthday();
                 Log.e(TAG,"电话号码 "+ phoneNum + "名字 "+nameString);
                 registerUser2.setPhoneNum(phoneNum);
                 registerUser2.setUaerName(nameString);
                 registerUser2.setGender(genderString);
+                registerUser2.setBirthDay(birthdayString);
 
                 ((RegisterActivity)this.getActivity()).setRegisterUser(registerUser2,2);
 
                 break;
         }
+    }
+
+    public void initBirthDayChoice(){
+
     }
 }

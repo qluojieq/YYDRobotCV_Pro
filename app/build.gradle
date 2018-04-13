@@ -38,6 +38,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.0'
     implementation files('libs/libreadface.jar')
     implementation 'com.contrarywind:Android-PickerView:3.2.7'
-//    compile 'com.contrarywind:Android-PickerView:4.1.2'
+    //    compile 'com.contrarywind:Android-PickerView:4.1.2'
     implementation 'com.bigkoo:quicksidebar:1.0.3'
+    implementation files('libs/OrbbecSDK_v1.1.4_170224_pro.jar')
 }

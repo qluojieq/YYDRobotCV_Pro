@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.yongyida.yydrobotcv.customview.ExitDialog;
 import com.yongyida.yydrobotcv.customview.SiderBar;
+import com.yongyida.yydrobotcv.service.PersonDetectService;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
 
@@ -83,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
     public void addNewUser(View view) {
         Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
         startActivityForResult(intent,NEW_ADD_REQUEST);
-
     }
 
     public static class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder> implements View.OnClickListener {
@@ -207,5 +207,10 @@ public class MainActivity extends AppCompatActivity {
         customToast.setDuration(Toast.LENGTH_SHORT);
         customToast.setGravity(Gravity.CENTER,0,0);
         customToast.show();
+    }
+
+    public void testClosePerson() {
+        Intent intent = new Intent(this,PersonDetectService.class);
+        startService(intent);
     }
 }

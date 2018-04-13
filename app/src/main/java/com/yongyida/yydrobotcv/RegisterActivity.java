@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.yongyida.yydrobotcv.customview.ExitDialog;
+import com.yongyida.yydrobotcv.fragment.BirthDayChoiceFragment;
 import com.yongyida.yydrobotcv.fragment.RegisterBaseInfoFragment;
 import com.yongyida.yydrobotcv.fragment.RegisterCameraFragment;
 import com.yongyida.yydrobotcv.fragment.RegisterVipFragment;
@@ -23,9 +24,11 @@ public class RegisterActivity extends FragmentActivity {
     FrameLayout registerFrame;
     FragmentManager fm;
     FragmentTransaction ft;
+    //
     RegisterVipFragment rVipInfoFrame;
+
     RegisterCameraFragment rCameraInfoFrame;
-    RegisterBaseInfoFragment rBaseInfoFrame ;
+    RegisterBaseInfoFragment rBaseInfoFrame;
     User registerUser;
     int currentStep = 0;
     UserDataSupport userDataSupport;
@@ -51,9 +54,9 @@ public class RegisterActivity extends FragmentActivity {
         exitDialog = new ExitDialog(this, R.style.custom_dialog, new ExitDialog.OnCloseListener() {
             @Override
             public void clickConfirm() {
-               if (!registerUser.getPersonId().equals("-1")){
-                   rCameraInfoFrame.removePersonId(registerUser.getPersonId());
-               }
+                if (!registerUser.getPersonId().equals("-1")) {
+                    rCameraInfoFrame.removePersonId(registerUser.getPersonId());
+                }
                 exitDialog.dismiss();
                 RegisterActivity.this.finish();
             }
@@ -67,42 +70,43 @@ public class RegisterActivity extends FragmentActivity {
     }
 
     public void registerBack(View view) {
-            exitDialog.show();
+        exitDialog.show();
     }
 
     //跳转到录入fragment
     public void registerCamera(View view) {
         currentStep = 1;
         ft = fm.beginTransaction();
-        if (!rBaseInfoFrame.isHidden()){
+        if (!rBaseInfoFrame.isHidden()) {
             ft.hide(rBaseInfoFrame);
         }
-        if (!rVipInfoFrame.isHidden()){
+        if (!rVipInfoFrame.isHidden()) {
             ft.hide(rVipInfoFrame);
         }
 
-        if (rCameraInfoFrame.isAdded()){
+        if (rCameraInfoFrame.isAdded()) {
             ft.show(rCameraInfoFrame).commit();
-        }else {
-            ft.add(R.id.register_frame,rCameraInfoFrame).show(rCameraInfoFrame).commit();
+        } else {
+            ft.add(R.id.register_frame, rCameraInfoFrame).show(rCameraInfoFrame).commit();
         }
     }
+
     //跳转到基础信息录入fragment
     public void registerBaseInfo(View view) {
         currentStep = 2;
         ft = fm.beginTransaction();
 
-        if (!rCameraInfoFrame.isHidden()){
+        if (!rCameraInfoFrame.isHidden()) {
             ft.hide(rCameraInfoFrame);
         }
-        if (!rVipInfoFrame.isHidden()){
+        if (!rVipInfoFrame.isHidden()) {
             ft.hide(rVipInfoFrame);
         }
 
-        if (rBaseInfoFrame.isAdded()){
+        if (rBaseInfoFrame.isAdded()) {
             ft.show(rBaseInfoFrame).commit();
-        }else {
-            ft.add(R.id.register_frame,rBaseInfoFrame).show(rBaseInfoFrame).commit();
+        } else {
+            ft.add(R.id.register_frame, rBaseInfoFrame).show(rBaseInfoFrame).commit();
         }
     }
 
@@ -110,17 +114,17 @@ public class RegisterActivity extends FragmentActivity {
     public void registerVipRate(View view) {
         currentStep = 3;
         ft = fm.beginTransaction();
-        if (!rCameraInfoFrame.isHidden()){
+        if (!rCameraInfoFrame.isHidden()) {
             ft.hide(rCameraInfoFrame);
         }
-        if (!rBaseInfoFrame.isHidden()){
+        if (!rBaseInfoFrame.isHidden()) {
             ft.hide(rBaseInfoFrame);
         }
 
-        if (rVipInfoFrame.isAdded()){
+        if (rVipInfoFrame.isAdded()) {
             ft.show(rVipInfoFrame).commit();
-        }else {
-            ft.add(R.id.register_frame,rVipInfoFrame).show(rVipInfoFrame).commit();
+        } else {
+            ft.add(R.id.register_frame, rVipInfoFrame).show(rVipInfoFrame).commit();
         }
     }
 
@@ -129,13 +133,13 @@ public class RegisterActivity extends FragmentActivity {
     }
 
     //每一步完成不同的信息录入
-    public void setRegisterUser(User registerUser,int step) {
-        switch (step){
+    public void setRegisterUser(User registerUser, int step) {
+        switch (step) {
             case 1:
                 this.registerUser.setPersonId(registerUser.getPersonId());
                 break;
             case 2:
-                this.registerUser.setUaerName( registerUser.getUaerName());
+                this.registerUser.setUaerName(registerUser.getUaerName());
                 this.registerUser.setGender(registerUser.getGender());
                 this.registerUser.setPhoneNum(registerUser.getPhoneNum());
                 this.registerUser.setBirthDay(registerUser.getBirthDay());
@@ -148,7 +152,7 @@ public class RegisterActivity extends FragmentActivity {
 
 
     //最后注册到数据库
-    public long doEnd(){
+    public long doEnd() {
         long ret = userDataSupport.insertUser(registerUser);
         return ret;
     }
