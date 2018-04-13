@@ -1,6 +1,7 @@
 package com.yongyida.yydrobotcv.fragment;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -8,9 +9,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
+
+
 import com.bigkoo.pickerview.lib.WheelView;
 import com.yongyida.yydrobotcv.R;
 import com.yongyida.yydrobotcv.RegisterActivity;
@@ -78,11 +83,15 @@ public class RegisterVipFragment extends Fragment implements View.OnClickListene
                 ((RegisterActivity)this.getActivity()).setRegisterUser(registerUser,3);
                 long ret = ((RegisterActivity)this.getActivity()).doEnd();
                 if (ret>0){
+                    ((RegisterActivity)this.getActivity()).setResult(RegisterActivity.ADD_SUCCESS_RESULT_CODE);
                     this.getActivity().finish();
                 }else {
+
                 }
                 Log.e(TAG,"最后生成 " + ret);
                 break;
         }
     }
+
+
 }

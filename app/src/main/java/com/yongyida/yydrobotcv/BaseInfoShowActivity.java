@@ -6,6 +6,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,7 +14,13 @@ import android.widget.TextView;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
 
+import java.io.File;
+
 public class BaseInfoShowActivity extends AppCompatActivity {
+
+    private final String TAG = BaseInfoShowActivity.class.getSimpleName();
+    public static final int DELETE_SUCCESS_RESULT_CODE = 1;
+    public static final int DELETE_FAILED_RESULT_CODE = -1;
 
     ImageView portraitImageView;
     TextView vipRateView;
@@ -37,34 +44,47 @@ public class BaseInfoShowActivity extends AppCompatActivity {
 
     }
 
-    public void initData(){
+    public void initData() {
         Bitmap bigMap;
 
         //圆形的头像
-        if (user.getHeadPortrait()==null){
-               bigMap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_success);
-        }else {
-            bigMap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_success);
+
+
+        File avaterFile = new File(this.getCacheDir() + "/" + user.getPersonId() + ".jpg");
+        if (avaterFile.exists()) {
+            bigMap = BitmapFactory.decodeFile(avaterFile.getAbsolutePath());
+        } else {
+            bigMap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_success);
         }
-        RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(),bigMap);
+
+        RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), bigMap);
         roundedBitmapDrawable.setCircular(true);
         portraitImageView.setImageDrawable(roundedBitmapDrawable);
-        nameView.setText("姓名："+user.getUaerName());
-        genderView.setText("性别："+user.getGender());
-        phoneNumView.setText("电话："+user.getPhoneNum());
-        birthdayView.setText("生日："+user.getBirthDay());
-        visitedCountView.setText("被访问次数："+user.getIdentifyCount());
+        nameView.setText("姓名：" + user.getUaerName());
+        genderView.setText("性别：" + user.getGender());
+        phoneNumView.setText("电话：" + user.getPhoneNum());
+        birthdayView.setText("生日：" + user.getBirthDay());
+        visitedCountView.setText("被访问次数：" + user.getIdentifyCount());
+        vipRateView.setText(user.getVipRate());
     }
 
     public void baseinfoBace(View view) {
         finish();
     }
 
+
     public void baseinfoDelete(View view) {
-        dataSupport.deleteUser(user.getPersonId());
+        long ret = dataSupport.deleteUser(user.getPersonId());
+        if (ret > 0) {
+            setResult(DELETE_SUCCESS_RESULT_CODE);
+        } else {
+            setResult(DELETE_FAILED_RESULT_CODE);
+        }
+        this.finish();
+        Log.e(TAG, "删除的返回结果" + ret);
     }
 
-    public void initView(){
+    public void initView() {
         portraitImageView = findViewById(R.id.base_show_head_img);
         vipRateView = findViewById(R.id.base_show_vip_rate);
         nameView = findViewById(R.id.base_show_name);

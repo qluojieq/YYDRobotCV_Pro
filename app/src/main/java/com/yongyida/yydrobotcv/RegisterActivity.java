@@ -5,9 +5,11 @@ import android.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.yongyida.yydrobotcv.customview.ExitDialog;
 import com.yongyida.yydrobotcv.fragment.RegisterBaseInfoFragment;
 import com.yongyida.yydrobotcv.fragment.RegisterCameraFragment;
 import com.yongyida.yydrobotcv.fragment.RegisterVipFragment;
@@ -16,6 +18,8 @@ import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
 
 public class RegisterActivity extends FragmentActivity {
 
+    private static final String TAG = RegisterActivity.class.getSimpleName();
+    public static final int ADD_SUCCESS_RESULT_CODE = 1;//不做设定的情况下返回的值是0
     FrameLayout registerFrame;
     FragmentManager fm;
     FragmentTransaction ft;
@@ -26,6 +30,8 @@ public class RegisterActivity extends FragmentActivity {
     int currentStep = 0;
     UserDataSupport userDataSupport;
 
+    ExitDialog exitDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,16 +41,33 @@ public class RegisterActivity extends FragmentActivity {
         fm = getFragmentManager();
         registerUser = new User();
         registerUser.setUaerName("Brandon");//设定默认值
-        registerUser.setPersonId("999");
+        registerUser.setPersonId("-1");
         userDataSupport = new UserDataSupport(this);
         rVipInfoFrame = new RegisterVipFragment();
         rCameraInfoFrame = new RegisterCameraFragment();
         rBaseInfoFrame = new RegisterBaseInfoFragment();
         registerCamera(null);
+
+        exitDialog = new ExitDialog(this, R.style.custom_dialog, new ExitDialog.OnCloseListener() {
+            @Override
+            public void clickConfirm() {
+               if (!registerUser.getPersonId().equals("-1")){
+                   rCameraInfoFrame.removePersonId(registerUser.getPersonId());
+               }
+                exitDialog.dismiss();
+                RegisterActivity.this.finish();
+            }
+
+            @Override
+            public void clickCancel() {
+                exitDialog.dismiss();
+
+            }
+        });
     }
 
     public void registerBack(View view) {
-        this.finish();
+            exitDialog.show();
     }
 
     //跳转到录入fragment
@@ -126,9 +149,8 @@ public class RegisterActivity extends FragmentActivity {
 
     //最后注册到数据库
     public long doEnd(){
-
         long ret = userDataSupport.insertUser(registerUser);
-
         return ret;
     }
+
 }

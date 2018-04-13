@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.yongyida.yydrobotcv.R;
+
 import java.util.ArrayList;
 
 /**
@@ -54,16 +56,18 @@ public class SiderBar extends View {
 
         super.onDraw(canvas);
         if (showBackground) {
-            canvas.drawColor(Color.parseColor("#fff7fff8"));
+            canvas.drawColor(Color.parseColor("#00000000"));
         }
         int height = getHeight()/2+12;
         int width = getWidth();
         //平均每个字母占的高度
         int singleWidth = width / letters.length;
         for (int i = 0; i < letters.length; i++) {
-            paint.setColor(Color.BLACK);
+            //字体颜色
+            paint.setColor(getResources().getColor(R.color.colorText));
             paint.setAntiAlias(true);
-            paint.setTextSize(25);
+            //字体大小
+            paint.setTextSize(44);
             int y = height;
             int x = singleWidth * i + singleWidth/2;
             if (i == choose) {
@@ -75,7 +79,7 @@ public class SiderBar extends View {
                 Rect rect = new Rect(x,top,x+width1,bottom);
                 paint.setColor(Color.BLUE);
                 canvas.drawCircle(x+width1/2,y-width1/2,20,paint);
-                paint.setColor(Color.parseColor("#ff07fff8"));
+                paint.setColor(Color.parseColor("#ffffffff"));
                 recycleView.scrollToPosition(i);
                 paint.setFakeBoldText(true);
             }

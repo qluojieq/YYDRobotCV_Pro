@@ -74,7 +74,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     public static Handler mHandler;
 
     //对于每种情况预览帧数进程测试
-    int TOTAL_STEP = 15;
+    int TOTAL_STEP = 5;
     int currentStep = 0;
     int viewCountStep1 = 0;
     int viewCountStep2 = 0;
@@ -447,4 +447,19 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         }
 
     }
+
+    public void removePersonId(String personId) {
+        if (faceTrack==null){
+            startTrack();
+        }
+        faceTrack.deletePerson(Integer.parseInt(personId));
+        Log.e(TAG,"移除已经注册，成功");
+        stopTrack();
+    }
+
+    @Override
+    public void onDestroy() {//释放
+        super.onDestroy();
+    }
+
 }

@@ -6,4 +6,5 @@
     <color name="colorText">#ff07fff8</color>
     <color name="colorTextTest">#ffffffff</color>
     <color name="colorTextWrite">#ffffffff</color>
+    <color name="colorToast">#19000000</color>
 </resources>

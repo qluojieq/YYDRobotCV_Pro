@@ -7,5 +7,6 @@
     <dimen name="btn_main_margin_side">17dp</dimen>
     <dimen name="text_size_base_info">14sp</dimen>
     <dimen name="text_size_base_info_choice">16sp</dimen>
+    <dimen name="text_size_item">16sp</dimen>
     <dimen name="line_size_base_info">45dp</dimen>
 </resources>

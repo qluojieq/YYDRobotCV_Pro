@@ -105,7 +105,7 @@ public class UserDataSupport {
     public long deleteUser(String personId) {
         long ret = -1;
         open();
-        ret = database.delete(UserDataHelper.DATABASE_TABLE, UserDataHelper.C_ID_PERSON + "= ?" + personId, new String [] { personId});
+        ret = database.delete(UserDataHelper.DATABASE_TABLE, UserDataHelper.C_ID_PERSON + "= ?" , new String [] { personId});
         close();
         return ret;
     }

@@ -9,7 +9,6 @@
         android:layout_marginTop="@dimen/btn_main_margin_top"
         android:layout_marginLeft="@dimen/btn_main_margin_side"
         android:onClick="registerBack"
-        android:text="返回"
         android:background="@mipmap/ic_feedback"
         android:gravity="center"
         android:layout_width="65dp"
