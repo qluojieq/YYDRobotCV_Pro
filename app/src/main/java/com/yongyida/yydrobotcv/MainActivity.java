@@ -86,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent,NEW_ADD_REQUEST);
     }
 
+    public void mainBack(View view) {
+        this.finish();
+    }
+
     public static class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder> implements View.OnClickListener {
 
         public interface OnItemClickListener {

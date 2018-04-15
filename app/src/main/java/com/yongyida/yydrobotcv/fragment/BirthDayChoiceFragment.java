@@ -3,10 +3,12 @@ package com.yongyida.yydrobotcv.fragment;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 
 import com.bigkoo.pickerview.adapter.NumericWheelAdapter;
 import com.bigkoo.pickerview.lib.WheelView;
@@ -14,12 +16,15 @@ import com.bigkoo.pickerview.listener.OnItemSelectedListener;
 import com.yongyida.yydrobotcv.R;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
  * @author Brandon on 2018/4/13
  **/
 public class BirthDayChoiceFragment extends Fragment {
+    private final String TAG = BirthDayChoiceFragment.class.getSimpleName();
     WheelView wv_year;
     WheelView wv_month;
     WheelView wv_day;
@@ -37,6 +42,7 @@ public class BirthDayChoiceFragment extends Fragment {
     private int startDay = DEFAULT_START_DAY;
     private int endDay = DEFAULT_END_DAY; //表示31天的
     private int currentYear;
+    private int nowYear;
 
     private int gravity;
 
@@ -63,6 +69,10 @@ public class BirthDayChoiceFragment extends Fragment {
         wv_year.setCurrentItem(year - startYear);
         wv_month.setCurrentItem(month);
         wv_day .setCurrentItem(day);
+    }
+    public void setCurrentDate(String age){
+        Log.e(TAG,"在日期转换处 当前年份 "+ nowYear + "测试到的年龄 " + age + "转换后的年龄 " + Integer.parseInt(age));
+        wv_year.setCurrentItem((nowYear-startYear)-Integer.parseInt(age));
     }
     public String getBirthday(){
         String ret = "20170619";
@@ -100,6 +110,7 @@ public class BirthDayChoiceFragment extends Fragment {
 
         /*  final Context context = view.getContext();*/
         currentYear = year;
+        nowYear = Calendar.getInstance().get(Calendar.YEAR);
         // 年
 //        wv_year = (WheelView) view.findViewById(com.bigkoo.pickerview.R.id.year);
         wv_year.setAdapter(new NumericWheelAdapter(startYear, endYear));// 设置"年"的显示数据

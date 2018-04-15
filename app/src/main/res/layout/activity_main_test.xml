@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainTestActivity">
+    <Button
+        android:text="开始人体检测"
+        android:onClick="startPersonDetect"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+    <Button
+        android:text="注册人脸"
+        android:onClick="startPersonRegist"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+    <Button
+        android:text="关闭人体检测"
+        android:onClick="closePersonDetect"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+</LinearLayout>

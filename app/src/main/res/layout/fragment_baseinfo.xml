@@ -33,7 +33,11 @@
             android:id="@+id/insert_phone_tap"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
+            android:orientation="vertical"
             android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
             <TextView
                 android:textColor="@color/colorTextWrite"
                 android:textSize="@dimen/text_size_base_info_choice"
@@ -44,19 +48,34 @@
             <EditText
                 android:background="@mipmap/btn_qx"
                 android:id="@+id/edit_phone"
-                android:hint="phone "
+                android:hint="正确的的手机号码 "
                 android:textColor="@color/colorTextWrite"
                 android:gravity="center"
                 android:layout_width="150dp"
                 android:layout_height="35dp" />
+                </LinearLayout>
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/input_warn_phone"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="50dp"
+                android:textSize="11sp"
+                android:textColor="@color/colorWarn"
+                android:text="请 输 入 正 确 的 手 机 号 码"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/insert_name_tap"
             android:visibility="gone"
+            android:id="@+id/insert_name_tap"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
+            android:orientation="vertical"
             android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
             <TextView
                 android:gravity="center"
                 android:text="姓名"
@@ -66,12 +85,23 @@
                 android:layout_height="match_parent" />
             <EditText
                 android:background="@mipmap/btn_qx"
-                android:hint="input name"
+                android:hint="数字、中文和字母"
                 android:textColor="@color/colorTextWrite"
                 android:gravity="center"
                 android:id="@+id/edit_name"
                 android:layout_width="150dp"
                 android:layout_height="35dp" />
+            </LinearLayout>
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/input_warn_name"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="50dp"
+                android:textSize="11sp"
+                android:text="请重新输入，禁止含有特殊字符"
+                android:textColor="@color/colorWarn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 

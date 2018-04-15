@@ -4,10 +4,13 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -24,6 +27,7 @@ import android.widget.Toast;
 
 import com.yongyida.yydrobotcv.R;
 import com.yongyida.yydrobotcv.RegisterActivity;
+import com.yongyida.yydrobotcv.camera.CameraBase;
 import com.yongyida.yydrobotcv.camera.ImageUtils;
 import com.yongyida.yydrobotcv.useralbum.User;
 
@@ -49,8 +53,8 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
 
     private final String TAG = RegisterCameraFragment.class.getSimpleName();
 
-    SurfaceView preview_surface;
-    SurfaceView draw_surface;
+    public SurfaceView preview_surface;
+    public SurfaceView draw_surface;
     TextView hintFaceView;
     protected CameraHelper mCameraHelper;
     protected YMFaceTrack faceTrack;
@@ -91,6 +95,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
         initCamera(view);
         registerUser = new User();
+        faceFrame = BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_face_frame);
         mHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
@@ -218,7 +223,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     }
 
     public synchronized void stopTrack() {
-
+        clearDrawSurface();
         if (faceTrack == null) {
             DLog.d("already release track");
             return;
@@ -334,7 +339,9 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
 
                 //draw rect
                 RectF rectf = new RectF(x1, y1, x1 + rect_width, y1 + rect_width);
-                canvas.drawRect(rectf, paint);
+//                canvas.drawRect(rectf, paint);
+                surfaceDraw(rectf,canvas);
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -433,6 +440,8 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         registerUser.setAge(faceTrack.getAge(0)+"");
         registerUser.setGender(faceTrack.getGender(0)+"");
 
+        Log.e(TAG,"起始 年龄" + faceTrack.getAge(0)+"性别 "+faceTrack.getGender(0));
+
 
         if (personId > 0) {
             registerUser.setPersonId(personId+"");
@@ -459,7 +468,28 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
 
     @Override
     public void onDestroy() {//释放
+        faceFrame.recycle();
         super.onDestroy();
+    }
+    Bitmap faceFrame;
+    public void surfaceDraw(RectF rect,Canvas canvas) {
+        Paint mPaint = new Paint();
+        mPaint.setColor(Color.BLUE);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeWidth(2f);
+        mPaint.setTextSize(40f);
+
+        if (canvas != null) {
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            canvas.drawBitmap(faceFrame, null, rect, mPaint);
+        }
+    }
+    public void clearDrawSurface() {
+        Canvas canvas = draw_surface.getHolder().lockCanvas();
+        Paint paint = new Paint(); paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        canvas.drawPaint(paint); paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+        draw_surface.invalidate();
+        draw_surface.getHolder().unlockCanvasAndPost(canvas);
     }
 
 }

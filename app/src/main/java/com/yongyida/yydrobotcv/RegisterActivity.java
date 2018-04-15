@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.RadioGroup;
 
 import com.yongyida.yydrobotcv.customview.ExitDialog;
 import com.yongyida.yydrobotcv.fragment.BirthDayChoiceFragment;
@@ -33,6 +34,8 @@ public class RegisterActivity extends FragmentActivity {
     int currentStep = 0;
     UserDataSupport userDataSupport;
 
+    RadioGroup registerRadioGroup;
+
     ExitDialog exitDialog;
 
     @Override
@@ -40,6 +43,7 @@ public class RegisterActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_main);
         registerFrame = findViewById(R.id.register_frame);
+        registerRadioGroup = findViewById(R.id.refer_view_group);
         registerFrame.removeAllViews();
         fm = getFragmentManager();
         registerUser = new User();
@@ -75,6 +79,7 @@ public class RegisterActivity extends FragmentActivity {
 
     //跳转到录入fragment
     public void registerCamera(View view) {
+        registerRadioGroup.check(R.id.register_index1);
         currentStep = 1;
         ft = fm.beginTransaction();
         if (!rBaseInfoFrame.isHidden()) {
@@ -93,6 +98,7 @@ public class RegisterActivity extends FragmentActivity {
 
     //跳转到基础信息录入fragment
     public void registerBaseInfo(View view) {
+        registerRadioGroup.check(R.id.register_index2);
         currentStep = 2;
         ft = fm.beginTransaction();
 
@@ -112,6 +118,7 @@ public class RegisterActivity extends FragmentActivity {
 
     //跳转到vip信息录入界面
     public void registerVipRate(View view) {
+        registerRadioGroup.check(R.id.register_index3);
         currentStep = 3;
         ft = fm.beginTransaction();
         if (!rCameraInfoFrame.isHidden()) {
@@ -137,6 +144,8 @@ public class RegisterActivity extends FragmentActivity {
         switch (step) {
             case 1:
                 this.registerUser.setPersonId(registerUser.getPersonId());
+                this.registerUser.setGender(registerUser.getGender());
+                this.registerUser.setAge(registerUser.getAge());
                 break;
             case 2:
                 this.registerUser.setUaerName(registerUser.getUaerName());

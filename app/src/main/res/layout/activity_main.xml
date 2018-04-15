@@ -10,6 +10,7 @@
     android:layout_width="match_parent"
     android:layout_height="60dp">
     <TextView
+        android:onClick="mainBack"
         android:background="@mipmap/ic_feedback"
         android:layout_marginTop="@dimen/btn_main_margin_top"
         android:layout_marginLeft="@dimen/btn_main_margin_side"

@@ -14,13 +14,14 @@
         android:layout_width="65dp"
         android:layout_height="30dp" />
     <RadioGroup
-        android:id="@+id/refer_view_register"
+        android:id="@+id/refer_view_group"
         android:layout_centerVertical="true"
         android:layout_width="130dp"
         android:orientation="vertical"
         android:layout_height="wrap_content">
 
         <RadioButton
+            android:id="@+id/register_index1"
             android:background="@drawable/button_register_bk"
             android:onClick="registerCamera"
             android:text="人脸录入"
@@ -30,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp" />
         <RadioButton
+            android:id="@+id/register_index2"
             android:button="@null"
             android:layout_marginTop="10dp"
             android:background="@drawable/button_register_bk"
@@ -40,6 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp" />
         <RadioButton
+            android:id="@+id/register_index3"
             android:button="@null"
             android:layout_marginTop="10dp"
             android:background="@drawable/button_register_bk"
@@ -52,7 +55,7 @@
 
     </RadioGroup>
     <FrameLayout
-        android:layout_toRightOf="@id/refer_view_register"
+        android:layout_toRightOf="@id/refer_view_group"
         android:id="@+id/register_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
