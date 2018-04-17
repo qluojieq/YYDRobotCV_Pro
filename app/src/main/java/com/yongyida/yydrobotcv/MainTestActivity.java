@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.yongyida.yydrobotcv.service.FaceDetectService;
 import com.yongyida.yydrobotcv.service.PersonDetectService;
+import com.yongyida.yydrobotcv.utils.ChineseCharacterUtil;
 
 public class MainTestActivity extends AppCompatActivity {
     private static final String TAG = MainTestActivity.class.getSimpleName();
@@ -31,5 +33,20 @@ public class MainTestActivity extends AppCompatActivity {
 
     public void closePersonDetect(View view) {
         Log.e(TAG,"关闭人体检测");
+    }
+
+    public void startFaceDetect(View view) {
+        Log.e(TAG,"开始人脸检测服务");
+        Intent intent = new Intent(this, FaceDetectService.class);
+        intent.putExtra("startType","start");
+        startService(intent);
+
+    }
+
+    public void stopFaceDetect(View view) {
+        Log.e(TAG,"关闭人脸检测服务");
+        Intent intent = new Intent(this, FaceDetectService.class);
+        intent.putExtra("startType","stop");
+        startService(intent);
     }
 }

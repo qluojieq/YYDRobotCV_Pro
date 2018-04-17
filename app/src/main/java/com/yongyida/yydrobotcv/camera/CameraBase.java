@@ -40,8 +40,8 @@ public abstract class CameraBase implements ImageReader.OnImageAvailableListener
     CameraCaptureSession mCameraCaptureSession;
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
 
-    public static int WIDTH_PREVIEW = 1920;
-    public static int HEIGHT_PREVIEW = 1080;
+    public static int WIDTH_PREVIEW = 1280;
+    public static int HEIGHT_PREVIEW = 720;
     private static final int RETRY_COUNT = 5;//相机打开失败时重试次数
     private int retryCount = 0;
 

@@ -46,8 +46,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
             <EditText
-                android:background="@mipmap/btn_qx"
+                android:background="@mipmap/ic_edit_bg"
                 android:id="@+id/edit_phone"
+                android:imeOptions="flagNoExtractUi"
                 android:hint="正确的的手机号码 "
                 android:textColor="@color/colorTextWrite"
                 android:gravity="center"
@@ -84,9 +85,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
             <EditText
-                android:background="@mipmap/btn_qx"
+                android:background="@mipmap/ic_edit_bg"
                 android:hint="数字、中文和字母"
                 android:textColor="@color/colorTextWrite"
+                android:imeOptions="flagNoExtractUi"
                 android:gravity="center"
                 android:id="@+id/edit_name"
                 android:layout_width="150dp"

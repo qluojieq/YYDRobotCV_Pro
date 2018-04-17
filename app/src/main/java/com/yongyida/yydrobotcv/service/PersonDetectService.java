@@ -84,15 +84,16 @@ public class PersonDetectService extends Service {
 
     boolean isPerson = true;
     long [] oneTime = {0,0,0,0,0,0,0,0,0,0};
+    long [] oneTimeGone = {0,0,0,0,0,0,0,0,0,0};
     class AnalyzeRunable implements Runnable{
         @Override
         public void run() {
             while (!mExit){
-                Log.e(TAG,"keep going");
+
                 mContext.waitAnyUpdateAll();
                 int [] data  = mUserTracker.getUsers();
-                if (data.length<0){
-                    Log.e(TAG,"do not have person");
+                if (data.length<=0){
+//                    Log.e(TAG,"do not have person"+oneTime[0]);
                     continue;
                 }
 
@@ -103,16 +104,43 @@ public class PersonDetectService extends Service {
                     if (head.getZ()>0&&head.getZ()<2000){
                         isPerson = true;
                         oneTime[i]++;
+                        oneTimeGone[i] = 0;
+                        if (isPerson&&oneTime[i]==1){
+                            startFaceDetect("start");
+                        }
                     }else {
                         isPerson = false;
                         oneTime[i] = 0;
+                        oneTimeGone[i]++;
+                        if (oneTimeGone[i]==1){
+                         startFaceDetect("stop");
+                        }
                     }
-                    if (isPerson&&oneTime[i]==1){
-                        Log.e(TAG,"有人 "+data.length+"个 距离是"+ head.getZ());
-                    }
+
                 }
 
             }
+        }
+    }
+
+    //获取当前人数
+    public int getCurrentPersonCount(){
+        int ret = 0;
+        for (int i = 0;i<oneTime.length;i++){
+            if (oneTime[i]>0){
+                ret++;
+            }
+        }
+        return  ret;
+    }
+
+    //启动人脸检测服务
+    public void startFaceDetect(String type){
+        Log.e(TAG,"当前拥有的人数 " + getCurrentPersonCount());
+        if (getCurrentPersonCount()==1){
+            Intent intent = new Intent(this,FaceDetectService.class);
+            intent.putExtra("startType",type);
+            startService(intent);
         }
     }
 

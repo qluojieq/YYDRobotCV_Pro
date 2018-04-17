@@ -4,9 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.yongyida.yydrobotcv.utils.ChineseCharacterUtil;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -66,6 +71,28 @@ public class UserDataSupport {
         Log.e(TAG,allUsers.size() + " get all user success " + cursor.getCount());
         cursor.close();
         close();
+
+        Collections.sort(allUsers, new Comparator<User>() {//对输出的结果提前排好序
+            @Override
+            public int compare(User o1, User o2) {
+                int ret = 0;
+                String name1 = o1.getUaerName();
+                String name2 = o2.getUaerName();
+
+                String first1 = ChineseCharacterUtil.getFirstChar(o1.getUaerName());
+                String second2 = ChineseCharacterUtil.getFirstChar(o2.getUaerName());
+                if (TextUtils.isEmpty(name1)&&TextUtils.isEmpty(name2)){
+
+                }else if (TextUtils.isEmpty(name1)){
+                    ret = 1;
+                }else if (TextUtils.isEmpty(name2)){
+                    ret = -1;
+                }else {
+                    ret = first1.charAt(0) - second2.charAt(0);
+                }
+                return ret;
+            }
+        });
         return allUsers;
     }
 

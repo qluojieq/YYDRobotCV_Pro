@@ -1,6 +1,8 @@
 package com.yongyida.yydrobotcv.customview;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -24,7 +26,7 @@ public class SiderBar extends View {
 
     private Paint paint = new Paint();
 
-    private int choose = -1;
+    private int choose = 0;//默认还是要选择开头
 
     private boolean showBackground;
 
@@ -50,14 +52,13 @@ public class SiderBar extends View {
 
     public SiderBar(Context context) {
         super(context);
+
     }
 
     protected void onDraw(Canvas canvas) {
 
         super.onDraw(canvas);
-        if (showBackground) {
-            canvas.drawColor(Color.parseColor("#00000000"));
-        }
+
         int height = getHeight()/2+12;
         int width = getWidth();
         //平均每个字母占的高度
@@ -78,9 +79,12 @@ public class SiderBar extends View {
                 int width1 = (int)paint.measureText(letters[i]);
                 Rect rect = new Rect(x,top,x+width1,bottom);
                 paint.setColor(Color.BLUE);
-                canvas.drawCircle(x+width1/2,y-width1/2,20,paint);
+//                canvas.drawCircle(x+width1/2,y-width1/2,20,paint);
+                Bitmap letterBackground = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_letter_choiced);
+                canvas.drawBitmap(letterBackground,x-17,y-46,paint);
+
                 paint.setColor(Color.parseColor("#ffffffff"));
-                recycleView.scrollToPosition(i);
+//                recycleView.scrollToPosition(i);
                 paint.setFakeBoldText(true);
             }
 
@@ -90,6 +94,7 @@ public class SiderBar extends View {
         }
     }
 
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         int action = event.getAction();
@@ -98,8 +103,6 @@ public class SiderBar extends View {
         int c = (int) (x / getWidth() * letters.length);
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-
-                showBackground = true;
                 if (oldChoose != c ) {
                     if (c > -1 && c < letters.length) {
                         Log.e(TAG,"ACTION_DOWN"+c);
@@ -139,7 +142,7 @@ public class SiderBar extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event);
+        return true;
     }
 
     public void setOnTouchingLetterChangedListener(OnChooseLetterChangedListener onChooseLetterChangedListener) {
@@ -153,13 +156,17 @@ public class SiderBar extends View {
     }
 
     public void setLetters(String s){
-        for (int i = 0;i<letters.length;i++){
-            if (s.equals(letters[i])){
-                choose=i;
-                break;
+
+            if (!s.equals(choose)){
+                for (int i = 0;i<letters.length;i++){
+                    if (s.equals(letters[i])){
+                        choose=i;
+                        break;
+                    }
+                }
+                invalidate();
             }
-        }
-        invalidate();
+
     }
 
 }

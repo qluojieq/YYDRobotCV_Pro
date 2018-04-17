@@ -21,4 +21,15 @@
         android:onClick="closePersonDetect"
         android:layout_width="match_parent"
         android:layout_height="60dp" />
+
+    <Button
+        android:text="启动人脸检测"
+        android:onClick="startFaceDetect"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+    <Button
+        android:text="关闭人脸检测"
+        android:onClick="stopFaceDetect"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
 </LinearLayout>

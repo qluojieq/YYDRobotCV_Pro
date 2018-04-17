@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -20,14 +22,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.yongyida.yydrobotcv.customview.ExitDialog;
 import com.yongyida.yydrobotcv.customview.SiderBar;
+import com.yongyida.yydrobotcv.customview.SiderBar.OnChooseLetterChangedListener;
 import com.yongyida.yydrobotcv.service.PersonDetectService;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
+import com.yongyida.yydrobotcv.utils.ChineseCharacterUtil;
 
 import java.io.File;
 import java.util.List;
+
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
 
 /**
  * @author Brandon on 2018/3/13
@@ -37,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int BASE_INFO_REQUEST = 10;
     private static final int NEW_ADD_REQUEST = 11;
     public static final String TAG = MainActivity.class.getSimpleName();
+    OnChooseLetterChangedListener onChooseLetterChangedListener;
     UserDataSupport dataSupport;
     // Used to load the 'native-lib' library on application startup.
    public static List<User> usersData;
@@ -45,19 +53,36 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
+    public static Handler mHandler;
+
     RecyclerView userRecycleView;
     UsersAdapter userDataAdapter;
     SiderBar mSiderBar;
-
+    final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.HORIZONTAL, false);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                mSiderBar.setLetters(ChineseCharacterUtil.getFirstChar(usersData.get(msg.what).getUaerName()));
+//                gridLayoutManager.scrollToPositionWithOffset(scrollString(usersData.get(msg.what).getUaerName()),0);
+                return false;
+            }
+        });
         setContentView(R.layout.activity_main);
         dataSupport = new UserDataSupport(this);
         userRecycleView = (RecyclerView) findViewById(R.id.user_recycle);
         mSiderBar = findViewById(R.id.side_bar);
+        onChooseLetterChangedListener = new OnChooseLetterChangedListener() {
+            @Override
+            public void onChooseLetter(String s) {
+                gridLayoutManager.scrollToPositionWithOffset(scrollString(s),0);
+            }
+        };
+        mSiderBar.setOnTouchingLetterChangedListener(onChooseLetterChangedListener);
 //        LinearLayoutManager
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.HORIZONTAL, false);
+
         userRecycleView.setLayoutManager(gridLayoutManager);
         usersData = dataSupport.getAllUsers();
         userDataAdapter = new UsersAdapter(this);
@@ -72,6 +97,34 @@ public class MainActivity extends AppCompatActivity {
         });
         mSiderBar.setRecycleView(userRecycleView);
         userRecycleView.setAdapter(userDataAdapter);
+        userRecycleView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                switch (newState){
+                    case SCROLL_STATE_IDLE:
+                        Log.e(TAG,"静止");
+                            break;
+                    case SCROLL_STATE_DRAGGING:
+                        Log.e(TAG,"拖动");
+                        break;
+                    case  SCROLL_STATE_SETTLING:
+                        Log.e(TAG,"设置");
+                        break;
+
+
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int firstVisibleItemPosition=gridLayoutManager.findFirstVisibleItemPosition()+1;//可见范围内的第一项的位置
+//                int lastVisibleItemPosition=gridLayoutManager.findLastVisibleItemPosition();//可见范围内的第一项的位置
+
+                mSiderBar.setLetters(ChineseCharacterUtil.getFirstChar(usersData.get(firstVisibleItemPosition).getUaerName()));
+            }
+        });
     }
 
     @Override
@@ -134,14 +187,14 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             } catch (Exception e) {}
-            if (position / 2 == 0) {
-                char c = (char) (position / 2 + 65);
-                textView.setText(c + name + position);
-            } else {
-                char c = (char) (position / 2 + 65);
-                textView.setText(c + name + position);
-            }
-
+//            if (position / 2 == 0) {
+//                char c = (char) (position / 2 + 65);
+//                textView.setText(c + name + position);
+//            } else {
+//                char c = (char) (position / 2 + 65);
+//                textView.setText(c + name + position);
+//            }
+            textView.setText(name);
             holder.itemView.setTag(position);
         }
 
@@ -162,8 +215,6 @@ public class MainActivity extends AppCompatActivity {
 
         static class MyViewHolder extends RecyclerView.ViewHolder {
             View itemView;
-
-
 
             public MyViewHolder(View itemView) {
                 super(itemView);
@@ -200,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //删除成功的自定义Toast
     public  void makeText(Context context) {
         Toast customToast = new Toast(context);
         //获得view的布局
@@ -216,5 +268,29 @@ public class MainActivity extends AppCompatActivity {
     public void testClosePerson() {
         Intent intent = new Intent(this,PersonDetectService.class);
         startService(intent);
+    }
+
+    public int scrollString(String targetChar){
+        int ret = 0;
+        int i=0;
+        for (;i<usersData.size();i++){
+            if (targetChar.equals(ChineseCharacterUtil.getFirstChar(usersData.get(i).getUaerName()))){
+                break;
+            }
+        }
+        ret = i;
+        Log.e(TAG,"点击到啊字母 " + targetChar + "首次出现该字母的位置 "  + ret );
+        if (i>usersData.size()-10){
+            mHandler.sendEmptyMessage(usersData.size()-10);
+            Log.e(TAG,"超出滑动范围 " + usersData.get(usersData.size()-10).getUaerName());
+            if (usersData.size()/2==0){
+                ret = usersData.size()-10;
+            }else {
+                ret = usersData.size()-9;
+            }
+
+        }
+
+        return ret;
     }
 }

@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
 
@@ -31,6 +32,8 @@ import com.yongyida.yydrobotcv.useralbum.User;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import dou.utils.ToastUtil;
 
 /**
  * @author Brandon on 2018/3/15
@@ -118,6 +121,10 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
         switch (v.getId()) {
             case R.id.btn_info_next:
                 Log.e(TAG, "next step is been pressed 当前步数" + currentStep);
+                if (currentStep == 2 && TextUtils.isEmpty(nameView.getText())){
+                    new ToastUtil(this.getActivity()).showSingletonToast("名字不能为空");
+                    return;
+                }
                 currentStep++;
                 switchTable(currentStep);
                 break;

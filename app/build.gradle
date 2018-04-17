@@ -51,4 +51,5 @@ dependencies {
     //    compile 'com.contrarywind:Android-PickerView:4.1.2'//请不要更新
     implementation 'com.bigkoo:quicksidebar:1.0.3'
     implementation files('libs/OrbbecSDK_v1.1.4_170224_pro.jar')
+    implementation files('libs/pinyin4j-2.5.0.jar')
 }
