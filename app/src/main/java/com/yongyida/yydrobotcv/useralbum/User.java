@@ -15,7 +15,7 @@ public class User implements Serializable{
 
     private String userId;
     private String personId;
-    private String uaerName;
+    private String userName;
     private String birthDay;
     private String age;
     private String gender;
@@ -30,12 +30,12 @@ public class User implements Serializable{
     }
 
 
-    public String getUaerName() {
-        return uaerName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUaerName(String uaerName) {
-        this.uaerName = uaerName;
+    public void setUserName(String uaerName) {
+        this.userName = uaerName;
     }
 
     public String getBirthDay() {

@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     OnChooseLetterChangedListener onChooseLetterChangedListener;
     UserDataSupport dataSupport;
     // Used to load the 'native-lib' library on application startup.
-   public static List<User> usersData;
+    public static List<User> usersData;
 
     static {
         System.loadLibrary("native-lib");
@@ -59,13 +59,14 @@ public class MainActivity extends AppCompatActivity {
     UsersAdapter userDataAdapter;
     SiderBar mSiderBar;
     final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.HORIZONTAL, false);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                mSiderBar.setLetters(ChineseCharacterUtil.getFirstChar(usersData.get(msg.what).getUaerName()));
+                mSiderBar.setLetters(ChineseCharacterUtil.getFirstChar(usersData.get(msg.what).getUserName()));
 //                gridLayoutManager.scrollToPositionWithOffset(scrollString(usersData.get(msg.what).getUaerName()),0);
                 return false;
             }
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         onChooseLetterChangedListener = new OnChooseLetterChangedListener() {
             @Override
             public void onChooseLetter(String s) {
-                gridLayoutManager.scrollToPositionWithOffset(scrollString(s),0);
+                gridLayoutManager.scrollToPositionWithOffset(scrollString(s), 0);
             }
         };
         mSiderBar.setOnTouchingLetterChangedListener(onChooseLetterChangedListener);
@@ -90,9 +91,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view, int position) {
                 Log.e(TAG, "这个位置白点击了 " + position);
-                Intent intent = new Intent(MainActivity.this, BaseInfoShowActivity.class);
-                intent.putExtra("one_user",usersData.get(position));
-                startActivityForResult(intent,10);
+                if (position == 0) {
+                    addNewUser(null);
+
+                } else {
+                    Intent intent = new Intent(MainActivity.this, BaseInfoShowActivity.class);
+                    intent.putExtra("one_user", usersData.get(position));
+                    startActivityForResult(intent, 10);
+                }
+
             }
         });
         mSiderBar.setRecycleView(userRecycleView);
@@ -101,15 +108,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                switch (newState){
+                switch (newState) {
                     case SCROLL_STATE_IDLE:
-                        Log.e(TAG,"静止");
-                            break;
-                    case SCROLL_STATE_DRAGGING:
-                        Log.e(TAG,"拖动");
+                        Log.e(TAG, "静止");
                         break;
-                    case  SCROLL_STATE_SETTLING:
-                        Log.e(TAG,"设置");
+                    case SCROLL_STATE_DRAGGING:
+                        Log.e(TAG, "拖动");
+                        break;
+                    case SCROLL_STATE_SETTLING:
+                        Log.e(TAG, "设置");
                         break;
 
 
@@ -119,10 +126,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int firstVisibleItemPosition=gridLayoutManager.findFirstVisibleItemPosition()+1;//可见范围内的第一项的位置
+                int firstVisibleItemPosition = gridLayoutManager.findFirstVisibleItemPosition() + 1;//可见范围内的第一项的位置
 //                int lastVisibleItemPosition=gridLayoutManager.findLastVisibleItemPosition();//可见范围内的第一项的位置
 
-                mSiderBar.setLetters(ChineseCharacterUtil.getFirstChar(usersData.get(firstVisibleItemPosition).getUaerName()));
+                mSiderBar.setLetters(ChineseCharacterUtil.getFirstChar(usersData.get(firstVisibleItemPosition).getUserName()));
             }
         });
     }
@@ -136,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     //添加按钮
     public void addNewUser(View view) {
         Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-        startActivityForResult(intent,NEW_ADD_REQUEST);
+        startActivityForResult(intent, NEW_ADD_REQUEST);
     }
 
     public void mainBack(View view) {
@@ -158,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
         Context mContext;
 
 
-        public UsersAdapter( Context context) {
+        public UsersAdapter(Context context) {
             mContext = context;
         }
 
@@ -175,18 +182,25 @@ public class MainActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             TextView textView = holder.itemView.findViewById(R.id.item_name);
             ImageView portraitView = holder.itemView.findViewById(R.id.item_portrait);
-            String name = usersData.get(position).getUaerName();
+            String name = usersData.get(position).getUserName();
             Bitmap bigMap = null;
-            try{
-                File avaterFile = new File(mContext.getCacheDir() + "/" + usersData.get(position).getPersonId() + ".jpg");
-                if(avaterFile.exists()) {
-                    bigMap = BitmapFactory.decodeFile(avaterFile.getAbsolutePath());
-                    RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(mContext.getResources(),bigMap);
-                    roundedBitmapDrawable.setCircular(true);
-                    portraitView.setImageDrawable(roundedBitmapDrawable);
-                }
 
-            } catch (Exception e) {}
+            if (position == 0) {
+                bigMap = BitmapFactory.decodeResource(mContext.getResources(),R.mipmap.ic_add);
+                portraitView.setImageBitmap(bigMap);
+            } else {
+
+                try {
+                    File avaterFile = new File(mContext.getCacheDir() + "/" + usersData.get(position).getPersonId() + ".jpg");
+                    if (avaterFile.exists()) {
+                        bigMap = BitmapFactory.decodeFile(avaterFile.getAbsolutePath());
+                        RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(mContext.getResources(), bigMap);
+                        roundedBitmapDrawable.setCircular(true);
+                        portraitView.setImageDrawable(roundedBitmapDrawable);
+                    }
+
+                } catch (Exception e) {
+                }
 //            if (position / 2 == 0) {
 //                char c = (char) (position / 2 + 65);
 //                textView.setText(c + name + position);
@@ -194,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
 //                char c = (char) (position / 2 + 65);
 //                textView.setText(c + name + position);
 //            }
+
+            }
             textView.setText(name);
             holder.itemView.setTag(position);
         }
@@ -202,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             int size = usersData.size();
-            Log.e(TAG,"拥有登记数目 "+size);
+            Log.e(TAG, "拥有登记数目 " + size);
             return size;
         }
 
@@ -226,12 +242,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e(TAG,"requestCode " + requestCode + "  resultCode" + resultCode);
-        switch(requestCode){
+        Log.e(TAG, "requestCode " + requestCode + "  resultCode" + resultCode);
+        switch (requestCode) {
             case BASE_INFO_REQUEST:
 
-                if (resultCode==BaseInfoShowActivity.DELETE_SUCCESS_RESULT_CODE){
-                    Log.e(TAG,"删除成功，更新一下数据"+usersData.size());
+                if (resultCode == BaseInfoShowActivity.DELETE_SUCCESS_RESULT_CODE) {
+                    Log.e(TAG, "删除成功，更新一下数据" + usersData.size());
                     usersData.clear();
                     usersData = dataSupport.getAllUsers();
                     userDataAdapter.notifyDataSetChanged();
@@ -239,11 +255,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case NEW_ADD_REQUEST:
-                if (resultCode==RegisterActivity.ADD_SUCCESS_RESULT_CODE){
+                if (resultCode == RegisterActivity.ADD_SUCCESS_RESULT_CODE) {
                     usersData.clear();
                     usersData = dataSupport.getAllUsers();
                     userDataAdapter.notifyDataSetChanged();
-                    Log.e(TAG,"添加成功，更新一下数据"+usersData.size());
+                    Log.e(TAG, "添加成功，更新一下数据" + usersData.size());
                 }
                 break;
 
@@ -252,41 +268,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //删除成功的自定义Toast
-    public  void makeText(Context context) {
+    public void makeText(Context context) {
         Toast customToast = new Toast(context);
         //获得view的布局
-        View customView = LayoutInflater.from(context).inflate(R.layout.custom_toast,null);
+        View customView = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);
 
         //设置textView中的文字
         //设置toast的View,Duration,Gravity最后显示
         customToast.setView(customView);
         customToast.setDuration(Toast.LENGTH_SHORT);
-        customToast.setGravity(Gravity.CENTER,0,0);
+        customToast.setGravity(Gravity.CENTER, 0, 0);
         customToast.show();
     }
 
     public void testClosePerson() {
-        Intent intent = new Intent(this,PersonDetectService.class);
+        Intent intent = new Intent(this, PersonDetectService.class);
         startService(intent);
     }
 
-    public int scrollString(String targetChar){
+    public int scrollString(String targetChar) {
         int ret = 0;
-        int i=0;
-        for (;i<usersData.size();i++){
-            if (targetChar.equals(ChineseCharacterUtil.getFirstChar(usersData.get(i).getUaerName()))){
+        int i = 0;
+        for (; i < usersData.size(); i++) {
+            if (targetChar.equals(ChineseCharacterUtil.getFirstChar(usersData.get(i).getUserName()))) {
                 break;
             }
         }
         ret = i;
-        Log.e(TAG,"点击到啊字母 " + targetChar + "首次出现该字母的位置 "  + ret );
-        if (i>usersData.size()-10){
-            mHandler.sendEmptyMessage(usersData.size()-10);
-            Log.e(TAG,"超出滑动范围 " + usersData.get(usersData.size()-10).getUaerName());
-            if (usersData.size()/2==0){
-                ret = usersData.size()-10;
-            }else {
-                ret = usersData.size()-9;
+        Log.e(TAG, "点击到啊字母 " + targetChar + "首次出现该字母的位置 " + ret);
+        if (i > usersData.size() - 10) {
+            mHandler.sendEmptyMessage(usersData.size() - 10);
+            Log.e(TAG, "超出滑动范围 " + usersData.get(usersData.size() - 10).getUserName());
+            if (usersData.size() / 2 == 0) {
+                ret = usersData.size() - 10;
+            } else {
+                ret = usersData.size() - 9;
             }
 
         }

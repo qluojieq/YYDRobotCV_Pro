@@ -287,7 +287,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
         genderWheelView.setTextColorCenter(getResources().getColor(R.color.colorTextWrite));
         genderWheelView.setTextSize(16);
         genderWheelView.setCyclic(true);
-        registerUser2.setUaerName("Brandon");
+        registerUser2.setUserName("Brandon");
     }
 
     public void switchTable(int position) {
@@ -337,17 +337,20 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     }
 
     public void saveData(){
-        String phoneNum = phoneNumView.getText().toString();
-        String nameString = nameView.getText().toString();
-        String genderString = genderList.get(genderWheelView.getCurrentItem());
-        String birthdayString = birthDayChoiceFragment.getBirthday();
-        Log.e(TAG, "电话号码 " + phoneNum + "名字 " + nameString);
-        registerUser2.setPhoneNum(phoneNum);
-        registerUser2.setUaerName(nameString);
-        registerUser2.setGender(genderString);
-        registerUser2.setBirthDay(birthdayString);
+        if (null!=phoneNumView){
+            String phoneNum = phoneNumView.getText().toString();
+            String nameString = nameView.getText().toString();
+            String genderString = genderList.get(genderWheelView.getCurrentItem());
+            String birthdayString = birthDayChoiceFragment.getBirthday();
+            Log.e(TAG, "电话号码 " + phoneNum + "名字 " + nameString);
+            registerUser2.setPhoneNum(phoneNum);
+            registerUser2.setUserName(nameString);
+            registerUser2.setGender(genderString);
+            registerUser2.setBirthDay(birthdayString);
 
-        ((RegisterActivity) this.getActivity()).setRegisterUser(registerUser2, 2);
+            ((RegisterActivity) this.getActivity()).setRegisterUser(registerUser2, 2);
+        }
+
     }
 
 

@@ -51,13 +51,25 @@ public class UserDataSupport {
     public List<User> getAllUsers() {
         open();
         List<User> allUsers = new ArrayList<>();
+        User user1 = new User();
+        user1.setUserId("");
+        user1.setPersonId("");
+        user1.setUserName("添加");
+        user1.setBirthDay("");
+        user1.setGender("");
+        user1.setPhoneNum("");
+        user1.setVipRate("");
+        user1.setHeadPortrait("");
+        user1.setIdentifyCount("");
+        user1.setTag("");
+        allUsers.add(user1);
         Cursor cursor = database.query(UserDataHelper.DATABASE_TABLE, allColumns, null, null, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             User user = new User();
             user.setUserId(cursor.getString(0));
             user.setPersonId(cursor.getString(1));
-            user.setUaerName(cursor.getString(2));
+            user.setUserName(cursor.getString(2));
             user.setBirthDay(cursor.getString(3));
             user.setGender(cursor.getString(4));
             user.setPhoneNum(cursor.getString(5));
@@ -76,17 +88,17 @@ public class UserDataSupport {
             @Override
             public int compare(User o1, User o2) {
                 int ret = 0;
-                String name1 = o1.getUaerName();
-                String name2 = o2.getUaerName();
+                String name1 = o1.getUserName();
+                String name2 = o2.getUserName();
 
-                String first1 = ChineseCharacterUtil.getFirstChar(o1.getUaerName());
-                String second2 = ChineseCharacterUtil.getFirstChar(o2.getUaerName());
+                String first1 = ChineseCharacterUtil.getFirstChar(o1.getUserName());
+                String second2 = ChineseCharacterUtil.getFirstChar(o2.getUserName());
                 if (TextUtils.isEmpty(name1)&&TextUtils.isEmpty(name2)){
 
-                }else if (TextUtils.isEmpty(name1)){
+                }else if (o1.getUserName().equals("添加")){
                     ret = 1;
-                }else if (TextUtils.isEmpty(name2)){
-                    ret = -1;
+                }else if (o2.getUserName().equals("添加")){
+                    ret = 1;
                 }else {
                     ret = first1.charAt(0) - second2.charAt(0);
                 }
@@ -102,7 +114,7 @@ public class UserDataSupport {
         ContentValues values = new ContentValues();
         values.put(allColumns[0], user.getUserId());
         values.put(allColumns[1], user.getPersonId());
-        values.put(allColumns[2], user.getUaerName());
+        values.put(allColumns[2], user.getUserName());
         values.put(allColumns[3], user.getBirthDay());
         values.put(allColumns[4], user.getGender());
         values.put(allColumns[5], user.getPhoneNum());
@@ -145,7 +157,7 @@ public class UserDataSupport {
            cursor.moveToFirst();
            user.setUserId(cursor.getString(0));
            user.setPersonId(cursor.getString(1));
-           user.setUaerName(cursor.getString(2));
+           user.setUserName(cursor.getString(2));
            user.setBirthDay(cursor.getString(3));
            user.setGender(cursor.getString(4));
            user.setPhoneNum(cursor.getString(5));

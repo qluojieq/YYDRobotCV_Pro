@@ -60,7 +60,7 @@ public class BaseInfoShowActivity extends AppCompatActivity {
         RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), bigMap);
         roundedBitmapDrawable.setCircular(true);
         portraitImageView.setImageDrawable(roundedBitmapDrawable);
-        nameView.setText("姓名：" + user.getUaerName());
+        nameView.setText("姓名：" + user.getUserName());
         genderView.setText("性别：" + user.getGender());
         phoneNumView.setText("电话：" + user.getPhoneNum());
         birthdayView.setText("生日：" + user.getBirthDay());

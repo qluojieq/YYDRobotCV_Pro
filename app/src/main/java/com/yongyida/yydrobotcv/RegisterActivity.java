@@ -52,7 +52,7 @@ public class RegisterActivity extends FragmentActivity {
         registerFrame.removeAllViews();
         fm = getFragmentManager();
         registerUser = new User();
-        registerUser.setUaerName("Brandon");//设定默认值
+        registerUser.setUserName("Brandon");//设定默认值
         registerUser.setPersonId("-1");
         userDataSupport = new UserDataSupport(this);
         rVipInfoFrame = new RegisterVipFragment();
@@ -180,7 +180,7 @@ public class RegisterActivity extends FragmentActivity {
 
     public boolean isUserNameOk(){
         boolean isOk = false;
-        String userName = registerUser.getUaerName();
+        String userName = registerUser.getUserName();
         if (!TextUtils.isEmpty(userName)&& CommonUtils.isMatchName(userName))
             isOk = true;
         return  isOk;
@@ -195,7 +195,7 @@ public class RegisterActivity extends FragmentActivity {
                 this.registerUser.setAge(registerUser.getAge());
                 break;
             case 2:
-                this.registerUser.setUaerName(registerUser.getUaerName());
+                this.registerUser.setUserName(registerUser.getUserName());
                 this.registerUser.setGender(registerUser.getGender());
                 this.registerUser.setPhoneNum(registerUser.getPhoneNum());
                 this.registerUser.setBirthDay(registerUser.getBirthDay());
