@@ -23,6 +23,8 @@ import com.yongyida.yydrobotcv.useralbum.User;
 
 import java.util.ArrayList;
 
+import dou.utils.ToastUtil;
+
 /**
  * @author Brandon on 2018/3/15
  * update 18/4/10
@@ -81,14 +83,24 @@ public class RegisterVipFragment extends Fragment implements View.OnClickListene
                 Log.e(TAG,"vip " + vipType);
                 registerUser.setVipRate(vipType);
                 ((RegisterActivity)this.getActivity()).setRegisterUser(registerUser,3);
-                long ret = ((RegisterActivity)this.getActivity()).doEnd();
-                if (ret>0){
-                    ((RegisterActivity)this.getActivity()).setResult(RegisterActivity.ADD_SUCCESS_RESULT_CODE);
-                    this.getActivity().finish();
-                }else {
+                if (((RegisterActivity)this.getActivity()).getRegisterUser().getPersonId().equals("-1")){
+                    new ToastUtil(this.getActivity()).showSingletonToast("还没有注册人脸 ！");
+                    ((RegisterActivity)this.getActivity()).registerCamera(null);
 
+                }else if (!((RegisterActivity)this.getActivity()).isUserNameOk()){
+                    new ToastUtil(this.getActivity()).showSingletonToast("人名不符合规则！");
+                    ((RegisterActivity)this.getActivity()).registerBaseInfo(null);
+                }else {
+                    long ret = ((RegisterActivity)this.getActivity()).doEnd();
+                    if (ret>0){
+                        ((RegisterActivity)this.getActivity()).setResult(RegisterActivity.ADD_SUCCESS_RESULT_CODE);
+                        this.getActivity().finish();
+                    }else {
+
+                    }
+                    Log.e(TAG,"最后生成 " + ret);
                 }
-                Log.e(TAG,"最后生成 " + ret);
+
                 break;
         }
     }

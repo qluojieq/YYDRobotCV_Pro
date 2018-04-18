@@ -255,11 +255,11 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
 
         if (result == 0) {
             DLog.d("初始化成功");
-            new ToastUtil(mContext).showSingletonToast("初始化检测器成功");
+//            new ToastUtil(mContext).showSingletonToast("初始化检测器成功");
 
         } else {
             DLog.d("初始化失败" );
-            new ToastUtil(mContext).showSingletonToast("初始化检测器失败");
+//            new ToastUtil(mContext).showSingletonToast("初始化检测器失败");
         }
         DLog.d("getAlbumSize: " + faceTrack.getAlbumSize());
     }
@@ -302,7 +302,6 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
             params.height = surface_h;
             draw_surface.requestLayout();
             Log.e(TAG, "跟踪时使用的 iw " + iw + " ih" + ih + "surface_w" + surface_w + "surface_h" + surface_h);
-            Toast.makeText(mContext, "跟踪时使用的 iw " + iw + " ih" + ih + "surface_w" + surface_w + "surface_h" + surface_h, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -490,6 +489,14 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         canvas.drawPaint(paint); paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
         draw_surface.invalidate();
         draw_surface.getHolder().unlockCanvasAndPost(canvas);
+    }
+
+    public void reInit(){
+         currentStep = 0;
+         viewCountStep1 = 0;
+         viewCountStep2 = 0;
+         viewCountStep3 = 0;
+         viewCountStep4 = 0;
     }
 
 }

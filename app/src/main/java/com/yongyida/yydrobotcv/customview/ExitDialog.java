@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,12 +20,22 @@ import org.w3c.dom.Text;
 public class ExitDialog extends Dialog implements View.OnClickListener {
     TextView confirmBtn;
     TextView cancelBtn;
+    TextView markWordShowView;
+
+    String markWord = "";
 
     public ExitDialog(@NonNull Context context) {
         super(context);
     }
 
     OnCloseListener listener;
+
+    public ExitDialog(Context context, int themeResId, OnCloseListener listener ,String showString){
+        super(context,themeResId);
+        this.listener = listener;
+        markWord = showString;
+
+    }
 
     public ExitDialog(@NonNull Context context, int themeResId, OnCloseListener listener) {
         super(context, themeResId);
@@ -43,8 +54,12 @@ public class ExitDialog extends Dialog implements View.OnClickListener {
         setCanceledOnTouchOutside(false);
         cancelBtn = findViewById(R.id.cancel_close);
         confirmBtn = findViewById(R.id.cancel_confirm);
+        markWordShowView = findViewById(R.id.reference_dialog);
         confirmBtn.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
+        if (!TextUtils.isEmpty(markWord)){
+            markWordShowView.setText(markWord);
+        }
     }
 
     @Override

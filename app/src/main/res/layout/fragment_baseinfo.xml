@@ -22,13 +22,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:layout_centerHorizontal="true"
-            android:id="@+id/info_step_hint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <RelativeLayout
             android:layout_marginTop="25dp"
-            android:src="@mipmap/info_step_1" />
+            android:layout_centerHorizontal="true"
+            android:layout_width="243dp"
+            android:layout_height="47dp">
+            <ImageView
+                android:id="@+id/info_step_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/info_step_1" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/hint_info1"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/hint_info2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/hint_info3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/hint_info4"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+        </RelativeLayout>
+
+
         <LinearLayout
             android:id="@+id/insert_phone_tap"
             android:layout_centerInParent="true"
@@ -46,6 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
             <EditText
+                android:singleLine="true"
                 android:background="@mipmap/ic_edit_bg"
                 android:id="@+id/edit_phone"
                 android:imeOptions="flagNoExtractUi"
@@ -85,6 +117,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
             <EditText
+                android:singleLine="true"
                 android:background="@mipmap/ic_edit_bg"
                 android:hint="数字、中文和字母"
                 android:textColor="@color/colorTextWrite"
