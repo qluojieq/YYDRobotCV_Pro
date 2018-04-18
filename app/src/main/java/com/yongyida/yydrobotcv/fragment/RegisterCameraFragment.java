@@ -56,6 +56,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     public SurfaceView preview_surface;
     public SurfaceView draw_surface;
     TextView hintFaceView;
+    TextView hintFaceInView;
     protected CameraHelper mCameraHelper;
     protected YMFaceTrack faceTrack;
     Context mContext;
@@ -100,6 +101,9 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
             @Override
             public boolean handleMessage(Message msg) {
                 switch (msg.what){
+                    case 0:
+                        hintFaceView.setText("正脸");
+                        break;
                     case 1:
                         hintFaceView.setText("侧脸");
                         break;
@@ -199,6 +203,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         preview_surface = view.findViewById(R.id.camera_preview);
         draw_surface = view.findViewById(R.id.draw_view);
         hintFaceView = view.findViewById(R.id.hint_face_side);
+        hintFaceInView = view.findViewById(R.id.hint_face_side_up);
         draw_surface.setZOrderOnTop(true);
         draw_surface.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         //预设Camera参数，方便扩充
@@ -354,6 +359,14 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         if (faceTrack == null) return null;
         final List<YMFace> faces = faceTrack.trackMulti(bytes, iw, ih);
         if (faces!=null&&faces.size()>0){
+            YMFace face = faces.get(0);
+            float [] faceRect = face.getRect();
+            float x = faceRect[0];
+            float y = faceRect[1];
+            float w = faceRect[2];
+            float h = faceRect[3];
+
+            Log.e(TAG,"face center x" + x+w/2 + "face center y " + y+h/2);
             YMFace ymFace = faces.get(0);
 
             if (currentStep ==0 && isFrontFace(ymFace)){
@@ -379,7 +392,6 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                     currentStep++;
                     viewCountStep4 = 0;
                     mHandler.sendEmptyMessage(3);
-
                 }
                 Log.e(TAG,"脸的位置测试： 抬头");
             }
@@ -492,6 +504,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     }
 
     public void reInit(){
+         mHandler.sendEmptyMessage(0);
          currentStep = 0;
          viewCountStep1 = 0;
          viewCountStep2 = 0;

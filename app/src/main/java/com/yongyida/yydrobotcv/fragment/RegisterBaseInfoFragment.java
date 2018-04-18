@@ -24,10 +24,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
-
 import com.bigkoo.pickerview.lib.WheelView;
 import com.yongyida.yydrobotcv.R;
 import com.yongyida.yydrobotcv.RegisterActivity;
@@ -35,8 +33,6 @@ import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import dou.utils.ToastUtil;
 
@@ -76,9 +72,9 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     public static Handler mHandler;
 
     //    private  String regPhonNum = "^1[3|4|5|7|8][0-9]\\d{4,8}$";
-    private String regPhonNum = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[013678])|(18[0,5-9]))\\d{8}$";
+    private String regPhonNum = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[013678])|(18[0,5-9]))\\d{8}$";//电话号码
 
-    private String regName = "^[(a-zA-Z0-9\\u4e00-\\u9fa5)]{1,8}$";
+    private String regName = "^[(a-zA-Z0-9\\u4e00-\\u9fa5)]{1,8}$";//取名规则（汉字、数字、字母）
 
     @Nullable
     @Override
@@ -133,15 +129,15 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
             case R.id.btn_info_next:
                 Log.e(TAG, "next step is been pressed 当前步数" + currentStep);
                 if (currentStep == 2) {
-                    if (TextUtils.isEmpty(nameView.getText())){
+                    if (TextUtils.isEmpty(nameView.getText())) {
                         new ToastUtil(this.getActivity()).showSingletonToast("名字不能空缺 ");
                         return;
-                    }else if (!CommonUtils.isMatch(nameView.getText().toString(),regName)){
+                    } else if (!CommonUtils.isMatch(nameView.getText().toString(), regName)) {
                         new ToastUtil(this.getActivity()).showSingletonToast("名字不符合规则");
                         return;
                     }
                 }
-                if (currentStep<5){
+                if (currentStep < 5) {
                     currentStep++;
                 }
                 switchTable(currentStep);
@@ -257,7 +253,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                         && KeyEvent.ACTION_DOWN == event.getAction())) {
                     Log.e(TAG, "actionId " + actionId + "event " + EditorInfo.IME_ACTION_NEXT);
                     nextStepBtn.performClick();
-                    if (!TextUtils.isEmpty(nameView.getText())&&CommonUtils.isMatch(nameView.getText().toString(),regName)){
+                    if (!TextUtils.isEmpty(nameView.getText()) && CommonUtils.isMatch(nameView.getText().toString(), regName)) {
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.toggleSoftInputFromWindow(v.getWindowToken(), 0, 0);
                     }
@@ -336,8 +332,8 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
         }
     }
 
-    public void saveData(){
-        if (null!=phoneNumView){
+    public void saveData() {
+        if (null != phoneNumView) {
             String phoneNum = phoneNumView.getText().toString();
             String nameString = nameView.getText().toString();
             String genderString = genderList.get(genderWheelView.getCurrentItem());

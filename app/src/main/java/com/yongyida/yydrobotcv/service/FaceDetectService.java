@@ -14,6 +14,7 @@ public class FaceDetectService extends Service implements PreviewListener{
     private static final String TAG = FaceDetectService.class.getSimpleName();
     CameraBase mCamera2Track;
 
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
@@ -26,7 +27,6 @@ public class FaceDetectService extends Service implements PreviewListener{
         Log.e(TAG,"onCreate");
         mCamera2Track = Camera2Track.getCameraInstance(this);
         mCamera2Track.setListener(this);
-
     }
 
     @Override

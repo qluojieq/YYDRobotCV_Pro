@@ -8,4 +8,5 @@
     <color name="colorTextTest">#ffffffff</color>
     <color name="colorTextWrite">#ffffffff</color>
     <color name="colorToast">#19000000</color>
+    <color name="colorCameraFrame">#59000000</color>
 </resources>
