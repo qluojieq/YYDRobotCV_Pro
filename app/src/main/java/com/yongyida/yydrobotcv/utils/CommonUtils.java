@@ -1,5 +1,11 @@
 package com.yongyida.yydrobotcv.utils;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.Gravity;
+import android.widget.Toast;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,5 +27,28 @@ public class CommonUtils {
         Matcher m = p.matcher(data);
         boolean isMatch = m.matches();
         return  isMatch;
+    }
+
+
+    private static Toast toast;
+    public static Handler handler = new Handler(Looper.getMainLooper());
+
+    public static void serviceToast(final Context mContext, final String str) {
+        handler.post(new Runnable() {
+            public void run() {
+                if (toast == null) {
+                    toast = Toast.makeText(mContext, str, Toast.LENGTH_LONG);
+                    //设置Toast显示位置，居中，向 X、Y轴偏移量均为0
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    //设置显示时长
+                    toast.setText(str);
+                    //显示
+                } else {
+                    toast.setText(str);
+                }
+                toast.show();
+
+            }
+        });
     }
 }

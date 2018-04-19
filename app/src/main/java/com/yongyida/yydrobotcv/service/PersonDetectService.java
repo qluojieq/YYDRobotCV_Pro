@@ -10,6 +10,7 @@ import com.orbbec.astrakernel.AstraContext;
 import com.orbbec.astrakernel.PermissionCallbacks;
 import com.orbbec.astrastartlibs.DepthData;
 import com.orbbec.astrastartlibs.UserTracker;
+import com.yongyida.yydrobotcv.utils.CommonUtils;
 
 import org.openni.IObservable;
 import org.openni.IObserver;
@@ -90,10 +91,10 @@ public class PersonDetectService extends Service {
         public void run() {
             while (!mExit){
 
+
                 mContext.waitAnyUpdateAll();
                 int [] data  = mUserTracker.getUsers();
                 if (data.length<=0){
-//                    Log.e(TAG,"do not have person"+oneTime[0]);
                     continue;
                 }
 
@@ -107,6 +108,8 @@ public class PersonDetectService extends Service {
                         oneTimeGone[i] = 0;
                         if (isPerson&&oneTime[i]==1){
                             startFaceDetect("start");
+                            Log.e(TAG,"人来 " + i);
+                            CommonUtils.serviceToast(PersonDetectService.this,"有人");
                         }
                     }else {
                         isPerson = false;
@@ -114,6 +117,8 @@ public class PersonDetectService extends Service {
                         oneTimeGone[i]++;
                         if (oneTimeGone[i]==1){
                          startFaceDetect("stop");
+                            CommonUtils.serviceToast(PersonDetectService.this,"离开");
+                         Log.e(TAG,"人离开" + i);
                         }
                     }
 

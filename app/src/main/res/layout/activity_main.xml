@@ -5,7 +5,7 @@
     android:background="@mipmap/big_background"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".PersonListActivity">
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="60dp">
@@ -33,17 +33,9 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
         </android.support.v7.widget.RecyclerView>
 
-        <TextView
-            android:visibility="gone"
-            android:layout_marginTop="2dp"
-            android:layout_marginLeft="16dp"
-            android:onClick="addNewUser"
-            android:background="@mipmap/ic_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+
    </FrameLayout>
 
 </LinearLayout>

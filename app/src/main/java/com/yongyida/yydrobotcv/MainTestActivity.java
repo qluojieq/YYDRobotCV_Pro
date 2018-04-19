@@ -8,7 +8,6 @@ import android.view.View;
 
 import com.yongyida.yydrobotcv.service.FaceDetectService;
 import com.yongyida.yydrobotcv.service.PersonDetectService;
-import com.yongyida.yydrobotcv.utils.ChineseCharacterUtil;
 
 public class MainTestActivity extends AppCompatActivity {
     private static final String TAG = MainTestActivity.class.getSimpleName();
@@ -27,7 +26,7 @@ public class MainTestActivity extends AppCompatActivity {
 
     public void startPersonRegist(View view) {
         Log.e(TAG,"启动注册人脸");
-        Intent intent = new Intent(this,MainActivity.class);
+        Intent intent = new Intent(this,PersonListActivity.class);
         startActivity(intent);
     }
 

@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.util.SimpleArrayMap;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.yongyida.yydrobotcv.camera.Camera2Track;
 import com.yongyida.yydrobotcv.camera.CameraBase;
 import com.yongyida.yydrobotcv.camera.PreviewListener;
+import com.yongyida.yydrobotcv.utils.CommonUtils;
 import com.yongyida.yydrobotcv.utils.DrawUtil;
 
 import java.util.List;
@@ -116,13 +118,14 @@ public class FaceDetectService extends Service implements PreviewListener{
         DLog.d("getAlbumSize2 :" + faceTrack.getEnrolledPersonIds().size());
     }
     private void runTrack(byte[] data) {
-
             final List<YMFace> faces = analyse(data, 1280, 720);
             if (faces.size()>0){
-                Log.e(TAG,"人脸识别的 id号码 " + faces.get(0).getPersonId() + "可信度 " + faces.get(0).getConfidence() +  "获取到的人名 " + DrawUtil.getNameFromPersonId(faces.get(0).getPersonId()));
+                String name = DrawUtil.getNameFromPersonId(faces.get(0).getPersonId());
+//                Log.e(TAG,"人脸识别的 id号码 " + faces.get(0).getPersonId() + "可信度 " + faces.get(0).getConfidence() +  "获取到的人名 " + name);
+                if (!TextUtils.isEmpty(name)){
+                    CommonUtils.serviceToast(this,name);
+                }
             }
-        new ToastUtil(this).showSingletonToast(""+DrawUtil.getNameFromPersonId(faces.get(0).getPersonId() ));
-
     }
 
 

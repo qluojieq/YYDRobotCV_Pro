@@ -48,11 +48,11 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
 /**
  * @author Brandon on 2018/3/13
  **/
-public class MainActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback{
+public class PersonListActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback{
 
     private static final int BASE_INFO_REQUEST = 10;
     private static final int NEW_ADD_REQUEST = 11;
-    public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String TAG = PersonListActivity.class.getSimpleName();
     OnChooseLetterChangedListener onChooseLetterChangedListener;
     UserDataSupport dataSupport;
     // Used to load the 'native-lib' library on application startup.
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
                     addNewUser(null);
 
                 } else {
-                    Intent intent = new Intent(MainActivity.this, BaseInfoShowActivity.class);
+                    Intent intent = new Intent(PersonListActivity.this, BaseInfoShowActivity.class);
                     intent.putExtra("one_user", usersData.get(position));
                     startActivityForResult(intent, 10);
                 }
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements OnRequestPermissi
 
     //添加按钮
     public void addNewUser(View view) {
-        Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+        Intent intent = new Intent(PersonListActivity.this, RegisterActivity.class);
         startActivityForResult(intent, NEW_ADD_REQUEST);
     }
 
