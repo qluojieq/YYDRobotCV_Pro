@@ -384,6 +384,8 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                     viewCountStep3 = 0;
                     currentStep++;
                     mHandler.sendEmptyMessage(2);
+                   int i =  faceTrack.updatePerson(personId, 0);
+                   Log.e(TAG,"注册侧脸时的返回值 " + i);
                 }
                 Log.e(TAG,"脸的位置测试： 侧脸");
             }else if (currentStep ==2 && isRiseFace(ymFace)){
@@ -392,6 +394,8 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                     currentStep++;
                     viewCountStep4 = 0;
                     mHandler.sendEmptyMessage(3);
+                    int i = faceTrack.updatePerson(personId, 0);
+                    Log.e(TAG,"注册抬头时的返回值 " + i);
                 }
                 Log.e(TAG,"脸的位置测试： 抬头");
             }

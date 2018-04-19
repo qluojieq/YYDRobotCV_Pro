@@ -54,7 +54,7 @@ public class RegisterActivity extends FragmentActivity {
         registerUser = new User();
         registerUser.setUserName("Brandon");//设定默认值
         registerUser.setPersonId("-1");
-        userDataSupport = new UserDataSupport(this);
+        userDataSupport =  UserDataSupport.getInstance(this);
         rVipInfoFrame = new RegisterVipFragment();
         rCameraInfoFrame = new RegisterCameraFragment();
         rBaseInfoFrame = new RegisterBaseInfoFragment();

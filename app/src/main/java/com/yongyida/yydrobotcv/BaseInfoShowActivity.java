@@ -38,7 +38,7 @@ public class BaseInfoShowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_info_show);
         user = (User) getIntent().getSerializableExtra("one_user");
-        dataSupport = new UserDataSupport(this);
+        dataSupport = UserDataSupport.getInstance(this);
         initView();
         initData();
 

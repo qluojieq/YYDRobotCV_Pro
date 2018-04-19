@@ -52,15 +52,15 @@ public abstract class CameraBase implements ImageReader.OnImageAvailableListener
         Log.e(TAG, "startCamea");
         startBackgroundThread();
 
-            try {
-                if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
+        try {
+            if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
 //                    throw new RuntimeException("Time out waiting to lock camera opening.");
-                    Log.e(TAG,"Time out waiting to lock camera opening");
+                Log.e(TAG, "Time out waiting to lock camera opening");
 //                    mCameraOpenCloseLock.release();
-                }
-                mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
-                CameraIds = mCameraManager.getCameraIdList();
-                if (CameraIds.length>0)
+            }
+            mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
+            CameraIds = mCameraManager.getCameraIdList();
+            if (CameraIds.length > 0)
                 mCameraManager.openCamera(CameraIds[0], new CameraDevice.StateCallback() {
                     @Override
                     public void onOpened(@NonNull CameraDevice cameraDevice) {
@@ -89,16 +89,16 @@ public abstract class CameraBase implements ImageReader.OnImageAvailableListener
                         Log.e(TAG, "打开相机重试次数" + retryCount + "Camera打开错误" + i);
                     }
                 }, mBackgroundHandler);
-                else
-                    Log.e(TAG,"相机异常");
-            } catch (CameraAccessException e) {
-                Log.e(TAG, "Camera打开失败");
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
+            else
+                Log.e(TAG, "相机异常");
+        } catch (CameraAccessException e) {
+            Log.e(TAG, "Camera打开失败");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
+    }
 
     private void afterOpenCamera(CameraDevice cameraDevice) {
         mCameraDevice = cameraDevice;
@@ -162,19 +162,23 @@ public abstract class CameraBase implements ImageReader.OnImageAvailableListener
                 mCameraCaptureSession.close();
                 mCameraCaptureSession = null;
             }
-            if (mImageReader != null)
-                mImageReader.close();
-            mImageReader = null;
-            if (mCameraDevice != null)
+
+            if (mCameraDevice != null){
                 mCameraDevice.close();
-            mCameraDevice = null;
-            stopBackgroundThread();
+                mCameraDevice = null;
+            }
 
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
+//            if (mImageReader != null){
+//                mImageReader.close();
+//                mImageReader = null;
+//            }
             mCameraOpenCloseLock.release();
+//            stopBackgroundThread();
         }
+
     }
 
     ;

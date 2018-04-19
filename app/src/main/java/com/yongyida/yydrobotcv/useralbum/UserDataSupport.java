@@ -22,6 +22,7 @@ public class UserDataSupport {
     public static final String TAG = UserDataSupport.class.getSimpleName();
     UserDataHelper userHelper;
     SQLiteDatabase database;
+    private static UserDataSupport userDataSupport;
     private String[] allColumns = {
             UserDataHelper.C_ID,
             UserDataHelper.C_ID_PERSON,
@@ -35,7 +36,14 @@ public class UserDataSupport {
             UserDataHelper.C_TAG
     };
 
-    public UserDataSupport(Context context) {
+    public static UserDataSupport getInstance(Context context){
+        if (userDataSupport ==null){
+            userDataSupport = new UserDataSupport(context);
+        }
+        return userDataSupport;
+    }
+
+    private UserDataSupport(Context context) {
         userHelper = new UserDataHelper(context);
     }
 
@@ -48,21 +56,24 @@ public class UserDataSupport {
 
 
     //获取全部用户
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers(String type) {
         open();
         List<User> allUsers = new ArrayList<>();
-        User user1 = new User();
-        user1.setUserId("");
-        user1.setPersonId("");
-        user1.setUserName("添加");
-        user1.setBirthDay("");
-        user1.setGender("");
-        user1.setPhoneNum("");
-        user1.setVipRate("");
-        user1.setHeadPortrait("");
-        user1.setIdentifyCount("");
-        user1.setTag("");
-        allUsers.add(user1);
+        if (type.equals("list")){//展示列表中添加了“添加”按钮
+
+            User user1 = new User();
+            user1.setUserId("");
+            user1.setPersonId("");
+            user1.setUserName("添加");
+            user1.setBirthDay("");
+            user1.setGender("");
+            user1.setPhoneNum("");
+            user1.setVipRate("");
+            user1.setHeadPortrait("");
+            user1.setIdentifyCount("");
+            user1.setTag("");
+            allUsers.add(user1);
+        }
         Cursor cursor = database.query(UserDataHelper.DATABASE_TABLE, allColumns, null, null, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -149,7 +160,7 @@ public class UserDataSupport {
         return ret;
     }
 
-    //获取单个用户
+    //获取单个用户，不易频繁启动
     public User getUser(String personId){
         User user = new User();
         Cursor cursor = database.query(UserDataHelper.DATABASE_TABLE, allColumns, UserDataHelper.C_ID_PERSON + "= ?", new String[] {personId}, null, null, null);

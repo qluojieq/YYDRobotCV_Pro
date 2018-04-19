@@ -1,13 +1,22 @@
 package com.yongyida.yydrobotcv;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
@@ -39,7 +48,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
 /**
  * @author Brandon on 2018/3/13
  **/
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback{
 
     private static final int BASE_INFO_REQUEST = 10;
     private static final int NEW_ADD_REQUEST = 11;
@@ -72,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         setContentView(R.layout.activity_main);
-        dataSupport = new UserDataSupport(this);
+        dataSupport =  UserDataSupport.getInstance(this);
         userRecycleView = (RecyclerView) findViewById(R.id.user_recycle);
         mSiderBar = findViewById(R.id.side_bar);
         onChooseLetterChangedListener = new OnChooseLetterChangedListener() {
@@ -85,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 //        LinearLayoutManager
 
         userRecycleView.setLayoutManager(gridLayoutManager);
-        usersData = dataSupport.getAllUsers();
+        usersData = dataSupport.getAllUsers("list");
         userDataAdapter = new UsersAdapter(this);
         userDataAdapter.setOnItemClickListener(new UsersAdapter.OnItemClickListener() {
             @Override
@@ -128,8 +137,9 @@ public class MainActivity extends AppCompatActivity {
                 super.onScrolled(recyclerView, dx, dy);
                 int firstVisibleItemPosition = gridLayoutManager.findFirstVisibleItemPosition() + 1;//可见范围内的第一项的位置
 //                int lastVisibleItemPosition=gridLayoutManager.findLastVisibleItemPosition();//可见范围内的第一项的位置
-
-                mSiderBar.setLetters(ChineseCharacterUtil.getFirstChar(usersData.get(firstVisibleItemPosition).getUserName()));
+                if (usersData.size()>9){
+                    mSiderBar.setLetters(ChineseCharacterUtil.getFirstChar(usersData.get(firstVisibleItemPosition).getUserName()));
+                }
             }
         });
     }
@@ -137,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        requestCameraPermission();
     }
 
 
@@ -249,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == BaseInfoShowActivity.DELETE_SUCCESS_RESULT_CODE) {
                     Log.e(TAG, "删除成功，更新一下数据" + usersData.size());
                     usersData.clear();
-                    usersData = dataSupport.getAllUsers();
+                    usersData = dataSupport.getAllUsers("list");
                     userDataAdapter.notifyDataSetChanged();
                     makeText(this);
                 }
@@ -257,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
             case NEW_ADD_REQUEST:
                 if (resultCode == RegisterActivity.ADD_SUCCESS_RESULT_CODE) {
                     usersData.clear();
-                    usersData = dataSupport.getAllUsers();
+                    usersData = dataSupport.getAllUsers("list");
                     userDataAdapter.notifyDataSetChanged();
                     Log.e(TAG, "添加成功，更新一下数据" + usersData.size());
                 }
@@ -296,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
         }
         ret = i;
         Log.e(TAG, "点击到啊字母 " + targetChar + "首次出现该字母的位置 " + ret);
-        if (i > usersData.size() - 10) {
+        if (usersData.size()>9&&i > usersData.size() - 10) {
             mHandler.sendEmptyMessage(usersData.size() - 10);
             Log.e(TAG, "超出滑动范围 " + usersData.get(usersData.size() - 10).getUserName());
             if (usersData.size() / 2 == 0) {
@@ -306,7 +317,94 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-
         return ret;
+    }
+
+    private static final int REQUEST_CAMERA_PERMISSION = 1;
+    private static final String FRAGMENT_DIALOG = "dialog";
+
+    private void requestCameraPermission() {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+            new ConfirmationDialog().show(getSupportFragmentManager(), FRAGMENT_DIALOG);
+        } else {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                ErrorDialog.newInstance(getString(R.string.request_permission))
+                        .show(getSupportFragmentManager(), FRAGMENT_DIALOG);
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    /**
+     * Shows an error message dialog.
+     */
+    public static class ErrorDialog extends DialogFragment {
+
+        private static final String ARG_MESSAGE = "message";
+
+        public static ErrorDialog newInstance(String message) {
+            ErrorDialog dialog = new ErrorDialog();
+            Bundle args = new Bundle();
+            args.putString(ARG_MESSAGE, message);
+            dialog.setArguments(args);
+            return dialog;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Activity activity = getActivity();
+            return new AlertDialog.Builder(activity)
+                    .setMessage(getArguments().getString(ARG_MESSAGE))
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            activity.finish();
+                        }
+                    })
+                    .create();
+        }
+
+    }
+
+    /**
+     * Shows OK/Cancel confirmation dialog about camera permission.
+     */
+    public static class ConfirmationDialog extends DialogFragment {
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Fragment parent = getParentFragment();
+            return new AlertDialog.Builder(getActivity())
+                    .setMessage("权限")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            parent.requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                    REQUEST_CAMERA_PERMISSION);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Activity activity = parent.getActivity();
+                                    if (activity != null) {
+                                        activity.finish();
+                                    }
+                                }
+                            })
+                    .create();
+        }
     }
 }
