@@ -50,6 +50,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     LinearLayout genderTableView;
     LinearLayout nameTableView;
     LinearLayout phoneTableView;
+    LinearLayout isStepClickAbleView;
     FrameLayout birthdayTableView;
 
     TextView stepHint1;
@@ -125,18 +126,28 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+        Log.e(TAG, "next step is been pressed 当前步数" + currentStep);
+        if (currentStep == 2) {
+            if (TextUtils.isEmpty(nameView.getText())) {
+                new ToastUtil(this.getActivity()).showSingletonToast("名字不能空缺 ");
+                return;
+            } else if (!CommonUtils.isMatch(nameView.getText().toString(), regName)) {
+                new ToastUtil(this.getActivity()).showSingletonToast("名字不符合规则");
+                return;
+            }
+        }
+        if (currentStep == 1) {
+            if (TextUtils.isEmpty(phoneNumView.getText())) {
+                new ToastUtil(this.getActivity()).showSingletonToast("手机号码不能空缺 ");
+                return;
+            } else if (!CommonUtils.isMatch(phoneNumView.getText().toString(),regPhonNum)) {
+                new ToastUtil(this.getActivity()).showSingletonToast("手机号码不符合规则");
+                return;
+            }
+        }
+
         switch (v.getId()) {
             case R.id.btn_info_next:
-                Log.e(TAG, "next step is been pressed 当前步数" + currentStep);
-                if (currentStep == 2) {
-                    if (TextUtils.isEmpty(nameView.getText())) {
-                        new ToastUtil(this.getActivity()).showSingletonToast("名字不能空缺 ");
-                        return;
-                    } else if (!CommonUtils.isMatch(nameView.getText().toString(), regName)) {
-                        new ToastUtil(this.getActivity()).showSingletonToast("名字不符合规则");
-                        return;
-                    }
-                }
                 if (currentStep < 5) {
                     currentStep++;
                 }
@@ -184,6 +195,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
         nameTableView = view.findViewById(R.id.insert_name_tap);
         phoneTableView = view.findViewById(R.id.insert_phone_tap);
         birthdayTableView = view.findViewById(R.id.insert_birthday_tap);
+        isStepClickAbleView = view.findViewById(R.id.btn_hint_clickable);
 
         phoneNumView = view.findViewById(R.id.edit_phone);
         phoneNumView.addTextChangedListener(new TextWatcher() {
@@ -204,7 +216,11 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                if (TextUtils.isEmpty(nameView.getText())){
+                    isStepClickAbleView.setClickable(false);
+                }else {
+                    isStepClickAbleView.setClickable(true);
+                }
             }
         });
         phoneNumView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -226,6 +242,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
         nameView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
@@ -240,7 +257,11 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                if (TextUtils.isEmpty(nameView.getText())){
+                    isStepClickAbleView.setClickable(false);
+                }else {
+                    isStepClickAbleView.setClickable(true);
+                }
             }
         });
         nameView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -282,7 +303,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
         genderWheelView.setGravity(Gravity.CENTER);
         genderWheelView.setTextColorCenter(getResources().getColor(R.color.colorTextWrite));
         genderWheelView.setTextSize(16);
-        genderWheelView.setCyclic(true);
+        genderWheelView.setCyclic(false);
         registerUser2.setUserName("Brandon");
     }
 
@@ -314,6 +335,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 nameTableView.setVisibility(View.INVISIBLE);
                 genderTableView.setVisibility(View.VISIBLE);
                 birthdayTableView.setVisibility(View.INVISIBLE);
+                nextStepBtn.setBackgroundResource(R.mipmap.bg_finish);
                 if (!TextUtils.isEmpty(registerUser2.getAge())) {
                     birthDayChoiceFragment.setCurrentDate(registerUser2.getAge());
                 }
@@ -327,7 +349,6 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 break;
             case 5:
                 ((RegisterActivity) this.getActivity()).registerVipRate(null);
-
                 break;
         }
     }
@@ -343,7 +364,6 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
             registerUser2.setUserName(nameString);
             registerUser2.setGender(genderString);
             registerUser2.setBirthDay(birthdayString);
-
             ((RegisterActivity) this.getActivity()).setRegisterUser(registerUser2, 2);
         }
 

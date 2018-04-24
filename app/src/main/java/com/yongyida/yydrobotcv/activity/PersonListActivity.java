@@ -1,13 +1,7 @@
-package com.yongyida.yydrobotcv;
+package com.yongyida.yydrobotcv.activity;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -15,8 +9,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +23,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.yongyida.yydrobotcv.BaseInfoShowActivity;
+import com.yongyida.yydrobotcv.R;
+import com.yongyida.yydrobotcv.RegisterActivity;
 import com.yongyida.yydrobotcv.customview.SiderBar;
 import com.yongyida.yydrobotcv.customview.SiderBar.OnChooseLetterChangedListener;
 import com.yongyida.yydrobotcv.service.PersonDetectService;
@@ -147,6 +142,7 @@ public class PersonListActivity extends AppCompatActivity implements OnRequestPe
     @Override
     protected void onResume() {
         super.onResume();
+
     }
 
 
@@ -261,6 +257,7 @@ public class PersonListActivity extends AppCompatActivity implements OnRequestPe
                     usersData.clear();
                     usersData = dataSupport.getAllUsers("list");
                     userDataAdapter.notifyDataSetChanged();
+                    makeText(this);
                 }
                 break;
             case NEW_ADD_REQUEST:
@@ -276,6 +273,19 @@ public class PersonListActivity extends AppCompatActivity implements OnRequestPe
 
     }
 
+    //删除成功的自定义Toast
+    public void makeText(Context context) {
+        Toast customToast = new Toast(context);
+        //获得view的布局
+        View customView = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);
+
+        //设置textView中的文字
+        //设置toast的View,Duration,Gravity最后显示
+        customToast.setView(customView);
+        customToast.setDuration(Toast.LENGTH_SHORT);
+        customToast.setGravity(Gravity.CENTER, 0, 0);
+        customToast.show();
+    }
 
     public void testClosePerson() {
         Intent intent = new Intent(this, PersonDetectService.class);

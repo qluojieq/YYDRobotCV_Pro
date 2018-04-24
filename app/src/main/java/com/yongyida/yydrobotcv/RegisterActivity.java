@@ -2,23 +2,25 @@ package com.yongyida.yydrobotcv;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.support.v4.app.FragmentActivity;
-
+import android.content.res.AssetFileDescriptor;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.RadioGroup;
 
 import com.yongyida.yydrobotcv.customview.ExitDialog;
-import com.yongyida.yydrobotcv.fragment.BirthDayChoiceFragment;
 import com.yongyida.yydrobotcv.fragment.RegisterBaseInfoFragment;
 import com.yongyida.yydrobotcv.fragment.RegisterCameraFragment;
 import com.yongyida.yydrobotcv.fragment.RegisterVipFragment;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
+
+import java.io.IOException;
 
 public class RegisterActivity extends FragmentActivity {
 
@@ -36,7 +38,6 @@ public class RegisterActivity extends FragmentActivity {
     int currentStep = 0;
     UserDataSupport userDataSupport;
 
-    RadioGroup registerRadioGroup;
 
     ExitDialog exitDialog;
     ExitDialog checkCameraFrame;
@@ -46,9 +47,9 @@ public class RegisterActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initSoundPool();
         setContentView(R.layout.register_main);
         registerFrame = findViewById(R.id.register_frame);
-        registerRadioGroup = findViewById(R.id.refer_view_group);
         registerFrame.removeAllViews();
         fm = getFragmentManager();
         registerUser = new User();
@@ -91,14 +92,9 @@ public class RegisterActivity extends FragmentActivity {
             @Override
             public void clickCancel() {
                 checkCameraFrame.dismiss();
-                if (whichCheck == 2){
-                    registerRadioGroup.check(R.id.register_index2);
-                }else if (whichCheck == 3 ){
-                    registerRadioGroup.check(R.id.register_index3);
-                }
-
             }
         },"确认重新录入人脸吗？");
+
     }
 
     public void registerBack(View view) {
@@ -108,10 +104,8 @@ public class RegisterActivity extends FragmentActivity {
 
     //跳转到录入fragment
     public void registerCamera(View view) {
-
         if (registerUser.getPersonId().equals("-1")) {
             whichCheck = 1;
-            registerRadioGroup.check(R.id.register_index1);
             currentStep = 1;
             ft = fm.beginTransaction();
             if (!rBaseInfoFrame.isHidden()) {
@@ -136,7 +130,6 @@ public class RegisterActivity extends FragmentActivity {
     //跳转到基础信息录入fragment
     public void registerBaseInfo(View view) {
         whichCheck = 2;
-        registerRadioGroup.check(R.id.register_index2);
         currentStep = 2;
         ft = fm.beginTransaction();
 
@@ -157,7 +150,6 @@ public class RegisterActivity extends FragmentActivity {
     //跳转到vip信息录入界面
     public void registerVipRate(View view) {
         whichCheck = 3;
-        registerRadioGroup.check(R.id.register_index3);
         currentStep = 3;
         ft = fm.beginTransaction();
         if (!rCameraInfoFrame.isHidden()) {
@@ -206,11 +198,57 @@ public class RegisterActivity extends FragmentActivity {
         }
     }
 
-
     //最后注册到数据库
     public long doEnd() {
         long ret = userDataSupport.insertUser(registerUser);
         return ret;
     }
+
+    private SoundPool soundPool;
+    //使用声音的提示
+    public void initSoundPool(){
+        AudioAttributes aab = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .build();
+        soundPool = new SoundPool.Builder()
+                .setMaxStreams(10)
+                .setAudioAttributes(aab)
+                .build();
+        try {
+            AssetFileDescriptor afdHutter1 = getResources().getAssets().openFd("amera_hutter_001.wav");
+            AssetFileDescriptor afdHutter2 = getResources().getAssets().openFd("pubtest.mp3");
+            AssetFileDescriptor afdHutter3 = getResources().getAssets().openFd("warning.mp3");
+
+
+            soundPool.load(afdHutter1,1);
+            soundPool.load(afdHutter2,1);
+            soundPool.load(afdHutter3,1);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        soundPool.release();
+    }
+
+    public void playSound(int type){
+        soundPool.play(type, 0.5f, 0.5f, 0, 0, 1.0f);
+        Log.e(TAG,"发声，咔嚓！");
+    }
+
+    public void pauseSound(){
+        soundPool.autoPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
 
 }

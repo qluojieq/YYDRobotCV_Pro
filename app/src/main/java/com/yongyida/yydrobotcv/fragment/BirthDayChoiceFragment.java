@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import com.bigkoo.pickerview.adapter.NumericWheelAdapter;
 import com.bigkoo.pickerview.lib.WheelView;
 import com.bigkoo.pickerview.listener.OnItemSelectedListener;
@@ -17,7 +16,6 @@ import com.yongyida.yydrobotcv.R;
 
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,8 +56,10 @@ public class BirthDayChoiceFragment extends Fragment {
         wv_month.setTextSize(16);
         wv_month.setTextColorCenter(getResources().getColor(R.color.colorTextWrite));
         wv_day = view.findViewById(R.id.choice_day);
+        wv_day.setCyclic(false);
         wv_day.setTextSize(16);
         wv_day.setTextColorCenter(getResources().getColor(R.color.colorTextWrite));
+        wv_month.setCyclic(false);
         gravity = Gravity.CENTER;
         setSolar(2017,6,15);
         return view;

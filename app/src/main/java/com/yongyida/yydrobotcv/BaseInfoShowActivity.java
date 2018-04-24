@@ -1,15 +1,21 @@
 package com.yongyida.yydrobotcv;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
@@ -41,6 +47,18 @@ public class BaseInfoShowActivity extends AppCompatActivity {
         dataSupport = UserDataSupport.getInstance(this);
         initView();
         initData();
+        mHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                switch (msg.what){
+                    case 1:
+                        BaseInfoShowActivity.this.finish();
+                        break;
+                }
+
+                return true;
+            }
+        });
 
     }
 
@@ -77,12 +95,17 @@ public class BaseInfoShowActivity extends AppCompatActivity {
         long ret = dataSupport.deleteUser(user.getPersonId());
         if (ret > 0) {
             setResult(DELETE_SUCCESS_RESULT_CODE);
+            mHandler.sendEmptyMessageDelayed(1,2000);
+            makeText(this,"删除成功");
         } else {
             setResult(DELETE_FAILED_RESULT_CODE);
+            mHandler.sendEmptyMessageDelayed(2,2000);
+            makeText(this,"删除失败");
         }
-        this.finish();
+
         Log.e(TAG, "删除的返回结果" + ret);
     }
+    Handler mHandler;
 
     public void initView() {
         portraitImageView = findViewById(R.id.base_show_head_img);
@@ -92,5 +115,22 @@ public class BaseInfoShowActivity extends AppCompatActivity {
         genderView = findViewById(R.id.base_show_gender);
         visitedCountView = findViewById(R.id.base_show_recognizer_count);
         phoneNumView = findViewById(R.id.base_show_phone);
+    }
+
+
+    //删除成功的自定义Toast
+    public void makeText(Context context,String text) {
+        Toast customToast = new Toast(context);
+        //获得view的布局
+        View customView = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);
+        TextView textView = customView.findViewById(R.id.show_message_toast);
+        textView.setText(text);
+
+        //设置textView中的文字
+        //设置toast的View,Duration,Gravity最后显示
+        customToast.setView(customView);
+        customToast.setDuration(Toast.LENGTH_SHORT);
+        customToast.setGravity(Gravity.CENTER, 0, 0);
+        customToast.show();
     }
 }
