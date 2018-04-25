@@ -91,7 +91,7 @@ public class PersonDetectService extends Service {
         public void run() {
             while (!mExit){
 
-
+//                Log.e(TAG,"人体检测中");
                 mContext.waitAnyUpdateAll();
                 int [] data  = mUserTracker.getUsers();
                 if (data.length<=0){
@@ -141,11 +141,13 @@ public class PersonDetectService extends Service {
 
     //启动人脸检测服务
     public void startFaceDetect(String type){
-        Log.e(TAG,"当前拥有的人数 " + getCurrentPersonCount());
-        if (getCurrentPersonCount()==1){
-            Intent intent = new Intent(this,FaceDetectService.class);
-            intent.putExtra("startType",type);
-            startService(intent);
+        if (false){
+            Log.e(TAG,"当前拥有的人数 " + getCurrentPersonCount());
+            if (getCurrentPersonCount()==1){
+                Intent intent = new Intent(this,FaceDetectService.class);
+                intent.putExtra("startType",type);
+                startService(intent);
+            }
         }
     }
 

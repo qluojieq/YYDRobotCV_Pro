@@ -1,21 +1,29 @@
-package com.yongyida.yydrobotcv.activity;
+package com.yyd.yydrobotcv.activity;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -142,7 +150,7 @@ public class PersonListActivity extends AppCompatActivity implements OnRequestPe
     @Override
     protected void onResume() {
         super.onResume();
-
+        callpremission();
     }
 
 
@@ -153,7 +161,8 @@ public class PersonListActivity extends AppCompatActivity implements OnRequestPe
     }
 
     public void mainBack(View view) {
-        this.finish();
+        testClosePerson();
+//        this.finish();
     }
 
     public static class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder> implements View.OnClickListener {
@@ -257,7 +266,6 @@ public class PersonListActivity extends AppCompatActivity implements OnRequestPe
                     usersData.clear();
                     usersData = dataSupport.getAllUsers("list");
                     userDataAdapter.notifyDataSetChanged();
-                    makeText(this);
                 }
                 break;
             case NEW_ADD_REQUEST:
@@ -273,19 +281,6 @@ public class PersonListActivity extends AppCompatActivity implements OnRequestPe
 
     }
 
-    //删除成功的自定义Toast
-    public void makeText(Context context) {
-        Toast customToast = new Toast(context);
-        //获得view的布局
-        View customView = LayoutInflater.from(context).inflate(R.layout.custom_toast, null);
-
-        //设置textView中的文字
-        //设置toast的View,Duration,Gravity最后显示
-        customToast.setView(customView);
-        customToast.setDuration(Toast.LENGTH_SHORT);
-        customToast.setGravity(Gravity.CENTER, 0, 0);
-        customToast.show();
-    }
 
     public void testClosePerson() {
         Intent intent = new Intent(this, PersonDetectService.class);
@@ -313,6 +308,86 @@ public class PersonListActivity extends AppCompatActivity implements OnRequestPe
 
         }
         return ret;
+    }
+    //获取权限
+    public void callpremission()
+    {
+        //系统版本号23/6.0之后/api23
+        if (Build.VERSION.SDK_INT >= 23)
+        {
+            //检查有没有所需的权限 PackageManager.PERMISSION_GRANTED：授权了权限
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            {
+                //请求获取所需的权限，第二个参数：需要的权限（可以多个集合）第三个参数：请求码
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUIRE_CODE_CALL_CAMERA);
+                return;
+            }
+        }
+    }
+
+    private final static int REQUIRE_CODE_CALL_CAMERA = 10;
+
+    //权限获取回调的方法
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode)
+        {
+            case REQUIRE_CODE_CALL_CAMERA:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    Log.e("权限log", "回调");
+                } else
+                {
+                    // Permission Denied拒绝
+                    Toast.makeText(this, "CAMERA Denied", Toast.LENGTH_SHORT)
+                            .show();
+                    SharedPreferences gosetting = getSharedPreferences("gosetting", MODE_PRIVATE);
+                    boolean isGoSetting = gosetting.getBoolean("isGoSetting", false);
+                    //用户首次拒绝申请权限时，不需弹窗提示去设置申请权限
+                    if (isGoSetting)
+                    {
+                        //当缺少权限时弹窗提示
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setIcon(R.mipmap.ic_launcher)
+                                .setTitle("缺少权限")
+                                .setMessage("去设置权限")
+                                .setPositiveButton("GoSetting", new DialogInterface.OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i)
+                                    {
+                                        //打开App的设置
+                                        getAppDetailSettingIntent(getBaseContext());
+                                    }
+                                }).show();
+                    }
+                    SharedPreferences.Editor edit = gosetting.edit();
+                    edit.putBoolean("isGoSetting", true).commit();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    //打开App的设置
+    private void getAppDetailSettingIntent(Context context)
+    {
+        Intent localIntent = new Intent();
+        localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (Build.VERSION.SDK_INT >= 9)
+        {
+            localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+            localIntent.setData(Uri.fromParts("package", getPackageName(), null));
+        } else if (Build.VERSION.SDK_INT <= 8)
+        {
+            localIntent.setAction(Intent.ACTION_VIEW);
+            localIntent.setClassName("com.android.settings", "com.android.settings.InstalledAppDetails");
+            localIntent.putExtra("com.android.settings.ApplicationPkgName", getPackageName());
+        }
+        startActivity(localIntent);
     }
 
 }

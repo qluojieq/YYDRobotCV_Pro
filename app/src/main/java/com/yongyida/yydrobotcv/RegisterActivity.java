@@ -16,9 +16,11 @@ import com.yongyida.yydrobotcv.customview.ExitDialog;
 import com.yongyida.yydrobotcv.fragment.RegisterBaseInfoFragment;
 import com.yongyida.yydrobotcv.fragment.RegisterCameraFragment;
 import com.yongyida.yydrobotcv.fragment.RegisterVipFragment;
+import com.yongyida.yydrobotcv.tts.TTSManager;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
+
 
 import java.io.IOException;
 
@@ -38,15 +40,17 @@ public class RegisterActivity extends FragmentActivity {
     int currentStep = 0;
     UserDataSupport userDataSupport;
 
-
     ExitDialog exitDialog;
     ExitDialog checkCameraFrame;
 
     int whichCheck = 1;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TTSManager.bindService(this);
         initSoundPool();
         setContentView(R.layout.register_main);
         registerFrame = findViewById(R.id.register_frame);
@@ -234,6 +238,7 @@ public class RegisterActivity extends FragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
         soundPool.release();
+        TTSManager.unBindService(this);
     }
 
     public void playSound(int type){
@@ -249,6 +254,5 @@ public class RegisterActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
     }
-
 
 }

@@ -15,7 +15,9 @@ import android.graphics.RectF;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,17 +27,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.yongyida.robot.brain.system.ITTSCallback;
 import com.yongyida.yydrobotcv.R;
 import com.yongyida.yydrobotcv.RegisterActivity;
-import com.yongyida.yydrobotcv.camera.CameraBase;
 import com.yongyida.yydrobotcv.camera.ImageUtils;
+import com.yongyida.yydrobotcv.tts.TTSManager;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
 
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import dou.helper.CameraHelper;
 import dou.helper.CameraParams;
@@ -43,7 +45,6 @@ import dou.utils.BitmapUtil;
 import dou.utils.DLog;
 import dou.utils.DeviceUtil;
 import dou.utils.DisplayUtil;
-import dou.utils.ToastUtil;
 import mobile.ReadFace.YMFace;
 import mobile.ReadFace.YMFaceTrack;
 
@@ -99,11 +100,11 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     int sh;
 
     public static Handler mHandler;
-
     public boolean isVoiceOn = false;
 
     //对于每种情况预览帧数进程测试
     int TOTAL_STEP = 10;
+    //从0开始，0,1,2；共三步
     int currentStep = 0;
     int viewCountStep1 = 0;
     int viewCountStep2 = 0;
@@ -112,6 +113,18 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     //注册的Id;
     int personId;
     User registerUser;
+
+
+    // 拍照中的各个步骤的提示语
+    final String ttsString1 = "请正对我，将人脸移入框内";
+    final String ttsString2 = "很好，请抬头";
+    final String ttsString3 = "请录入您的侧脸";
+    // 不在框内的提示语
+    final String ttsStringNOFrame1 = "没有检测到人脸";
+    final String ttsStringNOFrame2 = "请抬头";
+    final String ttsStringNOFrame3 = "请录入你的侧脸";
+    // 步骤走完
+    final String ttsAddSuccess = "人脸录入成功";
 
     @Nullable
     @Override
@@ -126,18 +139,19 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
             public boolean handleMessage(Message msg) {
                 switch (msg.what) {
                     case 0:
-                        playSound();
+                        ttsSpeakHint();
                         hintFaceView.setText("正脸");
                         break;
                     case 1:
-                        playSound();
+                        ttsSpeakHint();
                         hintFaceView.setText("抬头");
                         break;
                     case 2:
-                        playSound();
+                        ttsSpeakHint();
                         hintFaceView.setText("侧脸");
                         break;
                     case 3:
+                        ttsSpeakHint();
                         hintFaceView.setText("完成，跳转");
                         break;
                     case 4://停止，跳转
@@ -145,7 +159,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                         ((RegisterActivity) RegisterCameraFragment.this.getActivity()).setRegisterUser(registerUser, 1);
                         break;
                     case 5://test声音
-                        playSound1(3);
+                        ttsSpeakWarn();
                         break;
                     case 6:
                         ((RegisterActivity) RegisterCameraFragment.this.getActivity()).finish();
@@ -176,10 +190,8 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
 
     }
 
-    void playSound() {
-        isVoiceOn = true;
-        ((RegisterActivity) getActivity()).playSound(2);
-    }
+
+    ///使用soundPool发声
     void playSound1(int type) {//咔嚓
         ((RegisterActivity) getActivity()).playSound(type);
     }
@@ -414,6 +426,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
             YMFace ymFace = faces.get(0);
             if (isFaceIn(ymFace)) {
                 noPersonCount = 0;
+                voiceWarnCount = 0;
             } else {
                 noPersonDetect();
                 return faces;
@@ -423,7 +436,6 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                 Log.e(TAG, "脸的位置测试： 正脸");
                 if (viewCountStep1 == TOTAL_STEP) {
                     currentStep++;
-                    playSound1(1);
                     mHandler.sendEmptyMessageDelayed(1,500);
                     viewCountStep2 = 0;
                     addFace1(bytes, ymFace.getRect());
@@ -433,7 +445,6 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                 if (viewCountStep2 == TOTAL_STEP) {
                     viewCountStep3 = 0;
                     currentStep++;
-                    playSound1(1);
                     mHandler.sendEmptyMessageDelayed(2,500);
                     int i = faceTrack.updatePerson(personId, 0);
                     Log.e(TAG, "注册侧脸时的返回值 " + i);
@@ -444,7 +455,6 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                 if (viewCountStep3 == TOTAL_STEP) {
                     currentStep++;
                     viewCountStep4 = 0;
-                    playSound1(1);
                     mHandler.sendEmptyMessageDelayed(3,500);
                     int i = faceTrack.updatePerson(personId, 0);
                     Log.e(TAG, "注册抬头时的返回值 " + i);
@@ -608,4 +618,62 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     }
 
 
+    ITTSCallback ttsCallback = new ITTSCallback.Stub() {
+        @Override
+        public void OnBegin() throws RemoteException {
+            Log.e(TAG,"tts begin");
+            isVoiceOn = true;
+        }
+
+        @Override
+        public void OnPause() throws RemoteException {
+            Log.e(TAG,"tts pause");
+            isVoiceOn = false;
+        }
+
+        @Override
+        public void OnResume() throws RemoteException {
+            Log.e(TAG,"tts begin");
+            isVoiceOn = true;
+        }
+
+        @Override
+        public void OnComplete(String error, String tag) throws RemoteException {
+            Log.e(TAG,"tts complete");
+            isVoiceOn = false;
+        }
+    };
+
+    public void ttsSpeakHint(){
+        String stringSpeak = "";
+        switch (currentStep){
+            case 0:
+                stringSpeak = ttsString1;
+                break;
+            case 1:
+                stringSpeak = ttsString2;
+                break;
+            case 2:
+                stringSpeak = ttsString3;
+                break;
+            case 3:
+                stringSpeak = ttsAddSuccess;
+        }
+        TTSManager.TTS(stringSpeak,ttsCallback);
+    }
+    public void ttsSpeakWarn(){
+        String stringSpeak = "";
+        switch (currentStep){
+            case 0:
+                stringSpeak = ttsStringNOFrame1;
+                break;
+            case 1:
+                stringSpeak = ttsStringNOFrame2;
+                break;
+            case 2:
+                stringSpeak = ttsStringNOFrame3;
+                break;
+        }
+        TTSManager.TTS(stringSpeak,ttsCallback);
+    }
 }

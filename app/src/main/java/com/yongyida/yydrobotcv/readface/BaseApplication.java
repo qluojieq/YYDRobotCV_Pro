@@ -2,6 +2,9 @@ package com.yongyida.yydrobotcv.readface;
 
 import android.app.Application;
 import android.content.res.Configuration;
+import android.util.Log;
+
+import com.yongyida.yydrobotcv.tts.TTSManager;
 
 import mobile.ReadFace.YMUtil;
 
@@ -10,6 +13,7 @@ import mobile.ReadFace.YMUtil;
  * Created by mac on 16/8/15.
  */
 public class BaseApplication extends Application {
+    private static final String TAG = BaseApplication.class.getSimpleName();
 
     private static BaseApplication instence;
 
@@ -30,6 +34,7 @@ public class BaseApplication extends Application {
 //        DLog.mSwitch = false;
 //        DLog.mWrite = true;
         YMUtil.setDebug(true);
+        Log.e(TAG,"application onCreate");
     }
 
     public static BaseApplication getAppContext() {

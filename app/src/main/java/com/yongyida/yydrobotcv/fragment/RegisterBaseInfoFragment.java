@@ -310,6 +310,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     public void switchTable(int position) {
         switch (position) {
             case 1:
+                nextStepBtn.setBackgroundResource(R.mipmap.ic_steps);
                 stepHintView.setImageResource(R.mipmap.info_step_1);
                 phoneTableView.setVisibility(View.VISIBLE);
                 phoneNumView.setFocusable(true);
@@ -320,6 +321,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 birthdayTableView.setVisibility(View.INVISIBLE);
                 break;
             case 2:
+                nextStepBtn.setBackgroundResource(R.mipmap.ic_steps);
                 stepHintView.setImageResource(R.mipmap.info_step_2);
                 phoneTableView.setVisibility(View.INVISIBLE);
                 nameTableView.setVisibility(View.VISIBLE);
@@ -330,17 +332,18 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 birthdayTableView.setVisibility(View.INVISIBLE);
                 break;
             case 3:
+                nextStepBtn.setBackgroundResource(R.mipmap.ic_steps);
                 stepHintView.setImageResource(R.mipmap.info_step_3);
                 phoneTableView.setVisibility(View.INVISIBLE);
                 nameTableView.setVisibility(View.INVISIBLE);
                 genderTableView.setVisibility(View.VISIBLE);
                 birthdayTableView.setVisibility(View.INVISIBLE);
-                nextStepBtn.setBackgroundResource(R.mipmap.bg_finish);
                 if (!TextUtils.isEmpty(registerUser2.getAge())) {
                     birthDayChoiceFragment.setCurrentDate(registerUser2.getAge());
                 }
                 break;
             case 4:
+                nextStepBtn.setBackgroundResource(R.mipmap.ic_finish);
                 stepHintView.setImageResource(R.mipmap.info_step_4);
                 phoneTableView.setVisibility(View.INVISIBLE);
                 nameTableView.setVisibility(View.INVISIBLE);
@@ -348,7 +351,15 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 birthdayTableView.setVisibility(View.VISIBLE);
                 break;
             case 5:
-                ((RegisterActivity) this.getActivity()).registerVipRate(null);
+                saveData();
+                long ret = ((RegisterActivity)this.getActivity()).doEnd();
+                if (ret>0){
+                    this.getActivity().setResult(RegisterActivity.ADD_SUCCESS_RESULT_CODE);
+                    this.getActivity().finish();
+                }else {
+
+                }
+                this.getActivity().finish();
                 break;
         }
     }
