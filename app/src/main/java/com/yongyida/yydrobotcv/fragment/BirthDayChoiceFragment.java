@@ -48,7 +48,7 @@ public class BirthDayChoiceFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_birthday_choice,container,false);
+        View view = inflater.inflate(R.layout.custom_birthday_choice_fragment,container,false);
         wv_year = view.findViewById(R.id.choice_year);
         wv_year.setTextSize(16);
         wv_year.setTextColorCenter(getResources().getColor(R.color.colorTextWrite));

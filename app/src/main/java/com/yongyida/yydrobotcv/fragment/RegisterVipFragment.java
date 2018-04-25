@@ -1,7 +1,6 @@
 package com.yongyida.yydrobotcv.fragment;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -9,9 +8,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
 
@@ -40,7 +37,7 @@ public class RegisterVipFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
         registerUser = new User();
-        View view = inflater.inflate(R.layout.fragment_vipinfo,container,false);
+        View view = inflater.inflate(R.layout.enroll__vipinfo_fragment,container,false);
 //        return super.onCreateView(inflater, container, savedInstanceState);
          vipChoice = view.findViewById(R.id.vip_choice);
         btnFinish = view.findViewById(R.id.btn_finsih);

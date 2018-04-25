@@ -116,7 +116,7 @@ public class PersonDetectService extends Service {
                         oneTime[i] = 0;
                         oneTimeGone[i]++;
                         if (oneTimeGone[i]==1){
-                         startFaceDetect("stop");
+//                         startFaceDetect("stop");
                             CommonUtils.serviceToast(PersonDetectService.this,"离开");
                          Log.e(TAG,"人离开" + i);
                         }
@@ -141,7 +141,7 @@ public class PersonDetectService extends Service {
 
     //启动人脸检测服务
     public void startFaceDetect(String type){
-        if (false){
+        if (true){
             Log.e(TAG,"当前拥有的人数 " + getCurrentPersonCount());
             if (getCurrentPersonCount()==1){
                 Intent intent = new Intent(this,FaceDetectService.class);

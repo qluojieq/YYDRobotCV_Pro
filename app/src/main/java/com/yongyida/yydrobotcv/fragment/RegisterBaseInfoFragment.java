@@ -75,12 +75,12 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     //    private  String regPhonNum = "^1[3|4|5|7|8][0-9]\\d{4,8}$";
     private String regPhonNum = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[013678])|(18[0,5-9]))\\d{8}$";//电话号码
 
-    private String regName = "^[(a-zA-Z0-9\\u4e00-\\u9fa5)]{1,8}$";//取名规则（汉字、数字、字母）
+    private String regName = "^[(a-zA-Z0-9\\u4e00-\\u9fa5)]{1,6}$";//取名规则（汉字、数字、字母）
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_baseinfo, container, false);
+        View view = inflater.inflate(R.layout.enroll__baseinfo_fragment, container, false);
         initView(view);
         fm = getFragmentManager();
         ft = fm.beginTransaction();
@@ -354,11 +354,12 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 saveData();
                 long ret = ((RegisterActivity)this.getActivity()).doEnd();
                 if (ret>0){
-                    this.getActivity().setResult(RegisterActivity.ADD_SUCCESS_RESULT_CODE);
+                    ((RegisterActivity)this.getActivity()).setResult(RegisterActivity.ADD_SUCCESS_RESULT_CODE);
                     this.getActivity().finish();
                 }else {
 
                 }
+
                 this.getActivity().finish();
                 break;
         }

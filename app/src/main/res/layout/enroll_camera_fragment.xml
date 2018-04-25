@@ -11,8 +11,8 @@
         android:id="@+id/refer_face_frame"
         android:src="@mipmap/ic_face_frame"
         android:layout_centerInParent="true"
-        android:layout_width="156dp"
-        android:layout_height="156dp" />
+        android:layout_width="200dp"
+        android:layout_height="200dp" />
 
     <TextView
         android:id="@+id/left_refer_frame"
@@ -61,6 +61,6 @@
         android:layout_height="wrap_content"
         android:text="请将人脸移入框内"
         android:textSize="@dimen/add_face_hint_text"
-        android:textColor="@color/colorWarn"
+        android:textColor="@color/colorTextWrite"
         />
 </RelativeLayout>

@@ -9,6 +9,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,13 +29,13 @@ public class BaseInfoShowActivity extends AppCompatActivity {
     public static final int DELETE_SUCCESS_RESULT_CODE = 1;
     public static final int DELETE_FAILED_RESULT_CODE = -1;
 
-    ImageView portraitImageView;
-    TextView vipRateView;
-    TextView nameView;
-    TextView birthdayView;
-    TextView genderView;
-    TextView visitedCountView;
-    TextView phoneNumView;
+    ImageView ivPortraitImage;
+    TextView tvVipRate;
+    TextView tvName;
+    TextView tvBirthday;
+    TextView tvGender;
+    TextView tvVisitedCount;
+    TextView tvPhoneNum;
     User user;
     UserDataSupport dataSupport;
 
@@ -42,7 +43,7 @@ public class BaseInfoShowActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base_info_show);
+        setContentView(R.layout.main_user_info_activity);
         user = (User) getIntent().getSerializableExtra("one_user");
         dataSupport = UserDataSupport.getInstance(this);
         initView();
@@ -77,13 +78,18 @@ public class BaseInfoShowActivity extends AppCompatActivity {
 
         RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), bigMap);
         roundedBitmapDrawable.setCircular(true);
-        portraitImageView.setImageDrawable(roundedBitmapDrawable);
-        nameView.setText("姓名：" + user.getUserName());
-        genderView.setText("性别：" + user.getGender());
-        phoneNumView.setText("电话：" + user.getPhoneNum());
-        birthdayView.setText("生日：" + user.getBirthDay());
-        visitedCountView.setText("被访问次数：" + user.getIdentifyCount());
-        vipRateView.setText(user.getVipRate());
+        ivPortraitImage.setImageDrawable(roundedBitmapDrawable);
+        tvName.setText("姓名：" + user.getUserName());
+        tvGender.setText("性别：" + user.getGender());
+        tvPhoneNum.setText("电话：" + user.getPhoneNum());
+        tvBirthday.setText("生日：" + user.getBirthDay());
+        String identifyCount = user.getIdentifyCount();
+        if (TextUtils.isEmpty(identifyCount)){
+            identifyCount = "0";
+        }
+        tvVisitedCount.setText("被访问次数：" + identifyCount);
+
+        tvVipRate.setText(user.getVipRate());
     }
 
     public void baseinfoBace(View view) {
@@ -108,13 +114,13 @@ public class BaseInfoShowActivity extends AppCompatActivity {
     Handler mHandler;
 
     public void initView() {
-        portraitImageView = findViewById(R.id.base_show_head_img);
-        vipRateView = findViewById(R.id.base_show_vip_rate);
-        nameView = findViewById(R.id.base_show_name);
-        birthdayView = findViewById(R.id.base_show_birthday);
-        genderView = findViewById(R.id.base_show_gender);
-        visitedCountView = findViewById(R.id.base_show_recognizer_count);
-        phoneNumView = findViewById(R.id.base_show_phone);
+        ivPortraitImage = findViewById(R.id.base_show_head_img);
+        tvVipRate = findViewById(R.id.base_show_vip_rate);
+        tvName = findViewById(R.id.base_show_name);
+        tvBirthday = findViewById(R.id.base_show_birthday);
+        tvGender = findViewById(R.id.base_show_gender);
+        tvVisitedCount = findViewById(R.id.base_show_recognizer_count);
+        tvPhoneNum = findViewById(R.id.base_show_phone);
     }
 
 

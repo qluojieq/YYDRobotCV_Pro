@@ -52,7 +52,7 @@ public class RegisterActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         TTSManager.bindService(this);
         initSoundPool();
-        setContentView(R.layout.register_main);
+        setContentView(R.layout.main_enroll_activity);
         registerFrame = findViewById(R.id.register_frame);
         registerFrame.removeAllViews();
         fm = getFragmentManager();

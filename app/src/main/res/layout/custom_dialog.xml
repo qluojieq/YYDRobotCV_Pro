@@ -24,7 +24,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/cancel_confirm"
-                android:background="@mipmap/btn_qd"
+                android:background="@mipmap/btn_qx"
                 android:gravity="center"
                 android:text="确 认"
                 android:textSize="14sp"
@@ -34,7 +34,7 @@
             <TextView
                 android:id="@+id/cancel_close"
                 android:layout_marginLeft="38dp"
-                android:background="@mipmap/btn_qd"
+                android:background="@mipmap/btn_qx"
                 android:gravity="center"
                 android:text="取 消"
                 android:textSize="14sp"

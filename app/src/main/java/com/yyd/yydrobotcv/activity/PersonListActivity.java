@@ -83,7 +83,7 @@ public class PersonListActivity extends AppCompatActivity implements OnRequestPe
                 return false;
             }
         });
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity);
         dataSupport =  UserDataSupport.getInstance(this);
         userRecycleView = (RecyclerView) findViewById(R.id.user_recycle);
         mSiderBar = findViewById(R.id.side_bar);
@@ -187,7 +187,7 @@ public class PersonListActivity extends AppCompatActivity implements OnRequestPe
         @NonNull
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.layout_user_item, parent, false);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.main_recycle_item, parent, false);
             view.setOnClickListener(this);
             MyViewHolder holder = new MyViewHolder(view);
             return holder;

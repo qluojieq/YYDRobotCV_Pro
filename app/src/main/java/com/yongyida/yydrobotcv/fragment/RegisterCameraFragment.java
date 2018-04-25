@@ -15,7 +15,6 @@ import android.graphics.RectF;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
@@ -130,7 +129,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         Log.e(TAG, "onCreateView");
-        View view = inflater.inflate(R.layout.fragment_camera, container, false);
+        View view = inflater.inflate(R.layout.enroll_camera_fragment, container, false);
         initCamera(view);
         registerUser = new User();
         faceFrame = BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_face_frame);

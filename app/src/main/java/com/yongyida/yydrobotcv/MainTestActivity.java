@@ -31,7 +31,7 @@ public class MainTestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_test);
+        setContentView(R.layout.main_test_activity);
     }
 
     public void startPersonDetect(View view) {
