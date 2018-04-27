@@ -45,7 +45,10 @@ public class RegisterActivity extends FragmentActivity {
 
     int whichCheck = 1;
 
-
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
