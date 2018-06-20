@@ -13,7 +13,9 @@
         android:layout_marginRight="17dp"
         android:layout_alignParentEnd="true"
         android:id="@+id/btn_finsih"
-        android:background="@mipmap/ic_finish"
+        android:text="完成"
+        android:gravity="center"
+        android:background="@drawable/btn_next_bg"
         android:layout_width="65dp"
         android:layout_height="30dp" />
     <RelativeLayout

@@ -5,12 +5,17 @@
 
     <TextView
         android:id="@+id/btn_info_next"
-        android:layout_width="@dimen/btn_main_width"
-        android:layout_height="@dimen/btn_main_height"
+        android:text="下一步"
+
+        android:textColor="@color/colorTextWrite"
+        android:textSize="@dimen/btn_next_text_size"
+        android:gravity="center"
+        android:layout_width="@dimen/btn_next_width"
+        android:layout_height="@dimen/btn_next_height"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/btn_main_margin_top"
         android:layout_marginRight="@dimen/btn_main_margin_side"
-        android:background="@mipmap/ic_steps" />
+        android:background="@drawable/btn_next_bg" />
 
 
 
@@ -79,7 +84,8 @@
                 android:hint="请输入手机号码"
                 android:textColorHint="@color/colorEditHint"
                 android:textColor="@color/colorTextWrite"
-                android:gravity="center"
+                android:textSize="@dimen/text_size_base_info"
+                android:gravity="center|left"
                 android:layout_width="150dp"
                 android:layout_height="35dp" />
                 </LinearLayout>

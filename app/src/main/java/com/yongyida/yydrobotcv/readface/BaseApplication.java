@@ -34,6 +34,7 @@ public class BaseApplication extends Application {
 //        DLog.mSwitch = false;
 //        DLog.mWrite = true;
         YMUtil.setDebug(true);
+        TTSManager.bindService(this);
         Log.e(TAG,"application onCreate");
     }
 

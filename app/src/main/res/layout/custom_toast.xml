@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:background="@color/colorToast"
+    android:background="@drawable/toast_bg"
     android:orientation="vertical"
     android:layout_height="wrap_content">
     <ImageView
@@ -16,11 +16,11 @@
         android:layout_marginTop="13dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/reference_toast"
-        android:text="删除成功"
+        android:text="删除成功 !"
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="35dp"
-        android:textColor="@color/colorTextWrite"
+        android:textColor="@color/colorTextBlack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

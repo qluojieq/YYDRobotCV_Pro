@@ -8,6 +8,9 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
+        multiDexEnabled true
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -17,6 +20,10 @@ android {
 
         ndk {
             abiFilters( "armeabi-v7a")
+        }
+
+        dexOptions {
+            javaMaxHeapSize "4g"
         }
     }
     buildTypes {
@@ -37,19 +44,44 @@ android {
     }
 
 }
+repositories{
+    flatDir {
+        dirs 'libs'
+    }
+}
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    implementation 'com.android.support:recyclerview-v7:27.1.0'
+//    implementation 'com.android.support:appcompat-v7:27.1.0'
+    //    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    //    testImplementation 'junit:junit:4.12'
+    //    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    //    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation files('libs/libreadface.jar')
-    implementation 'com.contrarywind:Android-PickerView:3.2.7'
-    //    compile 'com.contrarywind:Android-PickerView:4.1.2'//请不要更新
-    implementation 'com.bigkoo:quicksidebar:1.0.3'
     implementation files('libs/OrbbecSDK_v1.1.4_170224_pro.jar')
     implementation files('libs/pinyin4j-2.5.0.jar')
+    compile(name: 'recyclerview-v7-27.1.0', ext: 'aar')
+    compile(name: 'Android-PickerView-3.2.7', ext: 'aar')
+    //    implementation 'com.contrarywind:Android-PickerView:3.2.7'
+    //    compile 'com.contrarywind:Android-PickerView:4.1.2'//请不要更新
+    compile(name: 'quicksidebar-1.0.3', ext: 'aar')
+    compile(name: 'viewmodel-1.1.0', ext: 'aar')
+    compile(name: 'livedata-core-1.1.0', ext: 'aar')
+    compile(name: 'runtime-1.1.0', ext: 'aar')
+    compile(name: 'core-runtime-1.1.0', ext: 'aar')
+
+    compile(name: 'support-fragment-27.1.0', ext: 'aar')
+    compile(name: 'support-core-ui-27.1.0', ext: 'aar')
+    compile(name: 'support-vector-drawable-27.1.0', ext: 'aar')
+    compile(name: 'animated-vector-drawable-27.1.0', ext: 'aar')
+    compile(name: 'appcompat-v7-27.1.0', ext: 'aar')
+    compile(name: 'support-compat-27.1.0', ext: 'aar')
+    compile(name: 'support-core-utils-27.1.0', ext: 'aar')
+    implementation files('libs/support-annotations-27.1.0.jar')
+    implementation files('libs/common-1.1.0.jar')
+    implementation files('libs/core-common-1.1.0.jar')
+
+    compile(name: 'communicate_app-debug-1.1.0', ext: 'aar')
+    compile(name: 'communicate_app_client-debug-1.1.0', ext: 'aar')
+    compile(name: 'communicate_app_hardware-debug-1.1.0', ext: 'aar')
 }

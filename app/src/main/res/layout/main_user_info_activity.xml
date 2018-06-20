@@ -20,8 +20,8 @@
         android:layout_marginTop="@dimen/btn_main_margin_top"
         android:layout_marginRight="@dimen/btn_main_margin_side"
         android:background="@mipmap/ic_delete"
-        android:layout_width="@dimen/btn_main_width"
-        android:layout_height="@dimen/btn_main_height"
+        android:layout_width="@dimen/btn_info_delete_width"
+        android:layout_height="@dimen/btn_info_delete_height"
         android:layout_alignParentEnd="true"
         android:onClick="baseinfoDelete" />
 

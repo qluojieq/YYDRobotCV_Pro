@@ -29,6 +29,7 @@ public class FaceDetectService extends Service implements PreviewListener{
     Context mContext;
 
 
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.

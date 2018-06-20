@@ -310,7 +310,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     public void switchTable(int position) {
         switch (position) {
             case 1:
-                nextStepBtn.setBackgroundResource(R.mipmap.ic_steps);
+                nextStepBtn.setText("下一步");
                 stepHintView.setImageResource(R.mipmap.info_step_1);
                 phoneTableView.setVisibility(View.VISIBLE);
                 phoneNumView.setFocusable(true);
@@ -321,7 +321,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 birthdayTableView.setVisibility(View.INVISIBLE);
                 break;
             case 2:
-                nextStepBtn.setBackgroundResource(R.mipmap.ic_steps);
+                nextStepBtn.setText("下一步");
                 stepHintView.setImageResource(R.mipmap.info_step_2);
                 phoneTableView.setVisibility(View.INVISIBLE);
                 nameTableView.setVisibility(View.VISIBLE);
@@ -332,7 +332,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 birthdayTableView.setVisibility(View.INVISIBLE);
                 break;
             case 3:
-                nextStepBtn.setBackgroundResource(R.mipmap.ic_steps);
+                nextStepBtn.setText("下一步");
                 stepHintView.setImageResource(R.mipmap.info_step_3);
                 phoneTableView.setVisibility(View.INVISIBLE);
                 nameTableView.setVisibility(View.INVISIBLE);
@@ -343,7 +343,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 }
                 break;
             case 4:
-                nextStepBtn.setBackgroundResource(R.mipmap.ic_finish);
+                nextStepBtn.setText("完成");
                 stepHintView.setImageResource(R.mipmap.info_step_4);
                 phoneTableView.setVisibility(View.INVISIBLE);
                 nameTableView.setVisibility(View.INVISIBLE);

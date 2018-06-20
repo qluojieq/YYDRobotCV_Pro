@@ -53,7 +53,6 @@ public class RegisterActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TTSManager.bindService(this);
         initSoundPool();
         setContentView(R.layout.main_enroll_activity);
         registerFrame = findViewById(R.id.register_frame);
@@ -241,7 +240,6 @@ public class RegisterActivity extends FragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
         soundPool.release();
-        TTSManager.unBindService(this);
     }
 
     public void playSound(int type){
