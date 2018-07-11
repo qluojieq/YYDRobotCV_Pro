@@ -33,7 +33,8 @@ public class BaseApplication extends Application {
         instence = this;
 //        DLog.mSwitch = false;
 //        DLog.mWrite = true;
-        YMUtil.setDebug(true);
+//        YMUtil.setDebug(true);
+//        YMUtil.
         TTSManager.bindService(this);
         Log.e(TAG,"application onCreate");
     }

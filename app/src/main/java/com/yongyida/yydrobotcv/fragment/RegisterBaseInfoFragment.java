@@ -32,9 +32,12 @@ import com.yongyida.yydrobotcv.RegisterActivity;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import dou.utils.ToastUtil;
+
+import static android.view.View.OVER_SCROLL_ALWAYS;
 
 /**
  * @author Brandon on 2018/3/15
@@ -71,12 +74,6 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     ArrayList<String> genderList;
 
     public static Handler mHandler;
-
-    //    private  String regPhonNum = "^1[3|4|5|7|8][0-9]\\d{4,8}$";
-    private String regPhonNum = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[013678])|(18[0,5-9]))\\d{8}$";//电话号码
-
-    private String regName = "^[(a-zA-Z0-9\\u4e00-\\u9fa5)]{1,6}$";//取名规则（汉字、数字、字母）
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -128,19 +125,31 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     public void onClick(View v) {
         Log.e(TAG, "next step is been pressed 当前步数" + currentStep);
         if (currentStep == 2) {
-            if (TextUtils.isEmpty(nameView.getText())) {
+            String tempName = nameView.getText().toString();
+            int nameLength = 0;
+            try {
+                nameLength  = tempName.getBytes("gbk").length;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            if (TextUtils.isEmpty(tempName)) {
                 new ToastUtil(this.getActivity()).showSingletonToast("名字不能空缺 ");
                 return;
-            } else if (!CommonUtils.isMatch(nameView.getText().toString(), regName)) {
+            } else if (!CommonUtils.isMatchName(tempName)) {
                 new ToastUtil(this.getActivity()).showSingletonToast("名字不符合规则");
+                return;
+            } else if (nameLength>12){
+                Log.e(TAG,"开始"+ tempName + "结束" + "length " + tempName.length() + " byteSize " + tempName.getBytes().length);
+                new ToastUtil(this.getActivity()).showSingletonToast("名字不能超过12个字符");
                 return;
             }
         }
         if (currentStep == 1) {
-            if (TextUtils.isEmpty(phoneNumView.getText())) {
+            String phoneNum = phoneNumView.getText().toString();
+            if (TextUtils.isEmpty(phoneNum)) {
                 new ToastUtil(this.getActivity()).showSingletonToast("手机号码不能空缺 ");
                 return;
-            } else if (!CommonUtils.isMatch(phoneNumView.getText().toString(),regPhonNum)) {
+            } else if (!CommonUtils.isMatchPhone(phoneNum)){
                 new ToastUtil(this.getActivity()).showSingletonToast("手机号码不符合规则");
                 return;
             }
@@ -206,7 +215,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                boolean isMatch = CommonUtils.isMatch(s.toString(), regPhonNum);
+                boolean isMatch = CommonUtils.isMatchPhone(s.toString());
                 if (isMatch) {
                     mHandler.sendEmptyMessage(1);
                 } else {
@@ -247,7 +256,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                boolean isMatch = CommonUtils.isMatch(s.toString(), regName);
+                boolean isMatch = CommonUtils.isMatchName(s.toString());
                 if (isMatch) {
                     mHandler.sendEmptyMessage(3);
                 } else {
@@ -274,7 +283,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                         && KeyEvent.ACTION_DOWN == event.getAction())) {
                     Log.e(TAG, "actionId " + actionId + "event " + EditorInfo.IME_ACTION_NEXT);
                     nextStepBtn.performClick();
-                    if (!TextUtils.isEmpty(nameView.getText()) && CommonUtils.isMatch(nameView.getText().toString(), regName)) {
+                    if (!TextUtils.isEmpty(nameView.getText()) && CommonUtils.isMatchName(nameView.getText().toString())) {
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.toggleSoftInputFromWindow(v.getWindowToken(), 0, 0);
                     }

@@ -77,6 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
             <EditText
+                android:nestedScrollingEnabled="true"
                 android:singleLine="true"
                 android:background="@mipmap/ic_edit_bg"
                 android:id="@+id/edit_phone"
@@ -85,6 +86,7 @@
                 android:textColorHint="@color/colorEditHint"
                 android:textColor="@color/colorTextWrite"
                 android:textSize="@dimen/text_size_base_info"
+                android:inputType="phone"
                 android:gravity="center|left"
                 android:layout_width="150dp"
                 android:layout_height="35dp" />
@@ -120,6 +122,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
             <EditText
+                android:nestedScrollingEnabled="true"
                 android:singleLine="true"
                 android:background="@mipmap/ic_edit_bg"
                 android:hint="数字、中文和字母"

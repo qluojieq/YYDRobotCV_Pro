@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,8 +40,11 @@ public class PersonListActivity extends AppCompatActivity {
 
     public void startPersonDetect(View view) {
         Log.e(TAG,"开始人体检测");
-        Intent intent = new Intent(PersonListActivity.this,PersonDetectService.class);
-        startService(intent);
+
+        ComponentName componentName = new ComponentName("com.yydrobo.yydrobofggame","com.yydrobo.yydrobofggame.activity.StartActivity");
+        Intent intent = new Intent();
+        intent.setComponent(componentName);
+        startActivity(intent);
     }
 
     public void startPersonRegist(View view) {
