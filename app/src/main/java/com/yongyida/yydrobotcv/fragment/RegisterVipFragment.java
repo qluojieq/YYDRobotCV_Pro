@@ -17,7 +17,9 @@ import com.bigkoo.pickerview.lib.WheelView;
 import com.yongyida.yydrobotcv.R;
 import com.yongyida.yydrobotcv.RegisterActivity;
 import com.yongyida.yydrobotcv.useralbum.User;
+import com.yongyida.yydrobotcv.utils.CommonUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import dou.utils.ToastUtil;
@@ -100,6 +102,32 @@ public class RegisterVipFragment extends Fragment implements View.OnClickListene
 
                 break;
         }
+    }
+
+    // 名字规范判定
+    public boolean checkName(String name){
+        boolean ret = false;
+        int bytLength  = 0;
+
+        try {
+            bytLength = name.getBytes("gbk").length;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+        //
+        if (bytLength>12){
+            Log.e(TAG,"超出限制");
+            return false;
+        }
+
+        if (CommonUtils.isMatchName(name)){// 判断特殊字符
+
+        }
+
+
+        return ret;
     }
 
 

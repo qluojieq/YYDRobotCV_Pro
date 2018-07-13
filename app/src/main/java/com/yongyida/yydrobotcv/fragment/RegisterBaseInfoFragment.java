@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
@@ -51,7 +52,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     User registerUser2;
     WheelView genderWheelView;
     LinearLayout genderTableView;
-    LinearLayout nameTableView;
+    RelativeLayout nameTableView;
     LinearLayout phoneTableView;
     LinearLayout isStepClickAbleView;
     FrameLayout birthdayTableView;
@@ -74,6 +75,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     ArrayList<String> genderList;
 
     public static Handler mHandler;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -95,12 +97,10 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                         warnTextPhone.setVisibility(View.VISIBLE);
                         break;
                     case 3:
-                        Log.e(TAG, "符合条件");
-                        warnTextName.setVisibility(View.GONE);
-                        break;
-                    case 4:
                         Log.e(TAG, "不符合条件");
-                        warnTextName.setVisibility(View.VISIBLE);
+//                        warnTextName.setVisibility(View.VISIBLE);
+                        msg.obj.toString();
+                        warnTextName.setText(msg.obj.toString());
                         break;
 
                 }
@@ -125,23 +125,22 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     public void onClick(View v) {
         Log.e(TAG, "next step is been pressed 当前步数" + currentStep);
         if (currentStep == 2) {
-            String tempName = nameView.getText().toString();
-            int nameLength = 0;
-            try {
-                nameLength  = tempName.getBytes("gbk").length;
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            if (TextUtils.isEmpty(tempName)) {
-                new ToastUtil(this.getActivity()).showSingletonToast("名字不能空缺 ");
-                return;
-            } else if (!CommonUtils.isMatchName(tempName)) {
-                new ToastUtil(this.getActivity()).showSingletonToast("名字不符合规则");
-                return;
-            } else if (nameLength>12){
-                Log.e(TAG,"开始"+ tempName + "结束" + "length " + tempName.length() + " byteSize " + tempName.getBytes().length);
-                new ToastUtil(this.getActivity()).showSingletonToast("名字不能超过12个字符");
-                return;
+
+            int checkNameResult = CommonUtils.checkoutName(nameView.getText().toString());
+            switch (checkNameResult) {
+                case -1:
+                    new ToastUtil(this.getActivity()).showSingletonToast("名字不能为空 ");
+                    return;
+                case -12:
+                    new ToastUtil(this.getActivity()).showSingletonToast("超出字符长度");
+                    return;
+                case -11:
+                    new ToastUtil(this.getActivity()).showSingletonToast("不能有特殊字符");
+                    return;
+                case -10:
+                    new ToastUtil(this.getActivity()).showSingletonToast("不支持中英文混合名");
+                    return;
+
             }
         }
         if (currentStep == 1) {
@@ -149,7 +148,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
             if (TextUtils.isEmpty(phoneNum)) {
                 new ToastUtil(this.getActivity()).showSingletonToast("手机号码不能空缺 ");
                 return;
-            } else if (!CommonUtils.isMatchPhone(phoneNum)){
+            } else if (!CommonUtils.isMatchPhone(phoneNum)) {
                 new ToastUtil(this.getActivity()).showSingletonToast("手机号码不符合规则");
                 return;
             }
@@ -225,9 +224,9 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(nameView.getText())){
+                if (TextUtils.isEmpty(nameView.getText())) {
                     isStepClickAbleView.setClickable(false);
-                }else {
+                } else {
                     isStepClickAbleView.setClickable(true);
                 }
             }
@@ -256,19 +255,37 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                boolean isMatch = CommonUtils.isMatchName(s.toString());
-                if (isMatch) {
-                    mHandler.sendEmptyMessage(3);
-                } else {
-                    mHandler.sendEmptyMessage(4);
+                int checkoutResult = CommonUtils.checkoutName(s.toString());
+                Message message = new Message();
+                Log.e(TAG,"字节变化了" + checkoutResult);
+                switch (checkoutResult) {
+                    case -1:
+                        message.obj = "名字不能为空";
+                        break;
+                    case -12:
+                        message.obj = "请重新输入，汉字不超过6个字，英文不超过12个字符";
+                        break;
+                    case -11:
+                        message.obj = "请重新输入，禁止含有特殊字符";
+                        break;
+                    case -10:
+                        message.obj = "请重新输入，不支持中英文混合输入";
+                        break;
+                    case 0:
+                        Log.e(TAG,"没有找到匹配项");
+                        message.obj = "中文不超过6个字符，英文不超过12个字符，不支持中英混合输入";
+                        break;
                 }
+                message.what = 3;
+                mHandler.sendMessage(message);
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(nameView.getText())){
+                if (TextUtils.isEmpty(nameView.getText())) {
                     isStepClickAbleView.setClickable(false);
-                }else {
+                } else {
                     isStepClickAbleView.setClickable(true);
                 }
             }
@@ -361,11 +378,11 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 break;
             case 5:
                 saveData();
-                long ret = ((RegisterActivity)this.getActivity()).doEnd();
-                if (ret>0){
-                    ((RegisterActivity)this.getActivity()).setResult(RegisterActivity.ADD_SUCCESS_RESULT_CODE);
+                long ret = ((RegisterActivity) this.getActivity()).doEnd();
+                if (ret > 0) {
+                    ((RegisterActivity) this.getActivity()).setResult(RegisterActivity.ADD_SUCCESS_RESULT_CODE);
                     this.getActivity().finish();
-                }else {
+                } else {
 
                 }
 
@@ -387,8 +404,5 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
             registerUser2.setBirthDay(birthdayString);
             ((RegisterActivity) this.getActivity()).setRegisterUser(registerUser2, 2);
         }
-
     }
-
-
 }

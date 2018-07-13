@@ -74,7 +74,6 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
 
     private final boolean isDrawFrame = false;
 
-
     public SurfaceView preview_surface;
     public SurfaceView draw_surface;
     TextView hintFaceView;

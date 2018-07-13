@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.yongyida.yydrobotcv.customview.ExitDialog;
 import com.yongyida.yydrobotcv.fragment.RegisterBaseInfoFragment;
@@ -256,4 +258,27 @@ public class RegisterActivity extends FragmentActivity {
         super.onResume();
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_MENU:
+                Log.d(TAG, "menu key clicked!");
+                Toast.makeText(RegisterActivity.this, "菜单键点击", Toast.LENGTH_SHORT).show();
+                break;
+
+            case KeyEvent.KEYCODE_BACK:
+                Log.d(TAG, "back key clicked!");
+                exitDialog.show();
+//                Toast.makeText(RegisterActivity.this, "返回键点击", Toast.LENGTH_SHORT).show();
+                return  false;
+
+
+            default:
+                break;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
 }
