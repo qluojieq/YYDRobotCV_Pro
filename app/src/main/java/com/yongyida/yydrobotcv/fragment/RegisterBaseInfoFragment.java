@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -31,14 +33,12 @@ import com.bigkoo.pickerview.lib.WheelView;
 import com.yongyida.yydrobotcv.R;
 import com.yongyida.yydrobotcv.RegisterActivity;
 import com.yongyida.yydrobotcv.useralbum.User;
+import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import dou.utils.ToastUtil;
-
-import static android.view.View.OVER_SCROLL_ALWAYS;
 
 /**
  * @author Brandon on 2018/3/15
@@ -52,7 +52,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     User registerUser2;
     WheelView genderWheelView;
     LinearLayout genderTableView;
-    RelativeLayout nameTableView;
+    LinearLayout nameTableView;
     LinearLayout phoneTableView;
     LinearLayout isStepClickAbleView;
     FrameLayout birthdayTableView;
@@ -126,7 +126,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
         Log.e(TAG, "next step is been pressed 当前步数" + currentStep);
         if (currentStep == 2) {
 
-            int checkNameResult = CommonUtils.checkoutName(nameView.getText().toString());
+            int checkNameResult = CommonUtils.checkoutName(nameView.getText().toString(),getActivity());
             switch (checkNameResult) {
                 case -1:
                     new ToastUtil(this.getActivity()).showSingletonToast("名字不能为空 ");
@@ -140,6 +140,9 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 case -10:
                     new ToastUtil(this.getActivity()).showSingletonToast("不支持中英文混合名");
                     return;
+                case -9:
+                    new ToastUtil(this.getActivity()).showSingletonToast("用户名已被使用");
+                    return;
 
             }
         }
@@ -150,6 +153,9 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 return;
             } else if (!CommonUtils.isMatchPhone(phoneNum)) {
                 new ToastUtil(this.getActivity()).showSingletonToast("手机号码不符合规则");
+                return;
+            } else if (UserDataSupport.getInstance(this.getActivity()).checkPhoneNum(phoneNum)){
+                new ToastUtil(this.getActivity()).showSingletonToast("手机号码已经被注册");
                 return;
             }
         }
@@ -202,10 +208,36 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
         genderTableView = view.findViewById(R.id.insert_gender_tap);
         nameTableView = view.findViewById(R.id.insert_name_tap);
         phoneTableView = view.findViewById(R.id.insert_phone_tap);
+
+
+
         birthdayTableView = view.findViewById(R.id.insert_birthday_tap);
         isStepClickAbleView = view.findViewById(R.id.btn_hint_clickable);
 
         phoneNumView = view.findViewById(R.id.edit_phone);
+
+        //键盘显示监听
+        phoneNumView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+
+            //当键盘弹出隐藏的时候会 调用此方法。
+            @Override
+            public void onGlobalLayout() {
+                final Rect rect = new Rect();
+                getActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+                final int screenHeight = getActivity().getWindow().getDecorView().getRootView().getHeight();
+                Log.e("TAG",rect.bottom+"#"+screenHeight);
+                final int heightDifference = screenHeight - rect.bottom;
+                boolean visible = heightDifference > screenHeight / 3;
+                if(visible){
+                    Log.e(TAG,"显示");
+                    changeKeyboardStateOut(phoneTableView);
+                }else {
+
+                    Log.e(TAG,"键盘隐藏");
+                    changeKeyboardStateIn(phoneTableView);
+                }
+            }
+        });
         phoneNumView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -247,6 +279,28 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
             }
         });
         nameView = view.findViewById(R.id.edit_name);
+
+        nameView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+
+            //当键盘弹出隐藏的时候会 调用此方法。
+            @Override
+            public void onGlobalLayout() {
+                final Rect rect = new Rect();
+                getActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+                final int screenHeight = getActivity().getWindow().getDecorView().getRootView().getHeight();
+                Log.e("TAG",rect.bottom+"#"+screenHeight);
+                final int heightDifference = screenHeight - rect.bottom;
+                boolean visible = heightDifference > screenHeight / 3;
+                if(visible){
+                    Log.e(TAG,"显示");
+                    changeKeyboardStateOut(nameTableView);
+                }else {
+
+                    Log.e(TAG,"键盘隐藏");
+                    changeKeyboardStateIn(nameTableView);
+                }
+            }
+        });
         nameView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -255,7 +309,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int checkoutResult = CommonUtils.checkoutName(s.toString());
+                int checkoutResult = CommonUtils.checkoutName(s.toString(),getActivity());
                 Message message = new Message();
                 Log.e(TAG,"字节变化了" + checkoutResult);
                 switch (checkoutResult) {
@@ -270,6 +324,9 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                         break;
                     case -10:
                         message.obj = "请重新输入，不支持中英文混合输入";
+                        break;
+                    case -9:
+                        message.obj = "请重新输入，名字已被使用";
                         break;
                     case 0:
                         Log.e(TAG,"没有找到匹配项");
@@ -405,4 +462,25 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
             ((RegisterActivity) this.getActivity()).setRegisterUser(registerUser2, 2);
         }
     }
+
+
+    // 键盘出现的时候
+    public void changeKeyboardStateOut(View view){
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
+        params.removeRule(RelativeLayout.CENTER_IN_PARENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        view.setLayoutParams(params);
+    }
+
+    // 键盘隐藏的时候
+    public void changeKeyboardStateIn(View view){
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
+        params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.removeRule(RelativeLayout.CENTER_HORIZONTAL);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        view.setLayoutParams(params);
+    }
+
+
 }

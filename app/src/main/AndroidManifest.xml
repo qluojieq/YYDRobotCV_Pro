@@ -23,10 +23,10 @@
         </activity>
 
         <activity
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
             android:name=".RegisterActivity"
             android:label="@string/app_name"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustResize">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
@@ -64,7 +64,6 @@
             android:name=".service.PersonDetectService"
             android:enabled="true"
             android:exported="true" />
-
 
     </application>
 

@@ -119,6 +119,33 @@ public class UserDataSupport {
         return allUsers;
     }
 
+    //判断是否重名
+    public  boolean checkNameUsed(String name){
+        open();
+        Cursor cursor = database.query(UserDataHelper.DATABASE_TABLE, allColumns, UserDataHelper.C_UN + "= ?", new String[] {name}, null, null, null);
+        int ret = cursor.getCount();
+        close();
+        if (ret>0){
+            Log.e(TAG,"名字查重 " + ret);
+            return true;
+        }
+        return false;
+    }
+
+    //  判断
+
+    //判断是否重名
+    public  boolean checkPhoneNum(String name){
+        open();
+        Cursor cursor = database.query(UserDataHelper.DATABASE_TABLE, allColumns, UserDataHelper.C_UPN + "= ?", new String[] {name}, null, null, null);
+        int ret = cursor.getCount();
+        close();
+        if (ret>0){
+            Log.e(TAG,"电话号码重复 " + ret);
+            return true;
+        }
+        return false;
+    }
     //插入一个用户
     public long insertUser(User user) {
         open();

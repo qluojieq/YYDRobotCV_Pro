@@ -13,7 +13,7 @@
         android:id="@+id/reference_dialog"
         android:textSize="15sp"
         android:textColor="@color/colorTextBlack"
-        android:text="离开您输入的数据将不会被保存"
+        android:text="离 开 您 输 入 的 数 据 将 不 会 被 保 存"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
         <LinearLayout

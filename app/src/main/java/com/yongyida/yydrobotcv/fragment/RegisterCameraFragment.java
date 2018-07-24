@@ -60,6 +60,8 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
 
     private static final int BASIC_FRAME_RATE_PERSON = 10;
 
+    private static boolean checkoutDifferenceFaceOn = false; // 是否开启人脸差异检测
+
 
     private static final int NO_PERSON_COUNT_THRESHOLD = BASIC_FRAME_RATE * 60 * 4;//没有人脸的qingk
 
@@ -109,7 +111,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     int viewCountStep3 = 0;
     int viewCountStep4 = 0;
     //注册的Id;
-    int personId;
+    int personId = -1;
     User registerUser;
 
 
@@ -161,6 +163,9 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                         break;
                     case 6:
                         ((RegisterActivity) RegisterCameraFragment.this.getActivity()).finish();
+                        if (personId>0){
+                            removePersonId(personId+"");
+                        }
                         break;
 
                 }
@@ -422,6 +427,14 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         }
         if (faces != null && faces.size() > 0) {
             YMFace ymFace = faces.get(0);
+            if (isFaceRegistered() == -1) {
+                Log.e(TAG,"已经注册过了");
+                return null;//已经注册的话报错
+            }
+            if (isFaceRegistered() == -2) {
+                Log.e(TAG,"异常只能注册一张脸");
+                return null;
+            }
             if (isFaceIn(ymFace)) {
                 noPersonCount = 0;
                 voiceWarnCount = 0;
@@ -434,7 +447,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                 Log.e(TAG, "脸的位置测试： 正脸");
                 if (viewCountStep1 == TOTAL_STEP) {
                     currentStep++;
-                    mHandler.sendEmptyMessageDelayed(1,500);
+                    mHandler.sendEmptyMessageDelayed(1, 500);
                     viewCountStep2 = 0;
                     addFace1(bytes, ymFace.getRect());
                 }
@@ -443,7 +456,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                 if (viewCountStep2 == TOTAL_STEP) {
                     viewCountStep3 = 0;
                     currentStep++;
-                    mHandler.sendEmptyMessageDelayed(2,500);
+                    mHandler.sendEmptyMessageDelayed(2, 500);
                     int i = faceTrack.updatePerson(personId, 0);
                     Log.e(TAG, "注册侧脸时的返回值 " + i);
                 }
@@ -453,7 +466,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                 if (viewCountStep3 == TOTAL_STEP) {
                     currentStep++;
                     viewCountStep4 = 0;
-                    mHandler.sendEmptyMessageDelayed(3,500);
+                    mHandler.sendEmptyMessageDelayed(3, 500);
                     int i = faceTrack.updatePerson(personId, 0);
                     Log.e(TAG, "注册抬头时的返回值 " + i);
                 }
@@ -464,12 +477,12 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
             viewCountStep1 = 0;
             viewCountStep2 = 0;
             viewCountStep3 = 0;
-            viewCountStep4 = 0;
+//            viewCountStep4 = 0;
             noPersonDetect();
         }
         if (currentStep == 3) {
             viewCountStep4++;
-            Log.e(TAG, "注册完成");
+            Log.e(TAG, "注册完成" + viewCountStep4);
             if (viewCountStep4 == TOTAL_STEP) {
                 mHandler.sendEmptyMessage(4);
             }
@@ -477,13 +490,13 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         return faces;
     }
 
-    private void noPersonDetect(){
-        noPersonCount ++;
+    private void noPersonDetect() {
+        noPersonCount++;
         if (noPersonCount % NO_PERSON_DETECT_THRESHOLD == 0) {
             voiceWarnCount++;
-            if (voiceWarnCount<5){
+            if (voiceWarnCount < 5) {
                 mHandler.sendEmptyMessage(5);//报告
-                Log.e(TAG,"发送警报" + voiceWarnCount);
+                Log.e(TAG, "发送警报" + voiceWarnCount);
             }
             if (voiceWarnCount > NO_PERSON_WARN_THRESHOLD) {
                 mHandler.sendEmptyMessage(6);//没脸报警
@@ -503,6 +516,38 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
             ret = true;
         return ret;
     }
+
+    /**
+     * @return 0
+     * -1 已经注册过了
+     * -2 两次人脸不一致
+     */
+
+    //判断人脸是不已经注册
+    private int isFaceRegistered() {
+        int ret = 0;
+        if (checkoutDifferenceFaceOn) {
+           int id =  faceTrack.identifyPerson(0);
+           if (currentStep == 0){
+               if (id>0){
+                   ret = -1;
+               }
+           }else {
+
+               if (id>0&&currentRegisterId == personId){
+
+               }else {
+                   ret = -2;
+               }
+           }
+            Log.e(TAG,"id "+id + "currentId " + currentRegisterId + " personId " + personId );
+        }
+
+
+        return ret;
+    }
+
+    int currentRegisterId = -1;
 
     //判断侧脸
     private boolean isSideFace(YMFace ymFace) {
@@ -527,10 +572,11 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
 
     void addFace1(byte[] bytes, float[] rect) {
 
+
         personId = faceTrack.addPerson(0);//添加人脸
         registerUser.setAge(faceTrack.getAge(0) + "");
         registerUser.setGender(faceTrack.getGender(0) + "");
-
+        currentRegisterId = personId;
         Log.e(TAG, "起始 年龄" + faceTrack.getAge(0) + "性别 " + faceTrack.getGender(0));
 
 
@@ -619,32 +665,32 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     ITTSCallback ttsCallback = new ITTSCallback.Stub() {
         @Override
         public void OnBegin() throws RemoteException {
-            Log.e(TAG,"tts begin");
+            Log.e(TAG, "tts begin");
             isVoiceOn = true;
         }
 
         @Override
         public void OnPause() throws RemoteException {
-            Log.e(TAG,"tts pause");
+            Log.e(TAG, "tts pause");
             isVoiceOn = false;
         }
 
         @Override
         public void OnResume() throws RemoteException {
-            Log.e(TAG,"tts begin");
+            Log.e(TAG, "tts begin");
             isVoiceOn = true;
         }
 
         @Override
         public void OnComplete(String error, String tag) throws RemoteException {
-            Log.e(TAG,"tts complete");
+            Log.e(TAG, "tts complete");
             isVoiceOn = false;
         }
     };
 
-    public void ttsSpeakHint(){
+    public void ttsSpeakHint() {
         String stringSpeak = "";
-        switch (currentStep){
+        switch (currentStep) {
             case 0:
                 stringSpeak = ttsString1;
                 break;
@@ -657,11 +703,12 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
             case 3:
                 stringSpeak = ttsAddSuccess;
         }
-        TTSManager.TTS(stringSpeak,ttsCallback);
+        TTSManager.TTS(stringSpeak, ttsCallback);
     }
-    public void ttsSpeakWarn(){
+
+    public void ttsSpeakWarn() {
         String stringSpeak = "";
-        switch (currentStep){
+        switch (currentStep) {
             case 0:
                 stringSpeak = ttsStringNOFrame1;
                 break;
@@ -672,6 +719,6 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                 stringSpeak = ttsStringNOFrame3;
                 break;
         }
-        TTSManager.TTS(stringSpeak,ttsCallback);
+        TTSManager.TTS(stringSpeak, ttsCallback);
     }
 }

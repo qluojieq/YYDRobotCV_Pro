@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
+
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,7 +58,7 @@ public class CommonUtils {
     }
 
 
-    public static int checkoutName(String name) {
+    public static int checkoutName(String name,Context context) {
         int ret = 0;// 0 无异常
         int strLength = 0;
         try {
@@ -82,8 +84,6 @@ public class CommonUtils {
             ret = -10;
             return  ret;
         }
-
-
         return ret; // 正常
     }
 
