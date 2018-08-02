@@ -54,4 +54,13 @@ public class DrawUtil {
         }
         return "";
     }
+
+    // 获取列表有人
+    public static User getUserFromPersonId(int personId) {
+        if (personId > 0 && userMap.containsKey(personId)) {
+            User user = userMap.get(personId);
+           return user;
+        }
+        return null;
+    }
 }

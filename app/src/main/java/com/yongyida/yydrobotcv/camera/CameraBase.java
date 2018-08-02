@@ -54,9 +54,9 @@ public abstract class CameraBase implements ImageReader.OnImageAvailableListener
 
         try {
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
-//                    throw new RuntimeException("Time out waiting to lock camera opening.");
                 Log.e(TAG, "Time out waiting to lock camera opening");
-//                    mCameraOpenCloseLock.release();
+                mCameraOpenCloseLock.release();
+//                throw new RuntimeException("Time out waiting to lock camera opening.");
             }
             mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
             CameraIds = mCameraManager.getCameraIdList();
@@ -127,11 +127,12 @@ public abstract class CameraBase implements ImageReader.OnImageAvailableListener
                             @Override
                             public void onCaptureFailed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureFailure failure) {
                                 Log.e(TAG, "onCaptureFailed");
-                                try {
-                                    cameraCaptureSession.stopRepeating();
-                                } catch (CameraAccessException e) {
-                                    e.printStackTrace();
-                                }
+//                                try {
+//                                    cameraCaptureSession.stopRepeating();
+//
+//                                } catch (CameraAccessException e) {
+//                                    e.printStackTrace();
+//                                }
                                 super.onCaptureFailed(session, request, failure);
                             }
 
@@ -161,24 +162,27 @@ public abstract class CameraBase implements ImageReader.OnImageAvailableListener
             if (mCameraCaptureSession != null) {
                 mCameraCaptureSession.close();
                 mCameraCaptureSession = null;
+                Log.e(TAG, "关闭 CaptureSession");
             }
 
-            if (mCameraDevice != null){
+            if (mCameraDevice != null) {
+                Log.e(TAG, "关闭 mCameraDevice 前");
                 mCameraDevice.close();
                 mCameraDevice = null;
+                Log.e(TAG, "关闭 mCameraDevice 后");
             }
-
+            if (mImageReader != null) {
+                mImageReader.close();
+                mImageReader = null;
+                Log.e(TAG, "关闭 ImageReader");
+            }
+            stopBackgroundThread();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-//            if (mImageReader != null){
-//                mImageReader.close();
-//                mImageReader = null;
-//            }
             mCameraOpenCloseLock.release();
-//            stopBackgroundThread();
         }
-
+        Log.e(TAG, "关闭 相机结束");
     }
 
     ;
@@ -198,22 +202,30 @@ public abstract class CameraBase implements ImageReader.OnImageAvailableListener
     protected Handler mBackgroundHandler;
 
     protected void startBackgroundThread() {
+        Log.e(TAG,"开启CameraBackground 线程");
         mBackgroundThread = new HandlerThread("CameraBackground");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
 
     protected void stopBackgroundThread() {
+
         if (mBackgroundHandler == null)
             return;
-        mBackgroundThread.quitSafely();
+
         try {
-            mBackgroundThread.join();
+            mBackgroundThread.quitSafely();
+            Log.e(TAG, "关闭 线程 开始1");
+            mBackgroundThread.join(1000);
+            Log.e(TAG, "关闭 线程 开始2");
             mBackgroundThread = null;
+            Log.e(TAG, "关闭 线程 开始3");
             mBackgroundHandler = null;
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            Log.e(TAG, "关闭 线程 结束 error");
         }
+        Log.e(TAG, "关闭 线程 结束");
     }
 }
 

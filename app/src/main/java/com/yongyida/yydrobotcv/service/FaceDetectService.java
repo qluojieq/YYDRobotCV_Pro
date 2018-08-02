@@ -1,9 +1,12 @@
 package com.yongyida.yydrobotcv.service;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.util.SimpleArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,6 +14,7 @@ import android.util.Log;
 import com.yongyida.yydrobotcv.camera.Camera2Track;
 import com.yongyida.yydrobotcv.camera.CameraBase;
 import com.yongyida.yydrobotcv.camera.PreviewListener;
+import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
 import com.yongyida.yydrobotcv.utils.DrawUtil;
 
@@ -23,10 +27,38 @@ import mobile.ReadFace.YMFaceTrack;
 
 public class FaceDetectService extends Service implements PreviewListener{
 
+    public static final String START_TYPE = "startType"; // 启动类型
+    public static final String START_TYPE_BLOCKLY = "blockly"; // blockly 编程 使用
+    public static final String START_TYPE_ACTIVE_INTERACTION = "active_interaction";  // 主动交互使用
+    public static final String START_CMD = "cmd"; // 在blockly中表示用户id 大于 0 ，-1为关闭人脸检测
+    public static final String START_MSG = "msg"; //
+    public static final String START_TAG = "tag"; //
+
+
     private static final String TAG = FaceDetectService.class.getSimpleName();
     CameraBase mCamera2Track;
     YMFaceTrack faceTrack;
     Context mContext;
+
+    String startType = START_TYPE_ACTIVE_INTERACTION;
+
+    // blockly块
+    int checkOutTime = 1000;
+    int checkId = -1;
+
+     Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    if (startType.equals(START_TYPE_BLOCKLY)){
+                        blockBack("timeOut");
+                    }
+                    break;
+            }
+            return true;
+        }
+    });
 
 
 
@@ -49,12 +81,27 @@ public class FaceDetectService extends Service implements PreviewListener{
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG,"startCommand");
-        switch (intent.getStringExtra("startType")){
-            case "start":
+        startType = intent.getStringExtra(START_TYPE);
+
+
+        switch (startType){
+            case START_TYPE_ACTIVE_INTERACTION:
                 mCamera2Track.start();
                 startTrack();
                 break;
-            case "stop":
+            case START_TYPE_BLOCKLY:
+                checkId = Integer.parseInt(intent.getStringExtra(START_CMD));
+                checkOutTime = Integer.parseInt(intent.getStringExtra(START_TAG));
+//                mHandler.sendEmptyMessageDelayed(1,checkOutTime);// 超时关闭
+
+                mCamera2Track.start();
+                startTrack();
+                break;
+            case "startTest":
+                mCamera2Track.start();
+                startTrack();
+                break;
+            case "stopTest":
                 stopTrack();
                 mCamera2Track.stop();
                 break;
@@ -79,7 +126,6 @@ public class FaceDetectService extends Service implements PreviewListener{
     }
 
     public void stopTrack() {
-
         if (faceTrack == null) {
             DLog.d("already release track");
             return;
@@ -121,11 +167,20 @@ public class FaceDetectService extends Service implements PreviewListener{
     private void runTrack(byte[] data) {
             final List<YMFace> faces = analyse(data, 1280, 720);
             if (faces.size()>0){
-                String name = DrawUtil.getNameFromPersonId(faces.get(0).getPersonId());
+
+                if(startType.equals(START_TYPE_BLOCKLY)){
+                    User user = DrawUtil.getUserFromPersonId(checkId);
+                    if (user!=null){
+                        blockBack(user.getUserName());
+                    }
+                }else {
+                    String name = DrawUtil.getNameFromPersonId(faces.get(0).getPersonId());
 //                Log.e(TAG,"人脸识别的 id号码 " + faces.get(0).getPersonId() + "可信度 " + faces.get(0).getConfidence() +  "获取到的人名 " + name);
-                if (!TextUtils.isEmpty(name)){
-                    CommonUtils.serviceToast(this,name);
+                    if (!TextUtils.isEmpty(name)){
+                        CommonUtils.serviceToast(this,name);
+                    }
                 }
+
             }
     }
 
@@ -216,6 +271,24 @@ public class FaceDetectService extends Service implements PreviewListener{
             }
         }
         return faces;
+    }
+
+    public void blockBack(String backMsg){
+
+        mCamera2Track.stop();
+        stopTrack();
+//        mHandler.removeMessages(1);// 删除延时
+        Log.e(TAG,startType + "检测结束 " + backMsg );
+//        Intent intent = new Intent();
+//        ComponentName componentName = new ComponentName("com.yongyida.robot.blocklyservice", "com.yongyida.robot.blocklyservice.BlocklyService");
+//        intent.setComponent(componentName);
+//        intent.putExtra("from", getPackageName());
+//        intent.putExtra("function", "CMD_MSG");
+//        intent.putExtra("cmd", 6003);
+//        intent.putExtra("arg1", 2);
+//        intent.putExtra("msg", backMsg);
+//        startService(intent);
+
     }
 
 }

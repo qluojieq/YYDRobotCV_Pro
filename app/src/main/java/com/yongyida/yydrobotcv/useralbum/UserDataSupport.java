@@ -1,9 +1,13 @@
 package com.yongyida.yydrobotcv.useralbum;
 
+import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -18,7 +22,12 @@ import java.util.List;
  * @author Brandon on 2018/3/13
  * update 18/4/10
  **/
-public class UserDataSupport {
+public class UserDataSupport extends ContentProvider {
+
+    static final String AUTHORITY = "com.yyd.yydrobotcv";
+
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/images");
+
     public static final String TAG = UserDataSupport.class.getSimpleName();
     UserDataHelper userHelper;
     SQLiteDatabase database;
@@ -35,6 +44,11 @@ public class UserDataSupport {
             UserDataHelper.C_UIC,
             UserDataHelper.C_TAG
     };
+
+
+
+    public UserDataSupport() {
+    }
 
     public static UserDataSupport getInstance(Context context){
         if (userDataSupport ==null){
@@ -53,6 +67,7 @@ public class UserDataSupport {
     private void close() {
         userHelper.close();
     }
+
 
 
     //获取全部用户
@@ -118,6 +133,8 @@ public class UserDataSupport {
         });
         return allUsers;
     }
+
+
 
     //判断是否重名
     public  boolean checkNameUsed(String name){
@@ -207,4 +224,39 @@ public class UserDataSupport {
         return  user;
     }
 
+    @Override
+    public boolean onCreate() {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+        userHelper = new UserDataHelper(this.getContext());
+        database = userHelper.getWritableDatabase();
+        Cursor cursor = database.query(UserDataHelper.DATABASE_TABLE, projection, selection, selectionArgs, null,null, sortOrder);
+        return cursor;
+    }
+
+    @Nullable
+    @Override
+    public String getType(@NonNull Uri uri) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
+        return null;
+    }
+
+    @Override
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+        return 0;
+    }
+
+    @Override
+    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+        return 0;
+    }
 }

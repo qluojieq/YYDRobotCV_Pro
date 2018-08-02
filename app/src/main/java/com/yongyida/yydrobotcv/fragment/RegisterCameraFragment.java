@@ -30,6 +30,8 @@ import com.yongyida.robot.brain.system.ITTSCallback;
 import com.yongyida.yydrobotcv.R;
 import com.yongyida.yydrobotcv.RegisterActivity;
 import com.yongyida.yydrobotcv.camera.ImageUtils;
+import com.yongyida.yydrobotcv.customview.ErrorDialog;
+import com.yongyida.yydrobotcv.customview.ExitDialog;
 import com.yongyida.yydrobotcv.tts.TTSManager;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
@@ -125,7 +127,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     final String ttsStringNOFrame3 = "请录入你的侧脸";
     // 步骤走完
     final String ttsAddSuccess = "人脸录入成功";
-
+    ErrorDialog exitDialog;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -133,6 +135,13 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         View view = inflater.inflate(R.layout.enroll_camera_fragment, container, false);
         initCamera(view);
         registerUser = new User();
+        exitDialog = new ErrorDialog(getContext(), R.style.custom_dialog, new ErrorDialog.OnCloseListener() {
+            @Override
+            public void clickConfirm() {
+                exitDialog.dismiss();
+                RegisterCameraFragment.this.getActivity().finish();
+            }
+        });
         faceFrame = BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_face_frame);
         mHandler = new Handler(new Handler.Callback() {
             @Override
@@ -162,7 +171,8 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                         ttsSpeakWarn();
                         break;
                     case 6:
-                        ((RegisterActivity) RegisterCameraFragment.this.getActivity()).finish();
+                        mCameraHelper.stopPreview();
+                        exitDialog.show();
                         if (personId>0){
                             removePersonId(personId+"");
                         }
@@ -499,7 +509,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                 Log.e(TAG, "发送警报" + voiceWarnCount);
             }
             if (voiceWarnCount > NO_PERSON_WARN_THRESHOLD) {
-                mHandler.sendEmptyMessage(6);//没脸报警
+                mHandler.sendEmptyMessage(6);//没脸报警并结束
                 CommonUtils.serviceToast(this.getActivity(), "不在框内");
             }
         }
@@ -720,5 +730,11 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                 break;
         }
         TTSManager.TTS(stringSpeak, ttsCallback);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mCameraHelper.stopCamera();
     }
 }

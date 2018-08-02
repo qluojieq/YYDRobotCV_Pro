@@ -20,6 +20,7 @@ import org.openni.UserEventArgs;
 public class PersonDetectService extends Service {
     private static final String TAG = PersonDetectService.class.getSimpleName();
 
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

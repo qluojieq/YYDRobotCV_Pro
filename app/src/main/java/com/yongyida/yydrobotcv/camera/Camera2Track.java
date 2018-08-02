@@ -42,8 +42,8 @@ public class Camera2Track extends CameraBase {
         Image image = null;
 //            Log.e(TAG,"ImageAvailableCount");
         try {
-//                image = reader.acquireLatestImage();
-            image = reader.acquireNextImage();
+                image = reader.acquireLatestImage();
+//            image = reader.acquireNextImage();
             if (image == null) {
                 return;
             }
