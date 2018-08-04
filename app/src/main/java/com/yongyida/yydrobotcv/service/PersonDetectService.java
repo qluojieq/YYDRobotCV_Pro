@@ -25,6 +25,9 @@ public class PersonDetectService extends Service {
     private static final int MIN_DISTANCE = 800;// 80厘米
 
     private String helloWords = "  我叫小勇，很高兴为您服务！"; // 小于最小值主动招呼语
+
+    private boolean wordOnce = true;
+
     private String startType = "start";// 'start ' 开始 ； ' stop ' 结束
     @Nullable
     @Override
@@ -100,6 +103,7 @@ public class PersonDetectService extends Service {
                 int [] data  = mUserTracker.getUsers();
                 if (data.length<=0){
                     Log.e(TAG," 没有人 ");
+                    wordOnce = true;
                     continue;
                 }
 
@@ -112,20 +116,23 @@ public class PersonDetectService extends Service {
                         oneTime[i]++;
                         oneTimeGone[i] = 0;
                         if (isPerson&&oneTime[i]==1){
-                            startFaceDetect("start");
+                            startFaceDetect("startTest");
                             Log.e(TAG,"人来 " + i);
                             CommonUtils.serviceToast(PersonDetectService.this,"有人");
                         }
                         if (head.getZ()<MIN_DISTANCE){
-
-                            TTSManager.TTS(helloWords, null);//  有人靠近
+                            if (wordOnce){
+                                wordOnce = false;
+                                TTSManager.TTS(helloWords, null);//  有人靠近
+                            }
                         }
                     }else {
                         isPerson = false;
                         oneTime[i] = 0;
                         oneTimeGone[i]++;
                         if (oneTimeGone[i]==1){
-//                         startFaceDetect("stop");
+                         startFaceDetect("stopTest");
+                            TTSManager.TTSSTop(PersonDetectService.this);
                             CommonUtils.serviceToast(PersonDetectService.this,"离开");
                             Log.e(TAG,"人离开" + i);
 
@@ -160,5 +167,4 @@ public class PersonDetectService extends Service {
             }
         }
     }
-
 }

@@ -14,6 +14,7 @@ import android.util.Log;
 import com.yongyida.yydrobotcv.camera.Camera2Track;
 import com.yongyida.yydrobotcv.camera.CameraBase;
 import com.yongyida.yydrobotcv.camera.PreviewListener;
+import com.yongyida.yydrobotcv.motion.HeadHelper;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
 import com.yongyida.yydrobotcv.utils.DrawUtil;
@@ -34,12 +35,27 @@ public class FaceDetectService extends Service implements PreviewListener{
     public static final String START_MSG = "msg"; //
     public static final String START_TAG = "tag"; //
 
+    // 跟随限定参数
+    private static final int TRACK_RANGE_HEIGHT = 360;
+    private static final int TRACK_RANGE_WIDTH = 320; // 720过大
+    //跟随的上下限
+    private static final  int TRACK_TOP = (CameraBase.HEIGHT_PREVIEW - TRACK_RANGE_HEIGHT)/2;
+    private static final int TRACK_BOTTOM = CameraBase.HEIGHT_PREVIEW - TRACK_TOP;
+    // 跟随的左右限制
+    private static final int TRACK_RIGHT = (CameraBase.WIDTH_PREVIEW - TRACK_RANGE_WIDTH)/2;
+    private static final int TRACK_LEFT = CameraBase.WIDTH_PREVIEW - TRACK_RIGHT;
+
+    private float trackCenterX = 640;
+    private float trackCenterY = 360;
+
 
     private static final String TAG = FaceDetectService.class.getSimpleName();
     CameraBase mCamera2Track;
     YMFaceTrack faceTrack;
     Context mContext;
 
+
+    boolean isTrackOn = true;
     String startType = START_TYPE_ACTIVE_INTERACTION;
 
     // blockly块
@@ -80,10 +96,9 @@ public class FaceDetectService extends Service implements PreviewListener{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG,"startCommand");
+
         startType = intent.getStringExtra(START_TYPE);
-
-
+        Log.e(TAG,"startCommand "  + startType);
         switch (startType){
             case START_TYPE_ACTIVE_INTERACTION:
                 mCamera2Track.start();
@@ -149,9 +164,7 @@ public class FaceDetectService extends Service implements PreviewListener{
         stop = false;
         mContext = this;
         faceTrack = new YMFaceTrack();
-
         faceTrack.setDistanceType(YMFaceTrack.DISTANCE_TYPE_NEAR);
-
         int result = faceTrack.initTrack(this, YMFaceTrack.FACE_0, YMFaceTrack.RESIZE_WIDTH_640);
         DLog.d("getAlbumSize1: " + faceTrack.getEnrolledPersonIds().size());
         boolean needUpdateFaceFeature = faceTrack.isNeedUpdateFaceFeature();
@@ -198,6 +211,7 @@ public class FaceDetectService extends Service implements PreviewListener{
         final List<YMFace> faces = faceTrack.trackMulti(bytes, iw, ih);
 
 
+
         if (faces != null && faces.size() > 0) {
             if ( !stop) {
                 if (trackingMap.size() > 50) trackingMap.clear();
@@ -214,6 +228,22 @@ public class FaceDetectService extends Service implements PreviewListener{
                 final int trackId = ymFace.getTrackId();
                 final float[] rect = ymFace.getRect();
                 final float[] headposes = ymFace.getHeadpose();
+
+
+                if (isTrackOn){ // 跟随运动逻辑
+                    trackCenterX = (rect[0] - rect[2]/2);
+                    trackCenterY = (rect[1] + rect[3]/2);
+                   if (trackCenterX>TRACK_LEFT){
+                       HeadHelper.headRight(this);
+                   }else if (trackCenterX<TRACK_RIGHT){
+                       HeadHelper.headLeft(this);
+                   }
+                   if (trackCenterY<TRACK_TOP){
+                       HeadHelper.headDown(this);
+                   }else if (trackCenterY>TRACK_BOTTOM){
+                       HeadHelper.headUp(this);
+                   }
+                }
 
                 thread = new Thread(new Runnable() {
                     @Override
@@ -252,8 +282,8 @@ public class FaceDetectService extends Service implements PreviewListener{
                                 //使用本地就不再使用云端,可直接删除云端部分
                             }
 
-                            DLog.d("identify end " + identifyPerson + " time :" + (System.currentTimeMillis() - time)
-                                    + "  faceQuality: " + faceQuality);
+//                            DLog.d("identify end " + identifyPerson + " time :" + (System.currentTimeMillis() - time)
+//                                    + "  faceQuality: " + faceQuality);
 
                         } catch (Exception e) {
                             e.printStackTrace();

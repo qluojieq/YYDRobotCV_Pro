@@ -59,7 +59,7 @@ public class TTSManager {
     public static void TTSSTop(Context context){
         Log.e(TAG,"stop  speak");
         try {
-            if (TTSControl!=null){
+            if (TTSControl!= null && TTSControl.isSpeaking()){
                 TTSControl.stopTTS(context.getPackageName());
             }
         } catch (RemoteException e) {

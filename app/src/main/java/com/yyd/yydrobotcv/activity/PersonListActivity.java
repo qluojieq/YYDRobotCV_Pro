@@ -68,17 +68,17 @@ public class PersonListActivity extends AppCompatActivity {
     public void startFaceDetect(View view) {
         Log.e(TAG,"开始人脸检测服务");
         Intent intent = new Intent(this, FaceDetectService.class);
-        intent.putExtra("startType","blockly");
-        intent.putExtra("cmd","1"); //用户id
-        intent.putExtra("tag","10000");//超时时长
+        intent.putExtra("startType","active_interaction");
+//        intent.putExtra("cmd","1"); //blockly使用：用户id
+//        intent.putExtra("tag","10000");//超时时长
         startService(intent);
     }
 
     public void stopFaceDetect(View view) {
         Log.e(TAG,"关闭人脸检测服务");
         Intent intent = new Intent(this, FaceDetectService.class);
-        intent.putExtra("startType","blockly");
-        intent.putExtra("cmd","1"); //用户id
+        intent.putExtra("startType","stopTest");
+        intent.putExtra("cmd","1"); //blockly使用用户id
         intent.putExtra("tag","-1");//-1直接调用停止
         startService(intent);
     }
