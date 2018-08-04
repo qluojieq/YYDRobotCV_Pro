@@ -10,6 +10,7 @@ import com.orbbec.astrakernel.AstraContext;
 import com.orbbec.astrakernel.PermissionCallbacks;
 import com.orbbec.astrastartlibs.DepthData;
 import com.orbbec.astrastartlibs.UserTracker;
+import com.yongyida.yydrobotcv.tts.TTSManager;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
 
 import org.openni.IObservable;
@@ -20,7 +21,11 @@ import org.openni.UserEventArgs;
 public class PersonDetectService extends Service {
     private static final String TAG = PersonDetectService.class.getSimpleName();
 
+    private static final int MAX_DISTANCE = 1500;// 一米五
+    private static final int MIN_DISTANCE = 800;// 80厘米
 
+    private String helloWords = "  我叫小勇，很高兴为您服务！"; // 小于最小值主动招呼语
+    private String startType = "start";// 'start ' 开始 ； ' stop ' 结束
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -91,11 +96,10 @@ public class PersonDetectService extends Service {
         @Override
         public void run() {
             while (!mExit){
-
-//                Log.e(TAG,"人体检测中");
                 mContext.waitAnyUpdateAll();
                 int [] data  = mUserTracker.getUsers();
                 if (data.length<=0){
+                    Log.e(TAG," 没有人 ");
                     continue;
                 }
 
@@ -103,7 +107,7 @@ public class PersonDetectService extends Service {
                     Point3D head = mDepthData
                             .convertRealWorldToProjective(mUserTracker
                                     .getCoM(data[i]));
-                    if (head.getZ()>0&&head.getZ()<2000){
+                    if (head.getZ()<MAX_DISTANCE){ //小于150 人脸跟踪
                         isPerson = true;
                         oneTime[i]++;
                         oneTimeGone[i] = 0;
@@ -112,6 +116,10 @@ public class PersonDetectService extends Service {
                             Log.e(TAG,"人来 " + i);
                             CommonUtils.serviceToast(PersonDetectService.this,"有人");
                         }
+                        if (head.getZ()<MIN_DISTANCE){
+
+                            TTSManager.TTS(helloWords, null);//  有人靠近
+                        }
                     }else {
                         isPerson = false;
                         oneTime[i] = 0;
@@ -119,12 +127,13 @@ public class PersonDetectService extends Service {
                         if (oneTimeGone[i]==1){
 //                         startFaceDetect("stop");
                             CommonUtils.serviceToast(PersonDetectService.this,"离开");
-                         Log.e(TAG,"人离开" + i);
+                            Log.e(TAG,"人离开" + i);
+
                         }
+
                     }
 
                 }
-
             }
         }
     }

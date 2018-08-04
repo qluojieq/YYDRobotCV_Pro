@@ -52,7 +52,7 @@ repositories{
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-//    implementation 'com.android.support:appcompat-v7:27.1.0'
+    //    implementation 'com.android.support:appcompat-v7:27.1.0'
     //    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     //    testImplementation 'junit:junit:4.12'
     //    androidTestImplementation 'com.android.support.test:runner:1.0.1'
@@ -69,7 +69,6 @@ dependencies {
     compile(name: 'livedata-core-1.1.0', ext: 'aar')
     compile(name: 'runtime-1.1.0', ext: 'aar')
     compile(name: 'core-runtime-1.1.0', ext: 'aar')
-
     compile(name: 'support-fragment-27.1.0', ext: 'aar')
     compile(name: 'support-core-ui-27.1.0', ext: 'aar')
     compile(name: 'support-vector-drawable-27.1.0', ext: 'aar')
@@ -80,8 +79,8 @@ dependencies {
     implementation files('libs/support-annotations-27.1.0.jar')
     implementation files('libs/common-1.1.0.jar')
     implementation files('libs/core-common-1.1.0.jar')
-
-    compile(name: 'communicate_app-debug-1.1.0', ext: 'aar')
-    compile(name: 'communicate_app_client-debug-1.1.0', ext: 'aar')
-    compile(name: 'communicate_app_hardware-debug-1.1.0', ext: 'aar')
+    // 头部运动
+    compile(name: 'communicate_app-2.0.1', ext: 'aar')
+    compile(name: 'communicate_app_hardware-2.0.2', ext: 'aar')
+    implementation 'com.google.code.gson:gson:2.2.4'
 }

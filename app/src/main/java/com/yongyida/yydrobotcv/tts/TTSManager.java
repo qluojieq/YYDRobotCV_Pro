@@ -56,5 +56,15 @@ public class TTSManager {
             e.printStackTrace();
         }
     }
+    public static void TTSSTop(Context context){
+        Log.e(TAG,"stop  speak");
+        try {
+            if (TTSControl!=null){
+                TTSControl.stopTTS(context.getPackageName());
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

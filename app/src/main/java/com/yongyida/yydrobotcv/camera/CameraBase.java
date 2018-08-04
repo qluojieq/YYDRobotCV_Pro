@@ -156,32 +156,58 @@ public abstract class CameraBase implements ImageReader.OnImageAvailableListener
 
     public void stop() {
 
+//        try {
+//            mCameraOpenCloseLock.acquire();
+//
+//            if (mCameraCaptureSession != null) {
+//                mCameraCaptureSession.close();
+//                mCameraCaptureSession = null;
+//                Log.e(TAG, "关闭 CaptureSession");
+//            }
+//
+//            if (mCameraDevice != null) {
+//                Log.e(TAG, "关闭 mCameraDevice 前");
+//                mCameraDevice.close();
+//                mCameraDevice = null;
+//                Log.e(TAG, "关闭 mCameraDevice 后");
+//            }
+//            if (mImageReader != null) {
+//                mImageReader.close();
+//                mImageReader = null;
+//                Log.e(TAG, "关闭 ImageReader");
+//            }
+//            stopBackgroundThread();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } finally {
+//            mCameraOpenCloseLock.release();
+//        }
         try {
-            mCameraOpenCloseLock.acquire();
-
-            if (mCameraCaptureSession != null) {
-                mCameraCaptureSession.close();
-                mCameraCaptureSession = null;
-                Log.e(TAG, "关闭 CaptureSession");
-            }
-
-            if (mCameraDevice != null) {
-                Log.e(TAG, "关闭 mCameraDevice 前");
-                mCameraDevice.close();
-                mCameraDevice = null;
-                Log.e(TAG, "关闭 mCameraDevice 后");
-            }
-            if (mImageReader != null) {
-                mImageReader.close();
-                mImageReader = null;
-                Log.e(TAG, "关闭 ImageReader");
-            }
-            stopBackgroundThread();
-        } catch (InterruptedException e) {
+            if (mCameraCaptureSession!=null)
+            mCameraCaptureSession.stopRepeating();
+        } catch (CameraAccessException e) {
             e.printStackTrace();
-        } finally {
-            mCameraOpenCloseLock.release();
         }
+        if (mBackgroundHandler!=null)
+        mBackgroundHandler.postDelayed(new Runnable() {//延迟关闭相机
+            @Override
+            public void run() {
+                if (mCameraCaptureSession!=null){
+                    mCameraCaptureSession.close();
+                    mCameraCaptureSession = null;
+                }
+                if (mCameraDevice!=null)//注意关闭顺序，先
+                    mCameraDevice.close();
+                mCameraDevice = null;
+                if (mImageReader!=null)//注意关闭顺序，后
+                    mImageReader.close();
+                mImageReader = null;
+
+//                isCameraOn = false;
+                stopBackgroundThread();
+            }
+
+        },100);
         Log.e(TAG, "关闭 相机结束");
     }
 

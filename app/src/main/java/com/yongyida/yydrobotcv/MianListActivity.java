@@ -269,11 +269,10 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
         }
 
     }
-
-
     public void testClosePerson() {
-        Intent intent = new Intent(this, PersonDetectService.class);
-        startService(intent);
+//        Intent intent = new Intent(this, PersonDetectService.class);
+//        intent.putExtra("startType","start");
+//        startService(intent);
     }
 
     public int scrollString(String targetChar) {

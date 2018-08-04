@@ -43,7 +43,7 @@ public class FaceDetectService extends Service implements PreviewListener{
     String startType = START_TYPE_ACTIVE_INTERACTION;
 
     // blockly块
-    int checkOutTime = 1000;
+    int checkOutTime = 2000;
     int checkId = -1;
 
      Handler mHandler = new Handler(new Handler.Callback() {
@@ -92,10 +92,14 @@ public class FaceDetectService extends Service implements PreviewListener{
             case START_TYPE_BLOCKLY:
                 checkId = Integer.parseInt(intent.getStringExtra(START_CMD));
                 checkOutTime = Integer.parseInt(intent.getStringExtra(START_TAG));
-//                mHandler.sendEmptyMessageDelayed(1,checkOutTime);// 超时关闭
-
-                mCamera2Track.start();
-                startTrack();
+                if (checkOutTime>0){
+                    mHandler.sendEmptyMessageDelayed(1,checkOutTime);// 超时关闭
+                    mCamera2Track.start();
+                    startTrack();
+                }else if (checkOutTime == -1){
+                    stopTrack();
+                    mCamera2Track.stop();
+                }
                 break;
             case "startTest":
                 mCamera2Track.start();
@@ -277,17 +281,17 @@ public class FaceDetectService extends Service implements PreviewListener{
 
         mCamera2Track.stop();
         stopTrack();
-//        mHandler.removeMessages(1);// 删除延时
+        mHandler.removeMessages(1);// 删除延时
         Log.e(TAG,startType + "检测结束 " + backMsg );
-//        Intent intent = new Intent();
-//        ComponentName componentName = new ComponentName("com.yongyida.robot.blocklyservice", "com.yongyida.robot.blocklyservice.BlocklyService");
-//        intent.setComponent(componentName);
-//        intent.putExtra("from", getPackageName());
-//        intent.putExtra("function", "CMD_MSG");
-//        intent.putExtra("cmd", 6003);
-//        intent.putExtra("arg1", 2);
-//        intent.putExtra("msg", backMsg);
-//        startService(intent);
+        Intent intent = new Intent();
+        ComponentName componentName = new ComponentName("com.yongyida.robot.blocklyservice", "com.yongyida.robot.blocklyservice.BlocklyService");
+        intent.setComponent(componentName);
+        intent.putExtra("from", getPackageName());
+        intent.putExtra("function", "CMD_MSG");
+        intent.putExtra("cmd", 6003);
+        intent.putExtra("arg1", 2);
+        intent.putExtra("msg", backMsg);
+        startService(intent);
 
     }
 

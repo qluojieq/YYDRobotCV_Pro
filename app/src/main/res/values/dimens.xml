@@ -14,4 +14,5 @@
     <dimen name="btn_next_text_size">16sp</dimen>
     <dimen name="btn_info_delete_height">35dp</dimen>
     <dimen name="btn_info_delete_width">35dp</dimen>
+    <dimen name="test_btn_height">45dp</dimen>
 </resources>

@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.yongyida.yydrobotcv.MianListActivity;
 import com.yongyida.yydrobotcv.R;
+import com.yongyida.yydrobotcv.motion.HeadHelper;
 import com.yongyida.yydrobotcv.service.FaceDetectService;
 import com.yongyida.yydrobotcv.service.PersonDetectService;
 
@@ -38,14 +39,6 @@ public class PersonListActivity extends AppCompatActivity {
         setContentView(R.layout.main_test_activity);
     }
 
-    public void startPersonDetect(View view) {
-        Log.e(TAG,"开始人体检测");
-
-        ComponentName componentName = new ComponentName("com.yydrobo.yydrobofggame","com.yydrobo.yydrobofggame.activity.StartActivity");
-        Intent intent = new Intent();
-        intent.setComponent(componentName);
-        startActivity(intent);
-    }
 
     public void startPersonRegist(View view) {
         Log.e(TAG,"启动注册人脸");
@@ -56,11 +49,20 @@ public class PersonListActivity extends AppCompatActivity {
         } catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
         }
-//        startActivity(intent);
     }
 
+
+    public void startPersonDetect(View view) {
+        Log.e(TAG,"开始人体检测");
+        Intent intent = new Intent(this, PersonDetectService.class);
+        intent.putExtra("startType","start");
+        startService(intent);
+    }
     public void closePersonDetect(View view) {
         Log.e(TAG,"关闭人体检测");
+        Intent intent = new Intent(this, PersonDetectService.class);
+        intent.putExtra("startType","stop");
+        startService(intent);
     }
 
     public void startFaceDetect(View view) {
@@ -75,7 +77,9 @@ public class PersonListActivity extends AppCompatActivity {
     public void stopFaceDetect(View view) {
         Log.e(TAG,"关闭人脸检测服务");
         Intent intent = new Intent(this, FaceDetectService.class);
-        intent.putExtra("startType","stopTest");
+        intent.putExtra("startType","blockly");
+        intent.putExtra("cmd","1"); //用户id
+        intent.putExtra("tag","-1");//-1直接调用停止
         startService(intent);
     }
 
@@ -87,6 +91,37 @@ public class PersonListActivity extends AppCompatActivity {
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
+
+    public void startFFGame(View view) { // 猜拳游戏
+        ComponentName componentName = new ComponentName("com.yydrobo.yydrobofggame","com.yydrobo.yydrobofggame.activity.StartActivity");
+        Intent intent = new Intent();
+        intent.setComponent(componentName);
+        startActivity(intent);
+    }
+
+    public void startEBGame(View view) { // 眉毛游戏
+
+    }
+
+    public void UpMotion(View view) {
+        HeadHelper.headUp(this);
+    }
+
+    public void DownMotion(View view) {
+        HeadHelper.headDown(this);
+    }
+
+    public void RightMotion(View view) {
+        HeadHelper.headRight(this);
+    }
+
+    public void LeftMotion(View view) {
+        HeadHelper.headLeft(this);
+    }
+
+    public void StopMotion(View view) {
+        HeadHelper.stopMotin(this);
+    }
 
 
     /**
