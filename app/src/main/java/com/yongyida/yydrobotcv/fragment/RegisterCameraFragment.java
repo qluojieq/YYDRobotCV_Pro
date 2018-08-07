@@ -32,8 +32,10 @@ import com.yongyida.yydrobotcv.RegisterActivity;
 import com.yongyida.yydrobotcv.camera.ImageUtils;
 import com.yongyida.yydrobotcv.customview.ErrorDialog;
 import com.yongyida.yydrobotcv.customview.ExitDialog;
+import com.yongyida.yydrobotcv.customview.SameFaceWarnDialog;
 import com.yongyida.yydrobotcv.tts.TTSManager;
 import com.yongyida.yydrobotcv.useralbum.User;
+import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
 
 
@@ -128,6 +130,11 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     // 步骤走完
     final String ttsAddSuccess = "人脸录入成功";
     ErrorDialog exitDialog;
+    SameFaceWarnDialog faceCheckDialog;
+    // 一次检测
+    boolean isSameFaceChecked = false;
+    boolean isUpdateFace = false;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -250,7 +257,6 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
             }
 //            final String fps1 = fps.toString() + str;
             final String fps1 = "";
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -437,14 +443,36 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         }
         if (faces != null && faces.size() > 0) {
             YMFace ymFace = faces.get(0);
-            if (isFaceRegistered() == -1) {
-                Log.e(TAG,"已经注册过了");
-                return null;//已经注册的话报错
+
+            int id = faceTrack.identifyPerson(0);
+            if (id>0&&!isSameFaceChecked){
+                isSameFaceChecked = true;
+                Log.e(TAG,"checked ");
+                final User user =  UserDataSupport.getInstance(this.getContext()).getUser(id+"");
+                mCameraHelper.stopPreview();
+                faceCheckDialog = new SameFaceWarnDialog(this.getContext(), R.style.custom_dialog, new SameFaceWarnDialog.OnCloseListener() {
+                    @Override
+                    public void clickConfirm() { // 更新
+                        Log.e(TAG,"更新头像");
+                        faceCheckDialog.dismiss();
+                        isUpdateFace = true;
+                        mCameraHelper.startPreview();
+                        personId = Integer.parseInt(user.getPersonId());
+                    }
+                    @Override
+                    public void clickCancel() {  // 不做任何处理
+                        Log.e(TAG,"新录入");
+                        faceCheckDialog.dismiss();
+                        mCameraHelper.startPreview();
+                    }
+                },id + "已识别你为"+ user.getUserName()+", " + user.getPhoneNum());
+                faceCheckDialog.show();
+            }if(id == -111){
+                isSameFaceChecked = true;
             }
-            if (isFaceRegistered() == -2) {
-                Log.e(TAG,"异常只能注册一张脸");
-                return null;
-            }
+
+
+
             if (isFaceIn(ymFace)) {
                 noPersonCount = 0;
                 voiceWarnCount = 0;
@@ -456,10 +484,14 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                 viewCountStep1++;
                 Log.e(TAG, "脸的位置测试： 正脸");
                 if (viewCountStep1 == TOTAL_STEP) {
-                    currentStep++;
-                    mHandler.sendEmptyMessageDelayed(1, 500);
-                    viewCountStep2 = 0;
-                    addFace1(bytes, ymFace.getRect());
+                    if(isUpdateFace){// 是否进行更新
+                        addFaceUpdate(bytes, ymFace.getRect());
+                    }else {
+                        currentStep++;
+                        mHandler.sendEmptyMessageDelayed(1, 500);
+                        viewCountStep2 = 0;
+                        addFace1(bytes, ymFace.getRect());
+                    }
                 }
             } else if (currentStep == 1 && isRiseFace(ymFace)) {
                 viewCountStep2++;
@@ -552,8 +584,6 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
            }
             Log.e(TAG,"id "+id + "currentId " + currentRegisterId + " personId " + personId );
         }
-
-
         return ret;
     }
 
@@ -600,6 +630,34 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         } else {
             DLog.d("添加人脸失败！");
             Toast.makeText(mContext, "添加人脸失败！请重新添加", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    //更新人脸
+    void addFaceUpdate(byte[] bytes, float[] rect) {
+
+
+        int id = faceTrack.updatePerson(personId,0);//更新人脸
+        registerUser.setAge(faceTrack.getAge(0) + "");
+        registerUser.setGender(faceTrack.getGender(0) + "");
+        currentRegisterId = personId;
+        Log.e(TAG, "起始 年龄" + faceTrack.getAge(0) + "性别 " + faceTrack.getGender(0));
+
+        if (id >=0) {
+            registerUser.setPersonId(personId + "");
+            Bitmap image = BitmapUtil.getBitmapFromYuvByte(bytes, iw, ih);
+            Bitmap head = Bitmap.createBitmap(image, (int) rect[0], (int) rect[1],
+                    (int) rect[2], (int) rect[3], null, true);
+            ImageUtils.saveBitmap(mContext.getCacheDir() + "/" + personId + ".jpg", head);
+            Toast.makeText(mContext, personId + " 更新人脸信息  " + id, Toast.LENGTH_SHORT).show();
+            TTSManager.TTS("人脸更新成功",null);
+            RegisterCameraFragment.this.getActivity().setResult(RegisterActivity.ADD_SUCCESS_RESULT_CODE);
+            RegisterCameraFragment.this.getActivity().finish();
+        } else {
+            DLog.d("更新人脸失败！");
+            mCameraHelper.stopPreview();
+            exitDialog.show();
         }
 
     }

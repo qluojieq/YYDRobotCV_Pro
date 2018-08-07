@@ -206,6 +206,7 @@ public class UserDataSupport extends ContentProvider {
 
     //获取单个用户，不易频繁启动
     public User getUser(String personId){
+        open();
         User user = new User();
         Cursor cursor = database.query(UserDataHelper.DATABASE_TABLE, allColumns, UserDataHelper.C_ID_PERSON + "= ?", new String[] {personId}, null, null, null);
        if (cursor.getCount()==1){
@@ -221,6 +222,7 @@ public class UserDataSupport extends ContentProvider {
            user.setIdentifyCount(cursor.getString(8));
            user.setTag(cursor.getString(9));
        }
+       close();
         return  user;
     }
 

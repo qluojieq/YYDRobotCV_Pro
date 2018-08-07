@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class CommonUtils {
 
 
-    private static String regPhonNum = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[013678])|(18[0,5-9]))\\d{8}$";//电话号码
+    private static String regPhonNum = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[013678])|(18[0,3-9]))\\d{8}$";//电话号码
 
 //    private String regNameRule = "^[(a-zA-Z0-9\\u4e00-\\u9fa5)]{1,6}$";//取名规则（汉字、数字、字母）
 //    private static String regPhonNum = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[013678])|(18[0,5-9]))\\d{8}$";
