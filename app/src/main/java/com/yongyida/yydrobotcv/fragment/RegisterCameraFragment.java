@@ -449,24 +449,28 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
                 isSameFaceChecked = true;
                 Log.e(TAG,"checked ");
                 final User user =  UserDataSupport.getInstance(this.getContext()).getUser(id+"");
-                mCameraHelper.stopPreview();
-                faceCheckDialog = new SameFaceWarnDialog(this.getContext(), R.style.custom_dialog, new SameFaceWarnDialog.OnCloseListener() {
-                    @Override
-                    public void clickConfirm() { // 更新
-                        Log.e(TAG,"更新头像");
-                        faceCheckDialog.dismiss();
-                        isUpdateFace = true;
-                        mCameraHelper.startPreview();
-                        personId = Integer.parseInt(user.getPersonId());
-                    }
-                    @Override
-                    public void clickCancel() {  // 不做任何处理
-                        Log.e(TAG,"新录入");
-                        faceCheckDialog.dismiss();
-                        mCameraHelper.startPreview();
-                    }
-                },id + "已识别你为"+ user.getUserName()+", " + user.getPhoneNum());
-                faceCheckDialog.show();
+                if (user.getPhoneNum()!=null){
+
+                    mCameraHelper.stopPreview();
+                    faceCheckDialog = new SameFaceWarnDialog(this.getContext(), R.style.custom_dialog, new SameFaceWarnDialog.OnCloseListener() {
+                        @Override
+                        public void clickConfirm() { // 更新
+                            Log.e(TAG,"更新头像");
+                            faceCheckDialog.dismiss();
+                            isUpdateFace = true;
+                            mCameraHelper.startPreview();
+                            personId = Integer.parseInt(user.getPersonId());
+                        }
+                        @Override
+                        public void clickCancel() {  // 不做任何处理
+                            Log.e(TAG,"新录入");
+                            faceCheckDialog.dismiss();
+                            mCameraHelper.startPreview();
+                        }
+                    }, "已识别你为"+ user.getUserName()+", " + user.getPhoneNum().substring(0,3) + " * * * " + user.getPhoneNum().substring(7,11));
+                    faceCheckDialog.show();
+                }
+
             }if(id == -111){
                 isSameFaceChecked = true;
             }
@@ -789,7 +793,6 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
         }
         TTSManager.TTS(stringSpeak, ttsCallback);
     }
-
     @Override
     public void onPause() {
         super.onPause();

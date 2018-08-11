@@ -56,7 +56,6 @@ public class BaseInfoShowActivity extends AppCompatActivity {
                         BaseInfoShowActivity.this.finish();
                         break;
                 }
-
                 return true;
             }
         });

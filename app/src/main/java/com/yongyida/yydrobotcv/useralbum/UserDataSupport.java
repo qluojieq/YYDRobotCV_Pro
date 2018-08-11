@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import mobile.ReadFace.YMFaceTrack;
+
 /**
  * @author Brandon on 2018/3/13
  * update 18/4/10
@@ -199,6 +201,9 @@ public class UserDataSupport extends ContentProvider {
     public long deleteUser(String personId) {
         long ret = -1;
         open();
+        // 同时删除阅面中的信息
+        YMFaceTrack ymFaceTrack = new YMFaceTrack();
+        ymFaceTrack.deletePerson(Integer.parseInt(personId));
         ret = database.delete(UserDataHelper.DATABASE_TABLE, UserDataHelper.C_ID_PERSON + "= ?" , new String [] { personId});
         close();
         return ret;

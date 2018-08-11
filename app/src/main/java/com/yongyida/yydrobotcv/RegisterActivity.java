@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -55,6 +56,7 @@ public class RegisterActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         initSoundPool();
         setContentView(R.layout.main_enroll_activity);
         registerFrame = findViewById(R.id.register_frame);
@@ -68,7 +70,6 @@ public class RegisterActivity extends FragmentActivity {
         rCameraInfoFrame = new RegisterCameraFragment();
         rBaseInfoFrame = new RegisterBaseInfoFragment();
         registerCamera(null);
-
         exitDialog = new ExitDialog(this, R.style.custom_dialog, new ExitDialog.OnCloseListener() {
             @Override
             public void clickConfirm() {
@@ -78,11 +79,9 @@ public class RegisterActivity extends FragmentActivity {
                 exitDialog.dismiss();
                 RegisterActivity.this.finish();
             }
-
             @Override
             public void clickCancel() {
                 exitDialog.dismiss();
-
             }
         });
         checkCameraFrame = new ExitDialog(this, R.style.custom_dialog, new ExitDialog.OnCloseListener() {
