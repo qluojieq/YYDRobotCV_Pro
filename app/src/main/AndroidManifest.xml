@@ -16,10 +16,10 @@
 
 
         <activity android:name="com.yyd.yydrobotcv.activity.PersonListActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
 
         <activity
@@ -70,6 +70,12 @@
             android:authorities="com.yydrobo.yydrobotcv"
             android:name=".useralbum.UserDataSupport">
         </provider>
+        <activity android:name=".PointsActivity">
+             <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
+             <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+        </activity>
 
     </application>
 

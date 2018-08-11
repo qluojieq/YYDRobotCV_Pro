@@ -18,7 +18,7 @@ public class BaseApplication extends Application {
     private static BaseApplication instence;
 
     //绘制左右翻转
-    public static final boolean yu = false;
+    public static final boolean yu = true;
 
     public static boolean reverse_180 = false;
 
