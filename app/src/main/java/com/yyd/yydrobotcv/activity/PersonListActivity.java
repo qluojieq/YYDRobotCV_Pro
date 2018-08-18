@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.yongyida.yydrobotcv.FaceTrackActivity;
 import com.yongyida.yydrobotcv.MianListActivity;
 import com.yongyida.yydrobotcv.R;
 import com.yongyida.yydrobotcv.motion.HeadHelper;
@@ -66,12 +67,14 @@ public class PersonListActivity extends AppCompatActivity {
     }
 
     public void startFaceDetect(View view) {
-        Log.e(TAG,"开始人脸检测服务");
-        Intent intent = new Intent(this, FaceDetectService.class);
-        intent.putExtra("startType","active_interaction");
-//        intent.putExtra("cmd","1"); //blockly使用：用户id
-//        intent.putExtra("tag","10000");//超时时长
-        startService(intent);
+//        Log.e(TAG,"开始人脸检测服务");
+//        Intent intent = new Intent(this, FaceDetectService.class);
+//        intent.putExtra("startType","active_interaction");
+////        intent.putExtra("cmd","1"); //blockly使用：用户id
+////        intent.putExtra("tag","10000");//超时时长
+//        startService(intent);
+         Intent intent = new Intent(this, FaceTrackActivity.class);
+         startActivity(intent);
     }
 
     public void stopFaceDetect(View view) {

@@ -314,7 +314,7 @@ public class FaceDetectService extends Service implements PreviewListener{
         mHandler.removeMessages(1);// 删除延时
         Log.e(TAG,startType + "检测结束 " + backMsg );
         Intent intent = new Intent();
-        ComponentName componentName = new ComponentName("com.yongyida.robot.blocklyservice", "com.yongyida.robot.blocklyservice.BlocklyService");
+        ComponentName componentName = new ComponentName("com.yydrobot.service.blockly", "com.yydrobot.service.blockly.BlocklyService");
         intent.setComponent(componentName);
         intent.putExtra("from", getPackageName());
         intent.putExtra("function", "CMD_MSG");

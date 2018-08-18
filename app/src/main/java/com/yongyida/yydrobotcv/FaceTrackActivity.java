@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.yongyida.yydrobotcv.service.PersonDetectService;
 import com.yongyida.yydrobotcv.utils.TrackUtil;
 
 import java.util.List;
@@ -19,12 +20,17 @@ import mobile.ReadFace.YMFace;
 /**
  * Created by mac on 16/7/4.
  */
-public class PointsActivity extends BaseCameraActivity {
+public class FaceTrackActivity extends BaseCameraActivity {
 
     public static final String TAG = "PointActivity";
     boolean showPoint = false;
     boolean preFrame = false;
     private boolean threadStart;
+
+
+    private  int noFaceCount = 0;
+    private final int NO_FACE_THRESHOLD  = 100;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,7 @@ public class PointsActivity extends BaseCameraActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        noFaceCount = 0;
 //        requestPermissions(new String[]{Manifest.permission.CAMERA},10);
     }
 
@@ -143,8 +150,18 @@ public class PointsActivity extends BaseCameraActivity {
                     ymFace.setGenderConfidence(faceTrack.getGenderConfidence(i));
                 }
             }
+            noFaceCount = 0;// 有则取零
         }else {
-            Log.e(TAG,"no face");
+
+            noFaceCount ++; // 没有就叠加
+            if (noFaceCount == NO_FACE_THRESHOLD){
+                Intent intent = new Intent(this, PersonDetectService.class);
+                intent.putExtra("startType","start");
+                startService(intent);
+                Log.e(TAG,"结束人脸检测，开始人体检测");
+                FaceTrackActivity.this.finish();
+            }
+            Log.e(TAG,"no face " + noFaceCount);
         }
         return faces;
     }

@@ -21,8 +21,8 @@ import org.openni.UserEventArgs;
 public class PersonDetectService extends Service {
     private static final String TAG = PersonDetectService.class.getSimpleName();
 
-    private static final int MAX_DISTANCE = 1500;// 一米五
-    private static final int MIN_DISTANCE = 800;// 80厘米
+    private static final int MAX_DISTANCE = 2500;// 一米五
+    private static final int MIN_DISTANCE = 1000;// 80厘米
 
     private String helloWords = "  我叫小勇，很高兴为您服务！"; // 小于最小值主动招呼语
 
@@ -40,18 +40,21 @@ public class PersonDetectService extends Service {
     public void onCreate() {
         Log.e(TAG,"onCreate");
         super.onCreate();
-        mContext = new AstraContext(this,permissionCallbacks);
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG,"onStartCommand");
+        mExit = false;
+        mContext = new AstraContext(this,permissionCallbacks);
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         Log.e(TAG,"onDestroy");
+        mContext.close();
         super.onDestroy();
     }
     AstraContext mContext;
@@ -93,8 +96,8 @@ public class PersonDetectService extends Service {
     }
 
     boolean isPerson = true;
-    long [] oneTime = {0,0,0,0,0,0,0,0,0,0};
-    long [] oneTimeGone = {0,0,0,0,0,0,0,0,0,0};
+    long [] oneTime = {0,0,0,0,0,0,0,0,0,0};//  一次到来的人数
+    long [] oneTimeGone = {0,0,0,0,0,0,0,0,0,0}; // 离开的人数
     class AnalyzeRunable implements Runnable{
         @Override
         public void run() {
@@ -137,7 +140,6 @@ public class PersonDetectService extends Service {
                             Log.e(TAG,"人离开" + i);
 
                         }
-
                     }
 
                 }
@@ -158,13 +160,20 @@ public class PersonDetectService extends Service {
 
     //启动人脸检测服务
     public void startFaceDetect(String type){
-        if (true){
-            Log.e(TAG,"当前拥有的人数 " + getCurrentPersonCount());
-            if (getCurrentPersonCount()==1){
-                Intent intent = new Intent(this,FaceDetectService.class);
-                intent.putExtra("startType",type);
-                startService(intent);
-            }
+
+        Log.e(TAG,"启动人脸检测  " + getCurrentPersonCount());
+        if (getCurrentPersonCount()==1){
+            Intent intent = new Intent(this,FaceDetectService.class);
+            intent.putExtra("startType",type);
+            startService(intent);
+            // 启动人脸检测
+            Log.e(TAG,"结束人体检测，开始人脸检测");
+//            mExit = true;
+//            mContext.close();
+//            stopSelf();
+//            Intent intent = new Intent(this, FaceTrackActivity.class);
+//            intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+//            startActivity(intent);
         }
     }
 }
