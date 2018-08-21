@@ -106,8 +106,8 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     public static Handler mHandler;
     public boolean isVoiceOn = false;
 
-    //对于每种情况预览帧数进程测试
-    int TOTAL_STEP = 10;
+    //对于每种情况预览帧数进程测试,10稍慢
+    int TOTAL_STEP = 8;
     //从0开始，0,1,2；共三步
     int currentStep = 0;
     int viewCountStep1 = 0;

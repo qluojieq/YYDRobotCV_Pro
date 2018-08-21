@@ -28,8 +28,6 @@ public class SiderBar extends View {
 
     private int choose = 0;//默认还是要选择开头
 
-    private boolean showBackground;
-
     public void setRecycleView(RecyclerView mRecycleView) {
         this.recycleView = mRecycleView;
     }
@@ -52,7 +50,6 @@ public class SiderBar extends View {
 
     public SiderBar(Context context) {
         super(context);
-
     }
 
     protected void onDraw(Canvas canvas) {

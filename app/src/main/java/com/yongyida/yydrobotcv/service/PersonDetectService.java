@@ -29,7 +29,9 @@ public class PersonDetectService extends Service {
     private boolean wordOnce = true;
 
     private String startType = "start";// 'start ' 开始 ； ' stop ' 结束
-    @Nullable
+    private boolean isCameraStarted = false;
+
+   @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         Log.e(TAG,"onBind");
@@ -68,13 +70,17 @@ public class PersonDetectService extends Service {
     PermissionCallbacks permissionCallbacks = new PermissionCallbacks() {
         @Override
         public void onDevicePermissionGranted() {
-            Log.e(TAG,"permission granted");
+            Log.e(TAG,"permission granted start Camera");
             mInitOk = true;
             mDepthData = new DepthData(mContext);
             mDepthData.setMapOutputMode(320,240,30);
             mUserTracker = new UserTracker(mContext);
             mUserTracker.addUserDetectObserver(new NewUserObserver());
-            mContext.start();
+            if (isCameraStarted){
+                mContext.start();
+                isCameraStarted  = true;
+            }
+
             if (m_analyzeThread==null){
                 m_analyzeThread = new Thread(new AnalyzeRunable());
                 m_analyzeThread.start();
@@ -104,6 +110,7 @@ public class PersonDetectService extends Service {
             while (!mExit){
                 mContext.waitAnyUpdateAll();
                 int [] data  = mUserTracker.getUsers();
+                Log.e(TAG,"当前人数 ： " + data.length);
                 if (data.length<=0){
                     Log.e(TAG," 没有人 ");
                     wordOnce = true;

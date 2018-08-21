@@ -81,7 +81,8 @@
 
 
         <LinearLayout
-            android:layout_centerInParent="true"
+            android:layout_marginLeft="200dp"
+            android:layout_centerVertical="true"
             android:id="@+id/insert_phone_tap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -101,9 +102,10 @@
                     android:textSize="@dimen/text_size_base_info_choice" />
 
                 <EditText
+                    android:paddingLeft="5dp"
                     android:id="@+id/edit_phone"
                     android:layout_width="150dp"
-                    android:layout_height="35dp"
+                    android:layout_height="30dp"
                     android:background="@mipmap/ic_edit_bg"
                     android:gravity="center|left"
                     android:hint="请输入手机号码"
@@ -129,12 +131,14 @@
         </LinearLayout>
 
     <LinearLayout
-        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:layout_centerVertical="true"
         android:id="@+id/insert_name_tap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:layout_marginLeft="100dp"
+
         >
 
         <LinearLayout
@@ -154,9 +158,10 @@
                 android:textSize="@dimen/text_size_base_info_choice" />
 
             <EditText
+                android:paddingLeft="5dp"
                 android:id="@+id/edit_name"
                 android:layout_width="150dp"
-                android:layout_height="35dp"
+                android:layout_height="30dp"
                 android:background="@mipmap/ic_edit_bg"
                 android:gravity="center|left"
                 android:hint="请输入您的姓名"

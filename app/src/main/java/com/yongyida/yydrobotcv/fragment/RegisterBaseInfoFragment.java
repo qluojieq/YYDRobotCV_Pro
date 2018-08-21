@@ -229,11 +229,11 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 final int heightDifference = screenHeight - rect.bottom;
                 boolean visible = heightDifference > screenHeight / 3;
                 if(visible){
-                    Log.e(TAG,"显示");
+//                    Log.e(TAG,"显示");
                     changeKeyboardStateOut(phoneTableView);
                 }else {
 
-                    Log.e(TAG,"键盘隐藏");
+//                    Log.e(TAG,"键盘隐藏");
                     changeKeyboardStateIn(phoneTableView);
                 }
             }
@@ -273,6 +273,7 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                         && KeyEvent.ACTION_DOWN == event.getAction())) {
                     Log.e(TAG, "actionId " + actionId + "event " + EditorInfo.IME_ACTION_NEXT);
                     nextStepBtn.performClick();
+                    nextStepBtn.setFocusable(true);
                 }
 
                 return true;
@@ -292,11 +293,8 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                 final int heightDifference = screenHeight - rect.bottom;
                 boolean visible = heightDifference > screenHeight / 3;
                 if(visible){
-                    Log.e(TAG,"显示");
                     changeKeyboardStateOut(nameTableView);
                 }else {
-
-                    Log.e(TAG,"键盘隐藏");
                     changeKeyboardStateIn(nameTableView);
                 }
             }
@@ -357,10 +355,11 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
                         && KeyEvent.ACTION_DOWN == event.getAction())) {
                     Log.e(TAG, "actionId " + actionId + "event " + EditorInfo.IME_ACTION_NEXT);
                     nextStepBtn.performClick();
-                    if (!TextUtils.isEmpty(nameView.getText()) && CommonUtils.isMatchName(nameView.getText().toString())) {
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.toggleSoftInputFromWindow(v.getWindowToken(), 0, 0);
-                    }
+                    nextStepBtn.setFocusable(true);
+//                    if (!TextUtils.isEmpty(nameView.getText()) && CommonUtils.isMatchName(nameView.getText().toString())) {
+//                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                        imm.toggleSoftInputFromWindow(v.getWindowToken(), 0, 0);
+//                    }
                 }
                 return true;
             }
@@ -391,6 +390,17 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     }
 
     public void switchTable(int position) {
+        InputMethodManager im = ((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE));
+
+        switch (position){
+            case 3:
+            case 4:
+                if (im.isActive()){
+                    Log.e(TAG,"hide is done");
+                    im.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
+                }
+                break;
+        }
         switch (position) {
             case 1:
                 nextStepBtn.setText("下一步");
@@ -467,9 +477,9 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     // 键盘出现的时候
     public void changeKeyboardStateOut(View view){
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
-        params.removeRule(RelativeLayout.CENTER_IN_PARENT);
+        params.removeRule(RelativeLayout.CENTER_VERTICAL);
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+//        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
         view.setLayoutParams(params);
     }
 
@@ -477,8 +487,8 @@ public class RegisterBaseInfoFragment extends Fragment implements View.OnClickLi
     public void changeKeyboardStateIn(View view){
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
         params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.removeRule(RelativeLayout.CENTER_HORIZONTAL);
-        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+//        params.removeRule(RelativeLayout.CENTER_HORIZONTAL);
+        params.addRule(RelativeLayout.CENTER_VERTICAL);
         view.setLayoutParams(params);
     }
 
