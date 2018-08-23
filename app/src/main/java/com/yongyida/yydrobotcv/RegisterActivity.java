@@ -272,8 +272,6 @@ public class RegisterActivity extends FragmentActivity {
                 exitDialog.show();
 //                Toast.makeText(RegisterActivity.this, "返回键点击", Toast.LENGTH_SHORT).show();
                 return  false;
-
-
             default:
                 break;
         }

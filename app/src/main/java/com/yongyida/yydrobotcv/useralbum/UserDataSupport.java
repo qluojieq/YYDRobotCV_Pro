@@ -72,6 +72,7 @@ public class UserDataSupport extends ContentProvider {
 
 
 
+
     //获取全部用户
     public List<User> getAllUsers(String type) {
         open();
@@ -118,7 +119,10 @@ public class UserDataSupport extends ContentProvider {
                 int ret = 0;
                 String name1 = o1.getUserName();
                 String name2 = o2.getUserName();
-
+                if (!indexLetter.contains(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)+"")){
+                    indexLetter.add(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)+"");
+                    Log.e(TAG,ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0) + "比较遍历");
+                }
                 String first1 = ChineseCharacterUtil.getFirstChar(o1.getUserName());
                 String second2 = ChineseCharacterUtil.getFirstChar(o2.getUserName());
                 if (TextUtils.isEmpty(name1)&&TextUtils.isEmpty(name2)){
@@ -136,7 +140,12 @@ public class UserDataSupport extends ContentProvider {
         return allUsers;
     }
 
+    final ArrayList<String> indexLetter = new ArrayList();
 
+    public ArrayList<String> getIndexLetter() {
+        Collections.sort(indexLetter);
+        return indexLetter;
+    }
 
     //判断是否重名
     public  boolean checkNameUsed(String name){

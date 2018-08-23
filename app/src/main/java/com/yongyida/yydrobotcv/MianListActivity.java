@@ -31,15 +31,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.yongyida.yydrobotcv.customview.SiderBar;
-import com.yongyida.yydrobotcv.customview.SiderBar.OnChooseLetterChangedListener;
-import com.yongyida.yydrobotcv.service.PersonDetectService;
+import com.yongyida.yydrobotcv.customview.HorizontalSideBar;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
 import com.yongyida.yydrobotcv.utils.ChineseCharacterUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
@@ -48,12 +50,12 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
 /**
  * @author Brandon on 2018/3/13
  **/
-public class MianListActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback{
+public class MianListActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback,HorizontalSideBar.OnChooseChangeListener{
 
     private static final int BASE_INFO_REQUEST = 10;
     private static final int NEW_ADD_REQUEST = 11;
     public static final String TAG = MianListActivity.class.getSimpleName();
-    OnChooseLetterChangedListener onChooseLetterChangedListener;
+
     UserDataSupport dataSupport;
     // Used to load the 'native-lib' library on application startup.
     public static List<User> usersData;
@@ -66,7 +68,7 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
 
     RecyclerView userRecycleView;
     UsersAdapter userDataAdapter;
-    SiderBar mSiderBar;
+    HorizontalSideBar mSiderBar;
     final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.HORIZONTAL, false);
 
     @Override
@@ -75,8 +77,6 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
         mHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                mSiderBar.setLetters(ChineseCharacterUtil.getFirstChar(usersData.get(msg.what).getUserName()));
-//                gridLayoutManager.scrollToPositionWithOffset(scrollString(usersData.get(msg.what).getUaerName()),0);
                 return false;
             }
         });
@@ -84,17 +84,16 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
         dataSupport =  UserDataSupport.getInstance(this);
         userRecycleView = (RecyclerView) findViewById(R.id.user_recycle);
         mSiderBar = findViewById(R.id.side_bar);
-        onChooseLetterChangedListener = new OnChooseLetterChangedListener() {
-            @Override
-            public void onChooseLetter(String s) {
-                gridLayoutManager.scrollToPositionWithOffset(scrollString(s), 0);
-            }
-        };
-        mSiderBar.setOnTouchingLetterChangedListener(onChooseLetterChangedListener);
-//        LinearLayoutManager
-
+        mSiderBar.setOnChooseChangeListener(this);
         userRecycleView.setLayoutManager(gridLayoutManager);
+
+        //  获取数据
         usersData = dataSupport.getAllUsers("list");
+        indexLetter = dataSupport.getIndexLetter();
+//        usersData = getTestUsersData(); // 测试数据
+
+        mSiderBar.setLetters(indexLetter.toArray(new String[indexLetter.size()]),0); // 初始化的值
+
         userDataAdapter = new UsersAdapter(this);
         userDataAdapter.setOnItemClickListener(new UsersAdapter.OnItemClickListener() {
             @Override
@@ -102,16 +101,13 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
                 Log.e(TAG, "这个位置白点击了 " + position);
                 if (position == 0) {
                     addNewUser(null);
-
                 } else {
                     Intent intent = new Intent(MianListActivity.this, BaseInfoShowActivity.class);
                     intent.putExtra("one_user", usersData.get(position));
                     startActivityForResult(intent, 10);
                 }
-
             }
         });
-        mSiderBar.setRecycleView(userRecycleView);
         userRecycleView.setAdapter(userDataAdapter);
         userRecycleView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -134,11 +130,16 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int firstVisibleItemPosition = gridLayoutManager.findFirstVisibleItemPosition() + 1;//可见范围内的第一项的位置
-//                int lastVisibleItemPosition=gridLayoutManager.findLastVisibleItemPosition();//可见范围内的第一项的位置
-                if (usersData.size()>9){
-                    mSiderBar.setLetters(ChineseCharacterUtil.getFirstChar(usersData.get(firstVisibleItemPosition).getUserName()));
+                int firstVisibleItemPosition = gridLayoutManager.findFirstVisibleItemPosition()+1;//可见范围内的第一项的位置
+                String lettersIndex [] = indexLetter.toArray(new String[indexLetter.size()]);
+                if (usersData.size()==1){
+                    mSiderBar.setLetters(lettersIndex,0);
+                }else {
+                    String temp = ChineseCharacterUtil.getFirstChar(usersData.get(firstVisibleItemPosition).getUserName());// 获取首字母
+
+                    mSiderBar.setLetters(lettersIndex,indexLetter.indexOf(temp));
                 }
+
             }
         });
     }
@@ -157,8 +158,13 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
     }
 
     public void mainBack(View view) {
-//        testClosePerson();
         this.finish();
+    }
+
+    @Override
+    public void chooseLetter(String letter) {
+//        userRecycleView.smoothScrollToPosition(12);
+        gridLayoutManager.scrollToPositionWithOffset(scrollString(letter), 0);
     }
 
     public static class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder> implements View.OnClickListener {
@@ -269,11 +275,7 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
         }
 
     }
-    public void testClosePerson() {
-//        Intent intent = new Intent(this, PersonDetectService.class);
-//        intent.putExtra("startType","start");
-//        startService(intent);
-    }
+
 
     public int scrollString(String targetChar) {
         int ret = 0;
@@ -378,4 +380,57 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
         startActivity(localIntent);
     }
 
+     ArrayList<String> indexLetter = new ArrayList();
+    public  List<User> getTestUsersData() {
+        String index[] = {"#", "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0"};
+
+        List<User> allUsers = new ArrayList<>();
+        User user1 = new User();
+        user1.setUserId("");
+        user1.setPersonId("");
+        user1.setUserName("添加");
+        user1.setBirthDay("");
+        user1.setGender("");
+        user1.setPhoneNum("");
+        user1.setVipRate("");
+        user1.setHeadPortrait("");
+        user1.setIdentifyCount("");
+        user1.setTag("");
+        Random random = new Random();
+        allUsers.add(user1);
+
+        for (int i = 0;i<10;i++){
+            User user2 = new User();
+            user2.setUserId("");
+            user2.setPersonId("");
+            user2.setUserName(index[random.nextInt(37)]);
+            user2.setBirthDay("");
+            user2.setGender("");
+            user2.setPhoneNum("");
+            user2.setVipRate("");
+            user2.setHeadPortrait("");
+            user2.setIdentifyCount("");
+            user2.setTag("");
+            allUsers.add(user2);
+        }
+        Collections.sort(allUsers, new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+
+                if (!indexLetter.contains(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)+"")){
+                    indexLetter.add(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)+"");
+                    Log.e(TAG,ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0) + "比较遍历");
+                }
+                if (o1.getUserName().equals("添加")||o2.getUserName().equals("添加")){
+                    return 1;
+                }else {
+                    Log.e(TAG,ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0) + " 值");
+                   return ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)-ChineseCharacterUtil.getFirstChar(o2.getUserName()).charAt(0);
+                }
+            }
+        });
+        Collections.sort(indexLetter);
+        Log.e(TAG,"indexLetter length " + indexLetter.size());
+        return allUsers;
+    }
 }

@@ -15,15 +15,13 @@ import android.view.View;
 
 import com.yongyida.yydrobotcv.R;
 
-import java.util.ArrayList;
-
 /**
  * @author Brandon on 2018/3/14
  **/
 public class SiderBar extends View {
 
     public static final String TAG = SiderBar.class.getSimpleName();
-
+    int width = 55;
     private Paint paint = new Paint();
 
     private int choose = 0;//默认还是要选择开头
@@ -35,8 +33,10 @@ public class SiderBar extends View {
     RecyclerView recycleView;
 
     public static String[] letters = {"#", "A", "B", "C", "D", "E", "F", "G", "H",
-            "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-            "V", "W", "X", "Y", "Z"};
+            "I", "J", "K", "L"};
+
+//    , "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+//            "V", "W", "X", "Y", "Z"
 
     private OnChooseLetterChangedListener onChooseLetterChangedListener;
 
@@ -57,9 +57,9 @@ public class SiderBar extends View {
         super.onDraw(canvas);
 
         int height = getHeight()/2+12;
-        int width = getWidth();
-        //平均每个字母占的高度
-        int singleWidth = width / letters.length;
+
+        //平均每个字母占的高度width / letters.length
+        int singleWidth = width;
         for (int i = 0; i < letters.length; i++) {
             //字体颜色
             paint.setColor(getResources().getColor(R.color.colorText));
@@ -108,7 +108,6 @@ public class SiderBar extends View {
                         choose = c;
                         invalidate();
                     }
-
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -163,7 +162,6 @@ public class SiderBar extends View {
                 }
                 invalidate();
             }
-
     }
 
 }

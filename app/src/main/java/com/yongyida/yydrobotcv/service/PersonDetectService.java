@@ -76,11 +76,11 @@ public class PersonDetectService extends Service {
             mDepthData.setMapOutputMode(320,240,30);
             mUserTracker = new UserTracker(mContext);
             mUserTracker.addUserDetectObserver(new NewUserObserver());
-            if (isCameraStarted){
+            if (!isCameraStarted){
                 mContext.start();
                 isCameraStarted  = true;
             }
-
+//            mContext.waitAnyUpdateAll();
             if (m_analyzeThread==null){
                 m_analyzeThread = new Thread(new AnalyzeRunable());
                 m_analyzeThread.start();

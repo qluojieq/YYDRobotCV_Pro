@@ -1,7 +1,5 @@
 package com.yongyida.yydrobotcv.useralbum;
 
-import android.os.Parcelable;
-
 import java.io.Serializable;
 
 /**
