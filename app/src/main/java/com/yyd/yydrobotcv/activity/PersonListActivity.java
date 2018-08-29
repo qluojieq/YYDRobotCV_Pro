@@ -29,6 +29,7 @@ import com.yongyida.yydrobotcv.R;
 import com.yongyida.yydrobotcv.motion.HeadHelper;
 import com.yongyida.yydrobotcv.service.FaceDetectService;
 import com.yongyida.yydrobotcv.service.PersonDetectService;
+import com.yongyida.yydrobotcv.service.PirPersonDetectService;
 
 
 public class PersonListActivity extends AppCompatActivity {
@@ -55,7 +56,7 @@ public class PersonListActivity extends AppCompatActivity {
 
     public void startPersonDetect(View view) {
         Log.e(TAG,"开始人体检测");
-        Intent intent = new Intent(this, PersonDetectService.class);
+        Intent intent = new Intent(this, PirPersonDetectService.class);
         intent.putExtra("startType","start");
         startService(intent);
     }

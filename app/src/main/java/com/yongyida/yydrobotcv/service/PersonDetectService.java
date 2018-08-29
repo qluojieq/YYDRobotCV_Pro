@@ -126,7 +126,7 @@ public class PersonDetectService extends Service {
                         oneTime[i]++;
                         oneTimeGone[i] = 0;
                         if (isPerson&&oneTime[i]==1){
-                            startFaceDetect("startTest");
+//                            startFaceDetect("startTest");
                             Log.e(TAG,"人来 " + i);
                             CommonUtils.serviceToast(PersonDetectService.this,"有人");
                         }
@@ -141,7 +141,7 @@ public class PersonDetectService extends Service {
                         oneTime[i] = 0;
                         oneTimeGone[i]++;
                         if (oneTimeGone[i]==1){
-                         startFaceDetect("stopTest");
+//                         startFaceDetect("stopTest");
                             TTSManager.TTSSTop(PersonDetectService.this);
                             CommonUtils.serviceToast(PersonDetectService.this,"离开");
                             Log.e(TAG,"人离开" + i);

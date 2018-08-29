@@ -15,12 +15,10 @@
         android:theme="@style/AppTheme">
         <activity android:name="com.yyd.yydrobotcv.activity.PersonListActivity">
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+             <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
+             <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
         </activity>
         <activity
             android:name=".RegisterActivity"
@@ -47,11 +45,11 @@
         <activity
             android:name=".MianListActivity"
             android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
 
         <service
@@ -62,6 +60,7 @@
             android:name=".service.PersonDetectService"
             android:enabled="true"
             android:exported="true" />
+        <service android:name=".service.PirPersonDetectService"/>
 
         <provider
             android:name=".useralbum.UserDataSupport"

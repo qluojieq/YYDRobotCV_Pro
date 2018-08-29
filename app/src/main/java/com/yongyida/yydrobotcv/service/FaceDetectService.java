@@ -15,6 +15,7 @@ import com.yongyida.yydrobotcv.camera.Camera2Track;
 import com.yongyida.yydrobotcv.camera.CameraBase;
 import com.yongyida.yydrobotcv.camera.PreviewListener;
 import com.yongyida.yydrobotcv.motion.HeadHelper;
+import com.yongyida.yydrobotcv.tts.TTSManager;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
 import com.yongyida.yydrobotcv.utils.DrawUtil;
@@ -57,6 +58,7 @@ public class FaceDetectService extends Service implements PreviewListener{
 
     boolean isTrackOn = true;
     String startType = START_TYPE_ACTIVE_INTERACTION;
+    String sayHello = "";
 
     // blockly块
     int checkOutTime = 2000;
@@ -101,6 +103,7 @@ public class FaceDetectService extends Service implements PreviewListener{
         Log.e(TAG,"startCommand "  + startType);
         switch (startType){
             case START_TYPE_ACTIVE_INTERACTION:
+                sayHello = intent.getStringExtra(START_MSG);
                 mCamera2Track.start();
                 startTrack();
                 break;
@@ -194,10 +197,12 @@ public class FaceDetectService extends Service implements PreviewListener{
                     String name = DrawUtil.getNameFromPersonId(faces.get(0).getPersonId());
 //                Log.e(TAG,"人脸识别的 id号码 " + faces.get(0).getPersonId() + "可信度 " + faces.get(0).getConfidence() +  "获取到的人名 " + name);
                     if (!TextUtils.isEmpty(name)){
+                        if (sayHello.equals("sayHello")){
+                            TTSManager.TTS("你好 " + name,null);
+                        }
                         CommonUtils.serviceToast(this,name);
                     }
                 }
-
             }
     }
 
