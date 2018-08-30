@@ -6,8 +6,8 @@ android {
         applicationId "com.yongyida.yydrobotcv"
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 3
-        versionName "1.1.180823"
+        versionCode 4
+        versionName "1.1.180825"
         multiDexEnabled true
         multiDexEnabled true
 

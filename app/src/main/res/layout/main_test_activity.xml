@@ -69,6 +69,18 @@
             android:layout_width="0dp"
             android:layout_height="match_parent" />
         <Button
+            android:onClick="LeftMotionFoot"
+            android:text="左足"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+        <Button
+            android:onClick="RightMotionFoot"
+            android:text="右足"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+        <Button
             android:onClick="StopMotion"
             android:text="停"
             android:layout_weight="1"

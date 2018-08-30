@@ -62,9 +62,11 @@ public class PersonListActivity extends AppCompatActivity {
     }
     public void closePersonDetect(View view) {
         Log.e(TAG,"关闭人体检测");
-        Intent intent = new Intent(this, PersonDetectService.class);
-        intent.putExtra("startType","stop");
-        startService(intent);
+//        Intent intent = new Intent(this, PersonDetectService.class);
+//        intent.putExtra("startType","stop");
+//        startService(intent);
+        Intent intent = new Intent(this,PirPersonDetectService.class);
+        stopService(intent);
     }
 
     public void startFaceDetect(View view) {
@@ -85,6 +87,7 @@ public class PersonListActivity extends AppCompatActivity {
         intent.putExtra("cmd","1"); //blockly使用用户id
         intent.putExtra("tag","-1");//-1直接调用停止
         startService(intent);
+
     }
 
     @Override
@@ -125,6 +128,14 @@ public class PersonListActivity extends AppCompatActivity {
 
     public void StopMotion(View view) {
         HeadHelper.stopMotin(this);
+    }
+
+    public void RightMotionFoot(View view) {
+        HeadHelper.headFootBackRight(this);
+    }
+
+    public void LeftMotionFoot(View view) {
+        HeadHelper.headFootBackLeft(this);
     }
 
 

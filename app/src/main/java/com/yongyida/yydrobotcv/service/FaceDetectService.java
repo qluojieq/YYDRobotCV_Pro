@@ -11,6 +11,10 @@ import android.support.v4.util.SimpleArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.yongyida.robot.communicate.app.common.send.SendClient;
+import com.yongyida.robot.communicate.app.common.send.SendResponseListener;
+import com.yongyida.robot.communicate.app.hardware.motion.response.data.Ultrasonic;
+import com.yongyida.robot.communicate.app.hardware.motion.send.data.QueryUltrasonicControl;
 import com.yongyida.yydrobotcv.camera.Camera2Track;
 import com.yongyida.yydrobotcv.camera.CameraBase;
 import com.yongyida.yydrobotcv.camera.PreviewListener;
@@ -59,6 +63,7 @@ public class FaceDetectService extends Service implements PreviewListener{
     boolean isTrackOn = true;
     String startType = START_TYPE_ACTIVE_INTERACTION;
     String sayHello = "";
+    boolean sayOnce = true;
 
     // blockly块
     int checkOutTime = 2000;
@@ -98,12 +103,14 @@ public class FaceDetectService extends Service implements PreviewListener{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        mQueryUltraValueControl.setAndroid(QueryUltrasonicControl.Android.SEND);
+        SendClient.getInstance(this).send(this, mQueryUltraValueControl, mSendUltraResponseListener);
         startType = intent.getStringExtra(START_TYPE);
         Log.e(TAG,"startCommand "  + startType);
         switch (startType){
             case START_TYPE_ACTIVE_INTERACTION:
                 sayHello = intent.getStringExtra(START_MSG);
+                sayOnce = true;
                 mCamera2Track.start();
                 startTrack();
                 break;
@@ -133,6 +140,8 @@ public class FaceDetectService extends Service implements PreviewListener{
 
     @Override
     public void onDestroy() {
+        mCamera2Track.stop();
+        stopTrack();
         Log.e(TAG,"onDestroy");
         super.onDestroy();
     }
@@ -167,7 +176,7 @@ public class FaceDetectService extends Service implements PreviewListener{
         stop = false;
         mContext = this;
         faceTrack = new YMFaceTrack();
-        faceTrack.setDistanceType(YMFaceTrack.DISTANCE_TYPE_NEAR);
+        faceTrack.setDistanceType(YMFaceTrack.DISTANCE_TYPE_FAR);
         int result = faceTrack.initTrack(this, YMFaceTrack.FACE_0, YMFaceTrack.RESIZE_WIDTH_640);
         DLog.d("getAlbumSize1: " + faceTrack.getEnrolledPersonIds().size());
         boolean needUpdateFaceFeature = faceTrack.isNeedUpdateFaceFeature();
@@ -197,7 +206,8 @@ public class FaceDetectService extends Service implements PreviewListener{
                     String name = DrawUtil.getNameFromPersonId(faces.get(0).getPersonId());
 //                Log.e(TAG,"人脸识别的 id号码 " + faces.get(0).getPersonId() + "可信度 " + faces.get(0).getConfidence() +  "获取到的人名 " + name);
                     if (!TextUtils.isEmpty(name)){
-                        if (sayHello.equals("sayHello")){
+                        if (sayHello.equals("sayHello")&&sayOnce){
+                            sayOnce = false;
                             TTSManager.TTS("你好 " + name,null);
                         }
                         CommonUtils.serviceToast(this,name);
@@ -222,11 +232,11 @@ public class FaceDetectService extends Service implements PreviewListener{
                 if (trackingMap.size() > 50) trackingMap.clear();
                 //只对最大人脸框进行识别
                 int maxIndex = 0;
-                for (int i = 1; i < faces.size(); i++) {
-                    if (faces.get(maxIndex).getRect()[2] <= faces.get(i).getRect()[2]) {
-                        maxIndex = i;
-                    }
-                }
+//                for (int i = 1; i < faces.size(); i++) {
+//                    if (faces.get(maxIndex).getRect()[2] <= faces.get(i).getRect()[2]) {
+//                        maxIndex = i;
+//                    }
+//                }
 
                 final YMFace ymFace = faces.get(maxIndex);
                 final int anaIndex = maxIndex;
@@ -235,7 +245,7 @@ public class FaceDetectService extends Service implements PreviewListener{
                 final float[] headposes = ymFace.getHeadpose();
 
 
-                if (isTrackOn){ // 跟随运动逻辑
+                if (isTrackOn&&ultraDistance>PirPersonDetectService.STOP_DISTANCE){ // 跟随运动逻辑
                     trackCenterX = (rect[0] - rect[2]/2);
                     trackCenterY = (rect[1] + rect[3]/2);
                    if (trackCenterX>TRACK_LEFT){
@@ -244,9 +254,10 @@ public class FaceDetectService extends Service implements PreviewListener{
                        HeadHelper.headLeft(this);
                    }
                    if (trackCenterY<TRACK_TOP){
-                       HeadHelper.headDown(this);
-                   }else if (trackCenterY>TRACK_BOTTOM){
                        HeadHelper.headUp(this);
+                   }else if (trackCenterY>TRACK_BOTTOM){
+                       HeadHelper.headDown(this);
+
                    }
                 }
 
@@ -327,7 +338,20 @@ public class FaceDetectService extends Service implements PreviewListener{
         intent.putExtra("arg1", 2);
         intent.putExtra("msg", backMsg);
         startService(intent);
-
     }
+    private QueryUltrasonicControl mQueryUltraValueControl = new QueryUltrasonicControl();
+    int ultraDistance = 0;
+    private SendResponseListener mSendUltraResponseListener = new SendResponseListener<Ultrasonic>() {
+        @Override
+        public void onSuccess(Ultrasonic ultrasonic) {
+            if (ultrasonic != null) {
+                ultraDistance = ultrasonic.getDistances()[5];
+            }
+        }
 
+        @Override
+        public void onFail(int i, String s) {
+
+        }
+    };
 }
