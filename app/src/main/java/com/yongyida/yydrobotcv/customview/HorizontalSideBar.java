@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -137,6 +138,9 @@ public class HorizontalSideBar extends View {
     }
 
     public void setLetters(String[] letters,int choose) {
+        for (int i = 0;i<letters.length;i++){
+            Log.e(TAG, "letters " + letters[i]);
+        }
         this.choose = choose;
         this.letters = letters;
         invalidate();

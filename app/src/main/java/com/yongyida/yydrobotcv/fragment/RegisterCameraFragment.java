@@ -107,7 +107,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
     public boolean isVoiceOn = false;
 
     //对于每种情况预览帧数进程测试,10稍慢
-    int TOTAL_STEP = 8;
+    int TOTAL_STEP = 5;
     //从0开始，0,1,2；共三步
     int currentStep = 0;
     int viewCountStep1 = 0;
@@ -546,7 +546,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
             }
             if (voiceWarnCount > NO_PERSON_WARN_THRESHOLD) {
                 mHandler.sendEmptyMessage(6);//没脸报警并结束
-                CommonUtils.serviceToast(this.getActivity(), "不在框内");
+//                CommonUtils.serviceToast(this.getActivity(), "不在框内");
             }
         }
     }
@@ -654,7 +654,7 @@ public class RegisterCameraFragment extends Fragment implements CameraHelper.Pre
             Bitmap head = Bitmap.createBitmap(image, (int) rect[0], (int) rect[1],
                     (int) rect[2], (int) rect[3], null, true);
             ImageUtils.saveBitmap(mContext.getCacheDir() + "/" + personId + ".jpg", head);
-            Toast.makeText(mContext, personId + " 更新人脸信息  " + id, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(mContext, personId + " 更新人脸信息  " + id, Toast.LENGTH_SHORT).show();
             TTSManager.TTS("人脸更新成功",null);
             RegisterCameraFragment.this.getActivity().setResult(RegisterActivity.ADD_SUCCESS_RESULT_CODE);
             RegisterCameraFragment.this.getActivity().finish();

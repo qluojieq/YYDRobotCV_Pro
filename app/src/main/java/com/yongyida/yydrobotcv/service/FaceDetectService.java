@@ -21,6 +21,7 @@ import com.yongyida.yydrobotcv.camera.PreviewListener;
 import com.yongyida.yydrobotcv.motion.HeadHelper;
 import com.yongyida.yydrobotcv.tts.TTSManager;
 import com.yongyida.yydrobotcv.useralbum.User;
+import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
 import com.yongyida.yydrobotcv.utils.CommonUtils;
 import com.yongyida.yydrobotcv.utils.DrawUtil;
 
@@ -52,6 +53,14 @@ public class FaceDetectService extends Service implements PreviewListener{
 
     private float trackCenterX = 640;
     private float trackCenterY = 360;
+
+    //人脸检测超时设置
+    private static final int FACE_CHECK_COUNT = 50;
+    private static final int NO_FACE_CHECK_COUNT = 50;
+    private int faceCheckCount = 0;
+    private int noFaceCheckCount = 0;
+
+
 
 
     private static final String TAG = FaceDetectService.class.getSimpleName();
@@ -103,6 +112,7 @@ public class FaceDetectService extends Service implements PreviewListener{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        faceCheckCount = 0;
         mQueryUltraValueControl.setAndroid(QueryUltrasonicControl.Android.SEND);
         SendClient.getInstance(this).send(this, mQueryUltraValueControl, mSendUltraResponseListener);
         startType = intent.getStringExtra(START_TYPE);
@@ -206,13 +216,19 @@ public class FaceDetectService extends Service implements PreviewListener{
                     String name = DrawUtil.getNameFromPersonId(faces.get(0).getPersonId());
 //                Log.e(TAG,"人脸识别的 id号码 " + faces.get(0).getPersonId() + "可信度 " + faces.get(0).getConfidence() +  "获取到的人名 " + name);
                     if (!TextUtils.isEmpty(name)){
+
                         if (sayHello.equals("sayHello")&&sayOnce){
                             sayOnce = false;
                             TTSManager.TTS("你好 " + name,null);
+                            // 添加数据库
+                            UserDataSupport dataSource =  UserDataSupport.getInstance(this);
+                            dataSource.updateIdentifyCount( faces.get(0).getPersonId()+"");
                         }
                         CommonUtils.serviceToast(this,name);
                     }
                 }
+            }else {
+
             }
     }
 

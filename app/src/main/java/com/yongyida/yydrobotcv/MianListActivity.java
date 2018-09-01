@@ -89,11 +89,6 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
 
         //  获取数据
         usersData = dataSupport.getAllUsers("list");
-        indexLetter = dataSupport.getIndexLetter();
-//        usersData = getTestUsersData(); // 测试数据
-
-        mSiderBar.setLetters(indexLetter.toArray(new String[indexLetter.size()]),0); // 初始化的值
-
         userDataAdapter = new UsersAdapter(this);
         userDataAdapter.setOnItemClickListener(new UsersAdapter.OnItemClickListener() {
             @Override
@@ -148,6 +143,9 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
     protected void onResume() {
         super.onResume();
         callpremission();
+        indexLetter = dataSupport.getIndexLetter();
+//        usersData = getTestUsersData(); // 测试数据
+        mSiderBar.setLetters(indexLetter.toArray(new String[indexLetter.size()]),0); // 初始化的值
     }
 
 
@@ -261,6 +259,7 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
                     usersData.clear();
                     usersData = dataSupport.getAllUsers("list");
                     userDataAdapter.notifyDataSetChanged();
+
                 }
                 break;
             case NEW_ADD_REQUEST:
@@ -279,7 +278,7 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
 
     public int scrollString(String targetChar) {
         int ret = 0;
-        int i = 0;
+        int i = 1;
         for (; i < usersData.size(); i++) {
             if (targetChar.equals(ChineseCharacterUtil.getFirstChar(usersData.get(i).getUserName()))) {
                 break;

@@ -112,16 +112,19 @@ public class UserDataSupport extends ContentProvider {
         Log.e(TAG,allUsers.size() + " get all user success " + cursor.getCount());
         cursor.close();
         close();
-
+        final ArrayList<String> indexLetterTemp = new ArrayList();
         Collections.sort(allUsers, new Comparator<User>() {//对输出的结果提前排好序
             @Override
             public int compare(User o1, User o2) {
                 int ret = 0;
                 String name1 = o1.getUserName();
                 String name2 = o2.getUserName();
+
                 if (!indexLetter.contains(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)+"")){
                     indexLetter.add(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)+"");
-                    Log.e(TAG,ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0) + "比较遍历");
+                }
+                if (!indexLetterTemp.contains(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)+"")){
+                    indexLetterTemp.add(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)+"");
                 }
                 String first1 = ChineseCharacterUtil.getFirstChar(o1.getUserName());
                 String second2 = ChineseCharacterUtil.getFirstChar(o2.getUserName());
@@ -137,13 +140,39 @@ public class UserDataSupport extends ContentProvider {
                 return ret;
             }
         });
+        Collections.sort(indexLetter);
+        Collections.sort(indexLetterTemp);
+        for (int i = 0;i<indexLetter.size();i++){
+            Log.e(TAG,"work " + indexLetter.get(i));
+        }
+        for (int i = 0;i<indexLetterTemp.size();i++){
+            Log.e(TAG,"workTemp " + indexLetterTemp.get(i));
+        }
+
+        // 删除多余的
+//        if (indexLetterTemp.size()!= indexLetterTemp.size()){
+//            for (int i = 0;i<indexLetter.size();i++){
+//                Log.e(TAG,"work " + indexLetter.get(i) + " temp " + indexLetterTemp.get(i));
+//                if (indexLetter.get(i)!= indexLetterTemp.get(i)){
+//                    indexLetter.remove(i);
+//                    break;
+//                }
+//            }
+//        }
+        indexLetter = indexLetterTemp;
+        for (int i = 0;i<indexLetter.size();i++){
+            Log.e(TAG,"workAfter " + indexLetter.get(i));
+        }
+        for (int i = 0;i<indexLetterTemp.size();i++){
+            Log.e(TAG,"workTempAfter " + indexLetterTemp.get(i));
+        }
         return allUsers;
     }
 
-    final ArrayList<String> indexLetter = new ArrayList();
+    ArrayList<String> indexLetter = new ArrayList();
 
     public ArrayList<String> getIndexLetter() {
-        Collections.sort(indexLetter);
+
         return indexLetter;
     }
 
