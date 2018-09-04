@@ -223,14 +223,32 @@ public class UserDataSupport extends ContentProvider {
     }
 
     //更新访问次数
+
     public long updateIdentifyCount(String personId) {
+        Log.e(TAG,"更新访问次数 开始");
         open();
         Cursor lastCursor = database.query(UserDataHelper.DATABASE_TABLE, new String[]{UserDataHelper.C_UIC}, UserDataHelper.C_ID_PERSON + "= ?", new String[] {personId}, null, null, null);
-        int lastCount = Integer.getInteger(lastCursor.getString(0));
+        lastCursor.moveToFirst();
+        String temp = lastCursor.getString(0);
+        Log.e(TAG,"更新访问次数 返回cursor" + temp);
+        int lastCount = 0;
+        if (!TextUtils.isEmpty(temp)){
+            lastCount = Integer.parseInt(temp);
+            Log.e(TAG,"更新访问次数 返回cursor" + null);
+        }else {
+            Log.e(TAG,"更新访问次数 返回cursor 0 +" + null);
+        }
+
+        Log.e(TAG,"更新访问次数 获取lastCount " + lastCount);
         lastCount++;
         ContentValues contentValues = new ContentValues();
-        contentValues.put(allColumns[1], lastCount);
+        contentValues.put(allColumns[8], lastCount);
         long ret = database.update(UserDataHelper.DATABASE_TABLE, contentValues, UserDataHelper.C_ID_PERSON + " = ?" , new String[]{personId});
+        if (ret>0){
+           Log.e(TAG,"访问次数更新成功 " + lastCount);
+        }else {
+            Log.e(TAG,"访问次数更新失败 " + lastCount);
+        }
         close();
         return ret;
     }

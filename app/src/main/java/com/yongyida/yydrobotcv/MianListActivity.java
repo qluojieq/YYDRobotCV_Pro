@@ -98,7 +98,9 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
                     addNewUser(null);
                 } else {
                     Intent intent = new Intent(MianListActivity.this, BaseInfoShowActivity.class);
+                    usersData = dataSupport.getAllUsers("list"); // 更新一下数据
                     intent.putExtra("one_user", usersData.get(position));
+                    Log.e(TAG,"最后访问次数 " +  usersData.get(position).getIdentifyCount());
                     startActivityForResult(intent, 10);
                 }
             }

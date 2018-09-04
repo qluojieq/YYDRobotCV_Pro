@@ -38,12 +38,12 @@ public class CorpusConstants {
 
 
     // 不同人说不同的话
-    public static String SayHelloWords(String whoTyep, String name) {
+    public static String SayHelloWords(String whoType, String name) {
 
         int index;
         Random random = new Random();
         String ret = "";
-        switch (whoTyep) {
+        switch (whoType) {
             case SIR:
                 index = random.nextInt(SirSays.length);
                 ret = SirSays[index];
@@ -67,6 +67,5 @@ public class CorpusConstants {
         }
         return ret;
     }
-
 
 }
