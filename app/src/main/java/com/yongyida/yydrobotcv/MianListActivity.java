@@ -50,7 +50,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
 /**
  * @author Brandon on 2018/3/13
  **/
-public class MianListActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback,HorizontalSideBar.OnChooseChangeListener{
+public class MianListActivity extends AppCompatActivity implements OnRequestPermissionsResultCallback, HorizontalSideBar.OnChooseChangeListener {
 
     private static final int BASE_INFO_REQUEST = 10;
     private static final int NEW_ADD_REQUEST = 11;
@@ -81,7 +81,7 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
             }
         });
         setContentView(R.layout.main_activity);
-        dataSupport =  UserDataSupport.getInstance(this);
+        dataSupport = UserDataSupport.getInstance(this);
         userRecycleView = (RecyclerView) findViewById(R.id.user_recycle);
         mSiderBar = findViewById(R.id.side_bar);
         mSiderBar.setOnChooseChangeListener(this);
@@ -100,7 +100,7 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
                     Intent intent = new Intent(MianListActivity.this, BaseInfoShowActivity.class);
                     usersData = dataSupport.getAllUsers("list"); // 更新一下数据
                     intent.putExtra("one_user", usersData.get(position));
-                    Log.e(TAG,"最后访问次数 " +  usersData.get(position).getIdentifyCount());
+                    Log.e(TAG, "最后访问次数 " + usersData.get(position).getIdentifyCount());
                     startActivityForResult(intent, 10);
                 }
             }
@@ -127,14 +127,17 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int firstVisibleItemPosition = gridLayoutManager.findFirstVisibleItemPosition()+1;//可见范围内的第一项的位置
-                String lettersIndex [] = indexLetter.toArray(new String[indexLetter.size()]);
-                if (usersData.size()==1){
-                    mSiderBar.setLetters(lettersIndex,0);
-                }else {
-                    String temp = ChineseCharacterUtil.getFirstChar(usersData.get(firstVisibleItemPosition).getUserName());// 获取首字母
-                    historyChoose = indexLetter.indexOf(temp);
-                    mSiderBar.setLetters(lettersIndex,indexLetter.indexOf(temp));
+                int firstVisibleItemPosition = gridLayoutManager.findFirstVisibleItemPosition() + 1;//可见范围内的第一项的位置
+                String lettersIndex[] = indexLetter.toArray(new String[indexLetter.size()]);
+                if (usersData.size() == 1) {
+                    mSiderBar.setLetters(lettersIndex, 0);
+                } else {
+                    if (!isOver) {
+                        String temp = ChineseCharacterUtil.getFirstChar(usersData.get(firstVisibleItemPosition).getUserName());// 获取首字母
+                        historyChoose = indexLetter.indexOf(temp);
+                        mSiderBar.setLetters(lettersIndex, indexLetter.indexOf(temp));
+                    }
+
                 }
 
             }
@@ -142,13 +145,14 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
     }
 
     int historyChoose = 0;
+
     @Override
     protected void onResume() {
         super.onResume();
         callpremission();
         indexLetter = dataSupport.getIndexLetter();
 //        usersData = getTestUsersData(); // 测试数据
-        mSiderBar.setLetters(indexLetter.toArray(new String[indexLetter.size()]),historyChoose); // 初始化的值
+        mSiderBar.setLetters(indexLetter.toArray(new String[indexLetter.size()]), historyChoose); // 初始化的值
     }
 
 
@@ -167,6 +171,7 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
     public void chooseLetter(String letter) {
 //        userRecycleView.smoothScrollToPosition(12);
         historyChoose = scrollString(letter);
+        Log.e(TAG, "touch been clicked show " + historyChoose);
         gridLayoutManager.scrollToPositionWithOffset(historyChoose, 0);
     }
 
@@ -206,7 +211,7 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
             Bitmap bigMap = null;
 
             if (position == 0) {
-                bigMap = BitmapFactory.decodeResource(mContext.getResources(),R.mipmap.ic_add);
+                bigMap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_add);
                 portraitView.setImageBitmap(bigMap);
             } else {
 
@@ -281,6 +286,8 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
     }
 
 
+    boolean isOver = false;
+
     public int scrollString(String targetChar) {
         int ret = 0;
         int i = 1;
@@ -291,9 +298,11 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
         }
         ret = i;
         Log.e(TAG, "点击到啊字母 " + targetChar + "首次出现该字母的位置 " + ret);
-        if (usersData.size()>9&&i > usersData.size() - 10) {
+        isOver = false;
+        if (usersData.size() > 9 && i > usersData.size() - 10) {
             mHandler.sendEmptyMessage(usersData.size() - 10);
             Log.e(TAG, "超出滑动范围 " + usersData.get(usersData.size() - 10).getUserName());
+            isOver = true;
             if (usersData.size() / 2 == 0) {
                 ret = usersData.size() - 10;
             } else {
@@ -303,15 +312,13 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
         }
         return ret;
     }
+
     //获取权限
-    public void callpremission()
-    {
+    public void callpremission() {
         //系统版本号23/6.0之后/api23
-        if (Build.VERSION.SDK_INT >= 23)
-        {
+        if (Build.VERSION.SDK_INT >= 23) {
             //检查有没有所需的权限 PackageManager.PERMISSION_GRANTED：授权了权限
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-            {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 //请求获取所需的权限，第二个参数：需要的权限（可以多个集合）第三个参数：请求码
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUIRE_CODE_CALL_CAMERA);
                 return;
@@ -323,35 +330,28 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
 
     //权限获取回调的方法
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode)
-        {
+        switch (requestCode) {
             case REQUIRE_CODE_CALL_CAMERA:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.e("权限log", "回调");
-                } else
-                {
+                } else {
                     // Permission Denied拒绝
                     Toast.makeText(this, "CAMERA Denied", Toast.LENGTH_SHORT)
                             .show();
                     SharedPreferences gosetting = getSharedPreferences("gosetting", MODE_PRIVATE);
                     boolean isGoSetting = gosetting.getBoolean("isGoSetting", false);
                     //用户首次拒绝申请权限时，不需弹窗提示去设置申请权限
-                    if (isGoSetting)
-                    {
+                    if (isGoSetting) {
                         //当缺少权限时弹窗提示
                         AlertDialog.Builder builder = new AlertDialog.Builder(this);
                         builder.setIcon(R.mipmap.ic_launcher)
                                 .setTitle("缺少权限")
                                 .setMessage("去设置权限")
-                                .setPositiveButton("GoSetting", new DialogInterface.OnClickListener()
-                                {
+                                .setPositiveButton("GoSetting", new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialogInterface, int i)
-                                    {
+                                    public void onClick(DialogInterface dialogInterface, int i) {
                                         //打开App的设置
                                         getAppDetailSettingIntent(getBaseContext());
                                     }
@@ -367,16 +367,13 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
     }
 
     //打开App的设置
-    private void getAppDetailSettingIntent(Context context)
-    {
+    private void getAppDetailSettingIntent(Context context) {
         Intent localIntent = new Intent();
         localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (Build.VERSION.SDK_INT >= 9)
-        {
+        if (Build.VERSION.SDK_INT >= 9) {
             localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
             localIntent.setData(Uri.fromParts("package", getPackageName(), null));
-        } else if (Build.VERSION.SDK_INT <= 8)
-        {
+        } else if (Build.VERSION.SDK_INT <= 8) {
             localIntent.setAction(Intent.ACTION_VIEW);
             localIntent.setClassName("com.android.settings", "com.android.settings.InstalledAppDetails");
             localIntent.putExtra("com.android.settings.ApplicationPkgName", getPackageName());
@@ -384,9 +381,10 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
         startActivity(localIntent);
     }
 
-     ArrayList<String> indexLetter = new ArrayList();
-    public  List<User> getTestUsersData() {
-        String index[] = {"#", "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0"};
+    ArrayList<String> indexLetter = new ArrayList();
+
+    public List<User> getTestUsersData() {
+        String index[] = {"#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"};
 
         List<User> allUsers = new ArrayList<>();
         User user1 = new User();
@@ -403,7 +401,7 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
         Random random = new Random();
         allUsers.add(user1);
 
-        for (int i = 0;i<10;i++){
+        for (int i = 0; i < 10; i++) {
             User user2 = new User();
             user2.setUserId("");
             user2.setPersonId("");
@@ -421,20 +419,20 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
             @Override
             public int compare(User o1, User o2) {
 
-                if (!indexLetter.contains(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)+"")){
-                    indexLetter.add(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)+"");
-                    Log.e(TAG,ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0) + "比较遍历");
+                if (!indexLetter.contains(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0) + "")) {
+                    indexLetter.add(ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0) + "");
+                    Log.e(TAG, ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0) + "比较遍历");
                 }
-                if (o1.getUserName().equals("添加")||o2.getUserName().equals("添加")){
+                if (o1.getUserName().equals("添加") || o2.getUserName().equals("添加")) {
                     return 1;
-                }else {
-                    Log.e(TAG,ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0) + " 值");
-                   return ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0)-ChineseCharacterUtil.getFirstChar(o2.getUserName()).charAt(0);
+                } else {
+                    Log.e(TAG, ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0) + " 值");
+                    return ChineseCharacterUtil.getFirstChar(o1.getUserName()).charAt(0) - ChineseCharacterUtil.getFirstChar(o2.getUserName()).charAt(0);
                 }
             }
         });
         Collections.sort(indexLetter);
-        Log.e(TAG,"indexLetter length " + indexLetter.size());
+        Log.e(TAG, "indexLetter length " + indexLetter.size());
         return allUsers;
     }
 }

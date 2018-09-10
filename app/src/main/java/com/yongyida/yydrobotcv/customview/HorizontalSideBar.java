@@ -123,10 +123,11 @@ public class HorizontalSideBar extends View {
                 }else if(choose>=letters.length){
                     choose = letters.length - 1;
                 }
-                invalidate();
                 if (oldChoose!= choose){
                     if (onChooseChangeListener!=null)
                     onChooseChangeListener.chooseLetter(letters[choose]);
+                    Log.e(TAG,letters[oldChoose]+"touch been clicked " + letters[choose]);
+                    invalidate();
                 }
                 break;
         }
