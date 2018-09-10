@@ -133,7 +133,7 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
                     mSiderBar.setLetters(lettersIndex,0);
                 }else {
                     String temp = ChineseCharacterUtil.getFirstChar(usersData.get(firstVisibleItemPosition).getUserName());// 获取首字母
-
+                    historyChoose = indexLetter.indexOf(temp);
                     mSiderBar.setLetters(lettersIndex,indexLetter.indexOf(temp));
                 }
 
@@ -141,13 +141,14 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
         });
     }
 
+    int historyChoose = 0;
     @Override
     protected void onResume() {
         super.onResume();
         callpremission();
         indexLetter = dataSupport.getIndexLetter();
 //        usersData = getTestUsersData(); // 测试数据
-        mSiderBar.setLetters(indexLetter.toArray(new String[indexLetter.size()]),0); // 初始化的值
+        mSiderBar.setLetters(indexLetter.toArray(new String[indexLetter.size()]),historyChoose); // 初始化的值
     }
 
 
@@ -161,10 +162,12 @@ public class MianListActivity extends AppCompatActivity implements OnRequestPerm
         this.finish();
     }
 
+
     @Override
     public void chooseLetter(String letter) {
 //        userRecycleView.smoothScrollToPosition(12);
-        gridLayoutManager.scrollToPositionWithOffset(scrollString(letter), 0);
+        historyChoose = scrollString(letter);
+        gridLayoutManager.scrollToPositionWithOffset(historyChoose, 0);
     }
 
     public static class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder> implements View.OnClickListener {
