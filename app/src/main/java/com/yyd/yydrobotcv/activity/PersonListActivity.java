@@ -76,8 +76,13 @@ public class PersonListActivity extends AppCompatActivity {
 ////        intent.putExtra("cmd","1"); //blockly使用：用户id
 ////        intent.putExtra("tag","10000");//超时时长
 //        startService(intent);
-         Intent intent = new Intent(this, FaceTrackActivity.class);
-         startActivity(intent);
+//        Intent intent = new Intent(this, FaceTrackActivity.class);
+//        startActivity(intent);
+
+        Intent intent = new Intent(this,FaceDetectService.class);
+        intent.putExtra("startType", "active_interaction");
+        intent.putExtra("msg","sayHello");
+        startService(intent);
     }
 
     public void stopFaceDetect(View view) {
