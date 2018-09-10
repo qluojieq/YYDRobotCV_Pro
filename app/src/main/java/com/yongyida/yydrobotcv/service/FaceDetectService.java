@@ -19,6 +19,7 @@ import com.yongyida.yydrobotcv.camera.Camera2Track;
 import com.yongyida.yydrobotcv.camera.CameraBase;
 import com.yongyida.yydrobotcv.camera.PreviewListener;
 import com.yongyida.yydrobotcv.motion.HeadHelper;
+import com.yongyida.yydrobotcv.tts.CorpusConstants;
 import com.yongyida.yydrobotcv.tts.TTSManager;
 import com.yongyida.yydrobotcv.useralbum.User;
 import com.yongyida.yydrobotcv.useralbum.UserDataSupport;
@@ -219,16 +220,45 @@ public class FaceDetectService extends Service implements PreviewListener{
 
                         if (sayHello.equals("sayHello")&&sayOnce){
                             sayOnce = false;
-                            TTSManager.TTS("你好 " + name,null);
+                           Log.e(TAG,"性别 "+ faces.get(0).getGender() + "track sex"+ faceTrack.getGender(0)) ;
+                            if (faceTrack.getGender(0)==1){
+                                TTSManager.TTS(CorpusConstants.SayHelloWords(CorpusConstants.VIP_SIR,name),null);
+                            }else {
+                                TTSManager.TTS(CorpusConstants.SayHelloWords(CorpusConstants.VIP_MADAM,name),null);
+                            }
                             // 添加数据库
+                            Log.e(TAG,"开始更新数据库 ");
                             UserDataSupport dataSource =  UserDataSupport.getInstance(this);
                             dataSource.updateIdentifyCount( faces.get(0).getPersonId()+"");
+                            Log.e(TAG,"更新数据库完成 ");
+
                         }
-                        CommonUtils.serviceToast(this,name);
+//                        CommonUtils.serviceToast(this,name);
+                    }else {
+                        faceCheckCount ++;
+                        if (faceCheckCount == FACE_CHECK_COUNT){
+                            if (sayHello.equals("sayHello")&&sayOnce){
+                                sayOnce = false;
+                                Log.e(TAG,"性别 "+ faces.get(0).getGender() + "track sex"+ faceTrack.getGender(0)) ;
+                                if (faceTrack.getGender(0)==1){
+                                    TTSManager.TTS(CorpusConstants.SayHelloWords(CorpusConstants.SIR,null),null);
+                                }else {
+                                    TTSManager.TTS(CorpusConstants.SayHelloWords(CorpusConstants.MADAM,null),null);
+                                }
+                            }
+                        }
+
                     }
                 }
             }else {
-
+                noFaceCheckCount ++;
+                if (noFaceCheckCount == NO_FACE_CHECK_COUNT){
+                    if (sayHello.equals("sayHello")&&sayOnce){
+                        sayOnce = false;
+                        Log.e(TAG,"性别 "+ faces.get(0).getGender() + "track sex"+ faceTrack.getGender(0)) ;
+                        TTSManager.TTS(CorpusConstants.SayHelloWords(CorpusConstants.NO_PERSON,null),null);
+                    }
+                }
             }
     }
 
